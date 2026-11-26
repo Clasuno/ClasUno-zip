@@ -44,9 +44,9 @@ p{margin:0}
 /* ---------- Cabecera ---------- */
 .cab{position:sticky;top:0;z-index:1000;background:var(--papel);border-bottom:1px solid var(--linea);view-transition-name:cabecera}
 .cab .envoltura{display:flex;align-items:center;gap:18px;height:66px}
-.hueco-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none}
-.hueco-logo i{width:34px;height:34px;border:1.5px dashed var(--linea-2);border-radius:10px;display:block}
-.hueco-logo span{font-size:13px;color:var(--tinta-2);border-bottom:1.5px dashed var(--linea-2);padding:2px 34px 2px 2px}
+.logo{display:flex;align-items:center;text-decoration:none;flex:none;color:var(--tinta);border-radius:6px}
+.logo svg{height:26px;width:auto}
+.pie .logo svg{height:30px}
 .nav{display:flex;gap:2px;margin-left:auto;align-items:center}
 .nav a{text-decoration:none;font-weight:500;font-size:15px;padding:8px 13px;border-radius:10px;color:var(--tinta-2)}
 .nav a:hover{color:var(--tinta);background:var(--papel-2)}
