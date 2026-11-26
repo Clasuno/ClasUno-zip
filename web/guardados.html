@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profes guardados</title>
+<meta name="description" content="Los profes que has guardado para verlos con calma, escribirles o pedir clase.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/marca/icono.svg" type="image/svg+xml"><link rel="icon" href="assets/marca/icono-32.png" sizes="32x32"><link rel="apple-touch-icon" href="assets/marca/icono-apple.png"><meta name="theme-color" content="#0B0C0E">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-guardados{padding:56px 0 30px;display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.cab-guardados h1{font-size:clamp(42px,6.4vw,84px)}
+.lista-guardados{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:70px}
+.lista-guardados .tarjeta-profe{animation:sube .45s both cubic-bezier(.2,.8,.2,1)}
+.vacio-guardados{grid-column:1/-1;padding:56px 24px;text-align:center}
+.vacio-guardados .corazon{font-size:44px;color:#E0465B;line-height:1;margin-bottom:14px}
+@keyframes sube{from{opacity:0;transform:translateY(12px)}}
+@media (max-width:900px){.lista-guardados{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <section class="envoltura cab-guardados">
+    <div>
+      <p class="kicker">Guardados</p>
+      <h1>Tus profes guardados</h1>
+      <p class="suave" id="resumen" style="margin-top:14px">Pulsa ♡ en cualquier profe para tenerlo aquí.</p>
+    </div>
+    <a class="boton sec" href="buscar.html">Buscar más profes</a>
+  </section>
+  <section class="envoltura">
+    <div class="lista-guardados" id="lista"></div>
+  </section>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  function pintar() {
+    const ps = U.favs().map(D.profe).filter(Boolean);
+    $('#resumen').textContent = ps.length
+      ? `${ps.length} profe${ps.length === 1 ? '' : 's'} guardado${ps.length === 1 ? '' : 's'}. Pulsa en uno para ver su perfil, escríbele o quítalo con «♥ Guardado».`
+      : 'Pulsa ♡ en cualquier profe para tenerlo aquí.';
+    $('#lista').innerHTML = ps.length
+      ? ps.map((p, i) => U.tarjetaProfe(p).replace('class="hoja tarjeta-profe"', `class="hoja tarjeta-profe" style="animation-delay:${Math.min(i, 10) * 40}ms"`)).join('')
+      : `<div class="hoja vacio-guardados"><div class="corazon">♡</div><h3>Aún no has guardado a nadie</h3>
+          <p class="suave" style="margin:10px auto 20px;max-width:46ch">Cuando veas un profe que te guste, pulsa «♡ Guardar» y lo tendrás aquí para compararlo, escribirle o pedir clase.</p>
+          <a class="boton" href="buscar.html">Buscar en el mapa</a></div>`;
+  }
+  D.listo.then(() => { pintar(); setTimeout(pintar, 1500); });
+  // Al quitar uno, desaparece de la lista
+  document.addEventListener('click', e => { if (e.target.closest('[data-fav]')) setTimeout(pintar, 60); });
+  window.addEventListener('storage', e => { if (e.key === 'favs') pintar(); });
+})();
+</script>
+</body>
+</html>

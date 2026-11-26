@@ -194,7 +194,7 @@ D.listo.then(async () => {
 
   // ---------- Menús ----------
   const MENUS = {
-    familia: [['inicio', 'Inicio'], ['asistente', 'Asistente'], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['favoritos', 'Favoritos'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
+    familia: [['inicio', 'Inicio'], ['asistente', 'Asistente'], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['favoritos', 'Profes guardados', U.favs().length], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
     profe: [['inicio', 'Inicio'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos']]
   };
   let chatPedido = U.param('chat');
@@ -253,7 +253,7 @@ D.listo.then(async () => {
         <div class="hoja asis"><div class="asis-msjs" id="asisMsjs"></div>
           <div class="sugerencias" id="asisSug">${[`¿Cómo va ${hijo.nombre}?`, '¿Qué le cuesta más?', '¿Cuándo es la próxima clase?', '¿Cuánto llevamos gastado este mes?', 'Hazme un plan para el examen de mates del día 18'].map(q => `<button type="button">${U.esc(q)}</button>`).join('')}</div>
           <form id="fAsis"><input class="entrada" placeholder="Escribe tu pregunta…" aria-label="Pregunta" autocomplete="off"><button class="boton">Preguntar</button></form></div>`,
-      favoritos: () => { const f = U.favs().map(D.profe).filter(Boolean); return `<h1>Favoritos</h1>${f.length ? `<div style="display:grid;gap:14px">${f.map(p => U.tarjetaProfe(p, s.zona)).join('')}</div>` : `<div class="hoja" style="padding:40px;text-align:center"><h3>Aún no has guardado a nadie</h3><p class="suave" style="margin:10px 0 18px">Pulsa el corazón en cualquier profe para tenerlo aquí.</p><a class="boton" href="buscar.html">Buscar en el plano</a></div>`}`; },
+      favoritos: () => { const f = U.favs().map(D.profe).filter(Boolean); return `<h1>Profes guardados</h1>${f.length ? `<div style="display:grid;gap:14px">${f.map(p => U.tarjetaProfe(p, s.zona)).join('')}</div>` : `<div class="hoja" style="padding:40px;text-align:center"><h3>Aún no has guardado a nadie</h3><p class="suave" style="margin:10px 0 18px">Pulsa el corazón en cualquier profe para tenerlo aquí.</p><a class="boton" href="buscar.html">Buscar en el plano</a></div>`}`; },
       pagos: () => `<h1>Pagos y bonos</h1>
         <div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><div><b style="font-size:20px">Bono de 10 clases · Laura Méndez</b><p class="suave">Quedan 6 clases · comprado el ${fmt(dia(-30), { day: 'numeric', month: 'long' })}</p></div><a class="boton peq" href="profe.html?id=laura">Renovar</a></div>
           <div class="tramo-barra" style="height:18px"><i style="width:40%;background:var(--tinta)"></i><i style="width:60%;background:var(--ok)"></i></div>

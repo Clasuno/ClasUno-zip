@@ -10,7 +10,7 @@
 
   const NAV = [
     ['buscar.html', 'Buscar en el mapa'], ['grupos.html', 'Grupos de portal'], ['como-se-paga.html', 'Cómo se paga'],
-    ['dar-clases.html', 'Dar clases'], ['ayuda.html', 'Ayuda']
+    ['dar-clases.html', 'Dar clases'], ['ayuda.html', 'Ayuda'], ['guardados.html', 'Guardados']
   ];
   const cab = document.createElement('header');
   cab.className = 'cab';
@@ -18,7 +18,7 @@
     <a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="nav" id="nav">
-      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
+      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
       <button class="tema-btn" type="button" aria-label="Cambiar entre tema claro y oscuro">◐</button>
       <a class="boton peq" href="${sesion() ? 'panel.html' : 'entrar.html'}">${sesion() ? 'Mi panel' : 'Entrar'}</a>
     </nav></div>`;
@@ -38,7 +38,7 @@
     <div class="cols">
       <div class="pila"><a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
         <p class="suave">Clases particulares en tu barrio. Profes comprobados en persona, sin cuotas y con la primera clase a prueba.</p></div>
-      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="grupos.html">Grupos de portal</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
+      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="guardados.html">Profes guardados</a></li><li><a href="grupos.html">Grupos de portal</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
       <div><h4>Profes</h4><ul><li><a href="dar-clases.html">Dar clases</a></li><li><a href="alta-profe.html">Crear perfil</a></li><li><a href="panel.html?rol=profe">Panel de profe</a></li></ul></div>
       <div><h4>Ayuda</h4><ul><li><a href="ayuda.html">Preguntas frecuentes</a></li><li><a href="ayuda.html#seguridad">Seguridad</a></li><li><a href="legal.html">Aviso legal y privacidad</a></li><li><a href="legal.html#cookies">Cookies</a></li></ul></div>
     </div>
@@ -54,7 +54,11 @@
   function sesion() { try { return JSON.parse(localStorage.getItem('sesion') || 'null'); } catch (e) { return null; } }
 
   const favs = () => { try { return JSON.parse(localStorage.getItem('favs') || '[]'); } catch (e) { return []; } };
-  const alternarFav = id => { const f = favs(); const i = f.indexOf(id); i < 0 ? f.push(id) : f.splice(i, 1); try { localStorage.setItem('favs', JSON.stringify(f)); } catch (e) {} if (window.SUPA) SUPA.fav(id, i < 0).catch(() => {}); return i < 0; };
+  const alternarFav = id => { const f = favs(); const i = f.indexOf(id); i < 0 ? f.push(id) : f.splice(i, 1); try { localStorage.setItem('favs', JSON.stringify(f)); } catch (e) {} if (window.SUPA) SUPA.fav(id, i < 0).catch(() => {}); contarFavs(); return i < 0; };
+  // Número de guardados en la pestaña «Guardados» de la cabecera
+  const contarFavs = () => { const n = favs().length; document.querySelectorAll('.cuenta-favs').forEach(c => { c.hidden = !n; c.textContent = n; }); };
+  contarFavs(); if (D && D.listo) D.listo.then(() => setTimeout(contarFavs, 1500));
+  window.addEventListener('storage', e => { if (e.key === 'favs') contarFavs(); });
 
   let tTost;
   const tostada = txt => {
@@ -78,7 +82,7 @@
     return `<article class="hoja tarjeta-profe" data-id="${p.id}">
       ${cara(p)}
       <div>
-        <h3 style="font-size:19px"><a href="profe.html?id=${p.id}" style="text-decoration:none">${p.nombre}</a></h3>
+        <h3 style="font-size:19px"><a class="enlace-tarjeta" href="profe.html?id=${p.id}" style="text-decoration:none">${p.nombre}</a></h3>
         <p class="suave" style="font-size:14px">${p.estudios}</p>
         <p style="font-size:15px;margin-top:6px">${p.corta}</p>
         <p style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
@@ -86,9 +90,13 @@
           <span class="etiqueta">${modoTxt(p.modo)}</span>
           ${p.grupos ? '<span class="etiqueta naranja">Grupos de portal</span>' : ''}
         </p>
+        <p class="acciones-tarjeta">
+          <a class="boton peq" href="profe.html?id=${p.id}">Ver perfil</a>
+          <a class="boton sec peq" href="panel.html?chat=${p.id}">Escribir a ${p.nombre.split(' ')[0]}</a>
+          <button class="boton sec peq" type="button" data-fav="${p.id}" data-fav-txt aria-pressed="${fav}">${fav ? '♥ Guardado' : '♡ Guardar'}</button>
+        </p>
       </div>
       <div class="precio">${p.precio} €<small>la hora</small><div style="font-size:14px;margin-top:10px;font-stretch:100%;font-weight:650">${p.clases && p.nota ? `<span class="estrellas">★</span> ${coma(p.nota)} <span class="suave mono">(${p.clases})</span>` : '<span class="etiqueta naranja">Nuevo</span>'}</div></div>
-      <button class="fav" type="button" aria-pressed="${fav}" aria-label="Guardar en favoritos" data-fav="${p.id}">${fav ? '♥' : '♡'}</button>
     </article>`;
   };
   // Delegación: botones de favorito en cualquier página
@@ -96,9 +104,13 @@
     const b = e.target.closest('[data-fav]'); if (!b) return;
     e.preventDefault();
     const on = alternarFav(b.dataset.fav);
-    b.setAttribute('aria-pressed', on); b.textContent = on ? '♥' : '♡';
-    b.animate([{ transform: 'scale(1.6)' }, { transform: 'scale(1)' }], { duration: 350, easing: 'cubic-bezier(.3,1.6,.5,1)' });
-    tostada(on ? 'Guardado en favoritos' : 'Quitado de favoritos');
+    // Todos los botones de ese profe en la página (corazón y botón «Guardar») a la vez
+    document.querySelectorAll(`[data-fav="${b.dataset.fav}"]`).forEach(x => {
+      x.setAttribute('aria-pressed', on);
+      x.textContent = x.hasAttribute('data-fav-txt') ? (on ? '♥ Guardado' : '♡ Guardar') : (on ? '♥' : '♡');
+    });
+    b.animate([{ transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 350, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+    tostada(on ? 'Guardado en «Guardados»' : 'Quitado de «Guardados»');
   });
 
   const param = k => new URLSearchParams(location.search).get(k);
@@ -112,5 +124,5 @@
     requestAnimationFrame(paso);
   };
 
-  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, tostada, param, esc, contar, sesion, iniciales };
+  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales };
 })();

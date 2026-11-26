@@ -241,7 +241,7 @@
     const nombre = [form.nombre.value.trim() || 'Tu nombre', form.apellidos.value.trim()].join(' ').trim();
     const p = { id: 'yo', nombre, estudios: tit.value.trim() || 'Tu titulación', corta: form.corta.value.trim() || 'Tu frase de presentación aparecerá aquí.',
       asig: est.asig.length ? est.asig : ['mat'], modo: est.modo, zona: est.modo === 'online' ? null : est.zona, precio: +form.precio.value, nota: 5, clases: 0, grupos: form.grupos.checked, verificado: false };
-    let html = U.tarjetaProfe(p).replace(/<button class="fav"[\s\S]*?<\/button>/, '');
+    let html = U.tarjetaProfe(p).replace(/<button class="fav"[\s\S]*?<\/button>/, '').replace(/<p class="acciones-tarjeta">[\s\S]*?<\/p>/, '');
     if (est.foto) html = html.replace(/<span class="cara "[^>]*>[^<]*<\/span>/, `<span class="cara" style="background:url(${est.foto}) center/cover"></span>`);
     $('#previa').innerHTML = html;
   }

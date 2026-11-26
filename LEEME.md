@@ -31,6 +31,7 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 | `index.html` | Portada con plano interactivo, sellos, ruta, calculadora de grupos y de comisión, carrusel |
 | `buscar.html` | Filtros + lista + plano sincronizados, orden por cercanía, favoritos |
 | `profe.html?id=…` | Ficha del profe, zona aproximada, reseñas y reserva (prueba, suelta, bono, grupo) con horario |
+| `guardados.html` | Profes guardados (pestaña «♥ Guardados» de la cabecera, con contador). Cada tarjeta de profe se puede pulsar entera para ir a su ficha y lleva «Ver perfil», «Escribir a…» (abre el chat del panel) y «♡ Guardar» |
 | `grupos.html` | Tablón de grupos abiertos, unirse, proponer grupo |
 | `como-se-paga.html` | Recibo interactivo, comparativa, cancelaciones |
 | `dar-clases.html` | Calculadora de ingresos del profe a 6 meses, requisitos |

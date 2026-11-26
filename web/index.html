@@ -438,7 +438,7 @@ D.listo.then(() => {
           <h3><a href="profe.html?id=${r.p.id}" style="text-decoration:none">${r.p.nombre}</a></h3>
           <p class="suave" style="font-size:14px">${r.p.estudios} · ${r.p.precio} €/h</p>
           <ul>${r.por.map(x => `<li>${x}</li>`).join('')}</ul>
-          <div class="acciones-match"><a class="boton peq" href="profe.html?id=${r.p.id}">Ver perfil</a><a class="boton sec peq" href="panel.html?chat=${r.p.id}">Escribirle</a></div>
+          <div class="acciones-match"><a class="boton peq" href="profe.html?id=${r.p.id}">Ver perfil</a><a class="boton sec peq" href="panel.html?chat=${r.p.id}">Escribirle</a><button class="boton sec peq" type="button" data-fav="${r.p.id}" data-fav-txt aria-pressed="${U.favs().includes(r.p.id)}">${U.favs().includes(r.p.id) ? '♥ Guardado' : '♡ Guardar'}</button></div>
         </div>
         <div class="encaje"><b data-enc="${r.encaje}">0 %</b><small>de encaje</small><div class="barra-enc"><i data-w="${r.encaje}"></i></div></div>
       </article>`).join('') + `<p class="suave" style="font-size:14px">¿Quieres ver más? <a href="buscar.html?q=${encodeURIComponent(txt)}">Ver todos los que encajan en el mapa</a></p>`;
