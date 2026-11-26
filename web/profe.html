@@ -129,7 +129,7 @@ D.listo.then(() => {
     <aside class="hoja reserva" aria-label="Reservar">
       <h2 style="font-size:24px">Pedir clase</h2>
       <div class="tipos" id="tipos">
-        <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>Si no encaja, no pagas</small></button>
+        <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>60 min · si no encaja, no pagas</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="suelta"><b>Clase suelta</b><small>${p.precio} € la hora</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="bono"><b>Bono de 10</b><small>5 % menos</small></button>
         ${p.grupos ? `<button class="tipo" type="button" aria-pressed="false" data-t="grupo"><b>Grupo de portal</b><small>${D.precioGrupo(p.precio, 3)} € por alumno</small></button>` : `<button class="tipo" type="button" disabled style="opacity:.4"><b>Grupo de portal</b><small>No hace grupos</small></button>`}
@@ -138,6 +138,7 @@ D.listo.then(() => {
         <div class="segmentado" id="durSel" style="display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden">
           ${[60, 90, 120].map((d, i) => `<button type="button" data-d="${d}" aria-pressed="${i === 0}" style="flex:1;border:0;padding:9px;font-weight:650;background:${i === 0 ? 'var(--tinta)' : 'transparent'};color:${i === 0 ? 'var(--papel)' : 'inherit'}">${d} min</button>`).join('')}
         </div></label>
+      <p class="suave" id="notaPrueba" style="font-size:13px;margin-top:6px">La clase de prueba es siempre de 60 minutos.</p>
       <p style="margin-top:16px;font-weight:650;font-size:14px">Elige hueco <span class="suave" style="font-weight:400">(esta semana)</span></p>
       <div class="semana" id="semana"></div>
       <div class="desglose" id="desglose"></div>
@@ -160,12 +161,23 @@ D.listo.then(() => {
     sem.querySelectorAll('.elegido').forEach(x => x.classList.remove('elegido'));
     b.classList.add('elegido'); hueco = b.dataset.h; calc();
   };
-  $('#tipos').onclick = e => { const b = e.target.closest('.tipo[data-t]'); if (!b) return; tipo = b.dataset.t; $('#tipos').querySelectorAll('.tipo').forEach(x => x.setAttribute('aria-pressed', x === b)); calc(); };
-  $('#durSel').onclick = e => {
-    const b = e.target.closest('button'); if (!b) return; dur = +b.dataset.d;
-    $('#durSel').querySelectorAll('button').forEach(x => { const on = x === b; x.setAttribute('aria-pressed', on); x.style.background = on ? 'var(--tinta)' : 'transparent'; x.style.color = on ? 'var(--papel)' : 'inherit'; });
-    calc();
+  const marcarDur = d => {
+    dur = d;
+    $('#durSel').querySelectorAll('button').forEach(x => { const on = +x.dataset.d === d; x.setAttribute('aria-pressed', on); x.style.background = on ? 'var(--tinta)' : 'transparent'; x.style.color = on ? 'var(--papel)' : 'inherit'; });
   };
+  // La clase de prueba solo puede ser de 60 minutos: 90 y 120 quedan bloqueados
+  const ajustarDur = () => {
+    const prueba = tipo === 'prueba';
+    $('#durSel').querySelectorAll('button').forEach(x => { const no = prueba && +x.dataset.d !== 60; x.disabled = no; x.style.opacity = no ? .35 : 1; x.style.cursor = no ? 'not-allowed' : ''; x.title = no ? 'La clase de prueba es de 60 minutos' : ''; });
+    $('#notaPrueba').hidden = !prueba;
+    if (prueba) marcarDur(60);
+  };
+  $('#tipos').onclick = e => { const b = e.target.closest('.tipo[data-t]'); if (!b) return; tipo = b.dataset.t; $('#tipos').querySelectorAll('.tipo').forEach(x => x.setAttribute('aria-pressed', x === b)); ajustarDur(); calc(); };
+  $('#durSel').onclick = e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return;
+    marcarDur(+b.dataset.d); calc();
+  };
+  ajustarDur();
   const eur = n => n.toFixed(2).replace('.', ',') + ' €';
   const DIAS_L = { L: 'lunes', M: 'martes', X: 'miércoles', J: 'jueves', V: 'viernes', S: 'sábado' };
   function calc() {
@@ -189,7 +201,7 @@ D.listo.then(() => {
       if (!u) { location.href = 'entrar.html?alta=familia&volver=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
       if (SUPA.rol() === 'profe') return U.tostada('Las clases las piden las familias desde su cuenta');
       const btn = $('#pedir'); btn.disabled = true; btn.textContent = 'Enviando…';
-      try { const ses = U.sesion() || {}; await SUPA.pedirClase({ teacherId: p.id, tipo, empieza: fechaHueco(hueco).toISOString(), minutos: dur, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null }); }
+      try { const ses = U.sesion() || {}; await SUPA.pedirClase({ teacherId: p.id, tipo, empieza: fechaHueco(hueco).toISOString(), minutos: tipo === 'prueba' ? 60 : dur, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null }); }
       catch (x) { U.tostada(x.message); btn.disabled = false; calc(); return; }
       calc();
     }

@@ -55,6 +55,7 @@ Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La web usa la clave pú
 1. SQL Editor → pegar `supabase/1-conectar-web.sql` → Run. Crea: coordenadas de barrios, Francés/Economía/Adultos, `profes_publicos()`, `guardar_perfil_profe()`, tablas `clases`, `informes`, `grupos`, `grupo_miembros`, `grupo_propuestas` con RLS, y tiempo real en `clases`.
 2. Authentication → URL Configuration: añadir `http://localhost:8130/**` (y luego el dominio real) en Redirect URLs.
 3. Mientras se prueba: Authentication → Sign In / Providers → Email → desactivar «Confirm email» (el correo gratuito de Supabase manda muy pocos al día). Volver a activarlo antes de abrir al público, con un SMTP propio.
-4. Para que un profe salga en la web: aprobarlo con `select set_teacher_status('<uuid>', '<estado aprobado>');` siendo admin, y marcar `certificado = true` cuando se haya visto el certificado.
+4. SQL Editor → pegar `supabase/2-prueba-60-minutos.sql` → Run. Hace que la primera clase a prueba solo pueda ser de 60 minutos también en la base de datos (la web ya no deja elegir otra duración).
+5. Para que un profe salga en la web: aprobarlo con `select set_teacher_status('<uuid>', '<estado aprobado>');` siendo admin, y marcar `certificado = true` cuando se haya visto el certificado.
 
 **Falta:** pasarela de pago (Stripe Connect para la comisión variable), reseñas, y conectar el asistente a la API de Claude (hoy son reglas en el navegador).

@@ -54,9 +54,10 @@ window.crearMapa = function (caja, op = {}) {
     const icono = L.divIcon({ className: 'pin', iconSize: null,
       html: `<span class="pin-cuerpo"><i style="background:${color}">${ini}</i>${p.precio} €</span>` });
     const m = L.marker(pos, { icon: icono, riseOnHover: true, keyboard: true, title: `${p.nombre}, ${p.precio} € la hora` }).addTo(mapa);
-    if (!op.onPin) {
-      m.bindPopup(`<div class="mapa-pop"><b>${p.nombre}</b><span>${p.asig.map(a => D.asig(a).nombre).join(' · ')}</span><span>${p.nota ? '★ ' + String(p.nota).replace('.', ',') + ' · ' : ''}${p.clases ? p.clases + ' clases · ' : 'Nuevo · '}${z.nombre}</span><a href="profe.html?id=${p.id}">Ver perfil</a></div>`, { closeButton: false, offset: [0, -6] });
-    } else m.on('click', () => op.onPin(p.id));
+    const ficha = `<div class="mapa-pop"><b>${p.nombre}</b><span>${p.asig.map(a => D.asig(a).nombre).join(' · ')}</span><span>${p.nota ? '★ ' + String(p.nota).replace('.', ',') + ' · ' : ''}${p.clases ? p.clases + ' clases · ' : 'Nuevo · '}${z.nombre}</span><a href="profe.html?id=${p.id}">Ver perfil</a></div>`;
+    if (!op.onPin) m.bindPopup(ficha, { closeButton: false, offset: [0, -6] });
+    // Con el mapa en grande la lista queda tapada: se enseña la ficha en el propio mapa
+    else m.on('click', () => grande() ? L.popup({ closeButton: false, offset: [0, -6] }).setLatLng(pos).setContent(ficha).openOn(mapa) : op.onPin(p.id));
     m.on('mouseover', () => op.onHover && op.onHover(p.id));
     m.on('mouseout', () => op.onHover && op.onHover(null));
     marcas[p.id] = { m, p };
@@ -92,8 +93,46 @@ window.crearMapa = function (caja, op = {}) {
     const z = D.zona(id);
     mapa.flyTo([z.lat, z.lng], factor && factor > 2.4 ? 14 : 13, { duration: .8 });
   }
+  // --- Ver en grande (pantalla completa) ---
+  // Al pulsar el mapa (o el botón) se abre ocupando toda la pantalla; se cierra con ✕ o con Esc.
+  const boton = document.createElement('button');
+  boton.type = 'button'; boton.className = 'mapa-ampliar';
+  caja.appendChild(boton);
+  L.DomEvent.disableClickPropagation(boton);
+  const grande = () => caja.classList.contains('grande');
+  let hueco = null, zoomGrande = null;
+  const pintarBoton = () => { boton.innerHTML = grande() ? '✕ Cerrar' : '⤢ Ver en grande'; boton.setAttribute('aria-label', grande() ? 'Cerrar el mapa a pantalla completa' : 'Ver el mapa a pantalla completa'); };
+  function abrir() {
+    if (grande()) return;
+    const centro = mapa.getCenter(), nivel = mapa.getZoom();
+    // Se saca la caja al final de <body> para que nada de la página la recorte; un hueco guarda su sitio
+    hueco = document.createElement('div');
+    hueco.style.height = caja.offsetHeight + 'px';
+    caja.replaceWith(hueco); document.body.appendChild(caja);
+    caja.classList.add('grande'); document.documentElement.classList.add('mapa-abierto');
+    mapa.scrollWheelZoom.enable();
+    if (!op.botonesZoom) zoomGrande = L.control.zoom({ position: 'topright' }).addTo(mapa);
+    pintarBoton(); boton.focus();
+    requestAnimationFrame(() => { mapa.invalidateSize(); mapa.setView(centro, nivel, { animate: false }); });
+  }
+  function cerrar() {
+    if (!grande()) return;
+    const centro = mapa.getCenter(), nivel = mapa.getZoom();
+    mapa.closePopup();
+    caja.classList.remove('grande'); document.documentElement.classList.remove('mapa-abierto');
+    if (hueco) { hueco.replaceWith(caja); hueco = null; }
+    mapa.scrollWheelZoom.disable();
+    if (zoomGrande) { zoomGrande.remove(); zoomGrande = null; }
+    pintarBoton();
+    requestAnimationFrame(() => { mapa.invalidateSize(); mapa.setView(centro, nivel, { animate: false }); });
+  }
+  boton.onclick = () => grande() ? cerrar() : abrir();
+  mapa.on('click', () => { if (!grande()) abrir(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && grande()) cerrar(); });
+  pintarBoton();
+
   setTimeout(() => mapa.invalidateSize(), 50);
   new ResizeObserver(() => mapa.invalidateSize()).observe(caja);
   filtrar(() => true);
-  return { filtrar, foco, zona, zoom, contar: () => visibles.size, mapa };
+  return { filtrar, foco, zona, zoom, contar: () => visibles.size, mapa, abrir, cerrar };
 };
