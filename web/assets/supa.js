@@ -69,7 +69,7 @@ window.SUPA = (() => {
         if (s && s.real) localStorage.removeItem('sesion');
       }
     } catch (e) {}
-    const b = document.querySelector('.cab .nav .boton');
+    const b = document.querySelector('.cab .nav .boton-entrar');
     if (b) { b.textContent = usuario ? 'Mi panel' : 'Entrar'; b.href = usuario ? (rolActual() === 'profe' ? 'panel.html?rol=profe' : 'panel.html') : 'entrar.html'; }
   }
   const rolActual = () => usuario && (usuario.user_metadata || {}).role === 'teacher' ? 'profe' : 'familia';

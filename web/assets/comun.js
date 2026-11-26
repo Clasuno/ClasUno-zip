@@ -13,7 +13,7 @@
     ['ayuda.html', 'Ayuda'], ['guardados.html', 'Guardados']
   ];
   // «Dar clases» va aparte, justo a la izquierda del botón «Entrar»
-  const darClases = `<a href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
+  const darClases = `<a class="boton sec peq" href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
   const cab = document.createElement('header');
   cab.className = 'cab';
   cab.innerHTML = `<div class="envoltura">
@@ -23,7 +23,7 @@
       ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
       <button class="tema-btn" type="button" aria-label="Cambiar entre tema claro y oscuro">◐</button>
       ${darClases}
-      <a class="boton peq" href="${sesion() ? 'panel.html' : 'entrar.html'}">${sesion() ? 'Mi panel' : 'Entrar'}</a>
+      <a class="boton peq boton-entrar" href="${sesion() ? 'panel.html' : 'entrar.html'}">${sesion() ? 'Mi panel' : 'Entrar'}</a>
     </nav></div>`;
   document.body.prepend(cab);
   const menu = cab.querySelector('.menu-btn'), nav = cab.querySelector('.nav');
