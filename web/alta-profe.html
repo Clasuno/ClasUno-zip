@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crear perfil de profe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.alta{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;padding:36px 0 80px;align-items:start}
+.alta>div{overflow-x:clip}
+.recorrido{display:flex;align-items:center;margin:6px 0 30px;position:relative}
+.recorrido::before{content:"";position:absolute;left:14px;right:14px;top:50%;height:3px;background:repeating-linear-gradient(90deg,var(--linea) 0 8px,transparent 8px 14px)}
+.recorrido .avance{position:absolute;left:14px;top:50%;height:3px;background:var(--butano);transition:width .5s cubic-bezier(.2,.8,.2,1);transform:translateY(-0px)}
+.parada-r{position:relative;z-index:1;flex:1;display:flex;justify-content:center}
+.parada-r:first-of-type{justify-content:flex-start}.parada-r:last-of-type{justify-content:flex-end}
+.parada-r span{width:30px;height:30px;border-radius:50%;background:var(--papel);border:2px solid var(--linea);display:grid;place-items:center;font-family:var(--mono);font-size:12px;transition:all .3s}
+.parada-r.hecha span{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}
+.parada-r.actual span{background:var(--butano);border-color:var(--tinta);color:#fff;transform:scale(1.25)}
+.paso-alta{display:none;padding:30px}
+.paso-alta.ver{display:block;animation:entraPaso .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes entraPaso{from{opacity:0;transform:translateX(30px)}}
+.paso-alta h2{font-size:34px;margin-bottom:6px}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.campos .ancho{grid-column:1/-1}
+.navegacion{display:flex;justify-content:space-between;gap:12px;margin-top:28px;align-items:center}
+.subir-foto{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin-top:24px}
+.foto-circulo{width:150px;height:150px;border-radius:50%;border:2.5px dashed var(--tinta);display:grid;place-items:center;background:var(--papel-2) center/cover no-repeat;cursor:pointer;text-align:center;font-size:13px;color:var(--tinta-2);padding:10px}
+.foto-circulo.con{border-style:solid;color:transparent}
+.lista-tit{max-height:210px;overflow:auto;border:1px solid var(--linea-2);border-top:0;border-radius:0 0 10px 10px;background:var(--hoja);display:none}
+.lista-tit.ver{display:block}
+.lista-tit button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:10px 12px;border-bottom:1px dashed var(--linea)}
+.lista-tit button:hover,.lista-tit button:focus{background:var(--papel-2)}
+.casillas{display:flex;flex-wrap:wrap;gap:8px}
+.casilla{position:relative}
+.casilla input{position:absolute;opacity:0}
+.casilla span{display:inline-block;border:1px solid var(--linea-2);border-radius:99px;padding:7px 14px;font-weight:650;font-size:14px;cursor:pointer;transition:all .15s}
+.casilla input:checked+span{background:var(--tinta);color:var(--papel)}
+.casilla input:focus-visible+span{outline:3px solid var(--butano)}
+.segmentado{display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden;background:var(--hoja)}
+.segmentado button{flex:1;border:0;background:transparent;padding:12px 6px;font-weight:650}
+.segmentado button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.semana{display:grid;grid-template-columns:34px repeat(6,1fr);gap:4px;font-size:12px;margin-top:10px;max-width:460px}
+.semana .d,.semana .h{font-family:var(--mono);color:var(--tinta-2);text-align:center}
+.hueco{height:30px;border-radius:6px;border:1.5px solid var(--linea);background:var(--hoja)}
+.hueco[aria-pressed="true"]{background:var(--ok);border-color:var(--tinta)}
+.opcion{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--linea-2);border-radius:12px;padding:14px;cursor:pointer;background:var(--hoja)}
+.opcion+.opcion{margin-top:10px}
+.opcion:has(input:checked){box-shadow:0 0 0 2px var(--butano);border-color:var(--butano)}
+.vista-previa{position:sticky;top:86px}
+.vista-previa .tarjeta-profe{pointer-events:none}
+.hecho{text-align:center;padding:60px 30px}
+.hecho .sello-ok{width:130px;height:130px;margin:0 auto 24px;border-radius:50%;border:3px solid var(--ok);display:grid;place-items:center;font-size:56px;color:var(--ok);animation:sellar .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes sellar{from{transform:scale(2.4) rotate(-30deg);opacity:0}}
+@media (max-width:980px){.alta{grid-template-columns:minmax(0,1fr)}.vista-previa{position:static;order:-1}}
+@media (max-width:560px){.campos{grid-template-columns:1fr}.subir-foto{grid-template-columns:1fr;justify-items:center}.paso-alta{padding:22px}}
+</style>
+</head>
+<body>
+<main class="envoltura alta">
+  <div>
+    <p class="kicker">Crear perfil de profe</p>
+    <div class="recorrido" id="recorrido"><i class="avance" id="avance"></i></div>
+    <form id="form" novalidate>
+      <section class="hoja paso-alta ver" data-paso="1">
+        <h2>Empecemos por ti</h2><p class="suave">Tu nombre sale en el perfil. El correo y la fecha de nacimiento, no.</p>
+        <div class="campos">
+          <label class="campo"><span>Nombre</span><input class="entrada" name="nombre" autocomplete="given-name" required></label>
+          <label class="campo"><span>Apellidos</span><input class="entrada" name="apellidos" autocomplete="family-name" required></label>
+          <label class="campo"><span>Correo electrónico</span><input class="entrada" type="email" name="correo" autocomplete="email" required></label>
+          <label class="campo"><span>Fecha de nacimiento</span><input class="entrada" type="date" name="nacimiento" required></label>
+          <label class="campo ancho"><span>Contraseña</span><input class="entrada" type="password" name="clave" autocomplete="new-password" minlength="8" required><p class="ayuda">Mínimo 8 caracteres.</p></label>
+        </div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="2">
+        <h2>Tu foto</h2><p class="suave">Obligatoria y en la que se te vea bien la cara. Las familias quieren saber quién va a dar la clase.</p>
+        <div class="subir-foto">
+          <label class="foto-circulo" id="fotoCirculo" tabindex="0">Pulsa para subir<br>JPG, PNG o WebP<br>máx. 3 MB<input type="file" accept="image/jpeg,image/png,image/webp" id="foto" class="oculto"></label>
+          <div class="pila">
+            <p>✓ De frente y con buena luz<br>✓ Solo tú, sin gafas de sol<br>✗ Sin logotipos ni dibujos</p>
+            <label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" name="cara" style="margin-top:5px"> <span>Confirmo que en la foto se me ve la cara y soy yo.</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="3">
+        <h2>Tus estudios</h2><p class="suave">Los comprobaremos en la videollamada.</p>
+        <div class="campos">
+          <div class="campo ancho"><label for="titInput" style="display:block;margin-bottom:6px">Titulación</label>
+            <input class="entrada" id="titInput" name="titulacion" autocomplete="off" placeholder="Escribe para buscar: «matemáticas», «DAM», «conservatorio»…" required>
+            <div class="lista-tit" id="listaTit" role="listbox"></div></div>
+          <label class="campo"><span>Centro <span class="suave">(opcional)</span></span><input class="entrada" name="centro" placeholder="p. ej. UCM"></label>
+          <label class="campo" style="display:flex;gap:10px;align-items:center;margin-top:28px"><input type="checkbox" name="cursando"> <span>Todavía lo estoy cursando</span></label>
+        </div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="4">
+        <h2>Qué enseñas</h2><p class="suave">Elige las asignaturas y los cursos que dominas de verdad.</p>
+        <p style="font-weight:650;margin:22px 0 10px">Asignaturas</p>
+        <div class="placas" id="asigs"></div>
+        <p style="font-weight:650;margin:22px 0 10px">Cursos</p>
+        <div class="casillas" id="niveles"></div>
+        <div class="campos">
+          <label class="campo ancho"><span>Frase de presentación <span class="suave" id="cCorta">0/120</span></span><input class="entrada" name="corta" maxlength="120" placeholder="p. ej. Matemáticas de ESO con ejercicios graduados y mucha paciencia." required></label>
+          <label class="campo ancho"><span>Sobre ti <span class="suave" id="cBio">0 caracteres (mínimo 120)</span></span><textarea class="entrada" name="bio" required placeholder="Cómo das las clases, tu experiencia, qué tipo de alumno te funciona mejor…"></textarea></label>
+        </div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="5">
+        <h2>Dónde das clase</h2><p class="suave">Si das clases en persona, marca tu barrio en el plano. Solo se verá la zona aproximada, nunca tu dirección.</p>
+        <div class="segmentado" id="modo" style="margin:22px 0 18px"><button type="button" data-m="presencial" aria-pressed="false">En persona</button><button type="button" data-m="online" aria-pressed="false">Online</button><button type="button" data-m="ambas" aria-pressed="true">Las dos</button></div>
+        <div id="zonaBloque"><div id="mapaAlta"></div><p style="margin-top:10px" id="zonaTxt" class="suave">Pulsa tu barrio en el plano.</p></div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="6">
+        <h2>Precio y horario</h2><p class="suave">Puedes cambiarlo cuando quieras.</p>
+        <label class="campo" style="margin-top:22px"><span>Precio por hora: <b id="tPrecio">18 €</b></span><input type="range" name="precio" id="precio" min="10" max="40" value="18"></label>
+        <p class="ayuda" id="precioAyuda"></p>
+        <label style="display:flex;gap:10px;align-items:center;margin-top:18px;font-weight:650"><input type="checkbox" name="grupos" id="grupos" checked> Acepto grupos de portal (2–4 alumnos)</label>
+        <p class="ayuda" id="grupoAyuda"></p>
+        <p style="font-weight:650;margin-top:22px">Cuándo sueles estar libre <span class="suave" style="font-weight:400">(pulsa los huecos)</span></p>
+        <div class="semana" id="semana"></div>
+      </section>
+
+      <section class="hoja paso-alta" data-paso="7">
+        <h2>Comprobación</h2><p class="suave">Lo último. Sin esto no publicamos ningún perfil.</p>
+        <p style="font-weight:650;margin:22px 0 10px">Certificado negativo de delitos de naturaleza sexual</p>
+        <label class="opcion"><input type="radio" name="cert" value="tengo"> <span><b>Ya lo tengo</b><br><span class="suave">Nos lo enseñas en la videollamada. No guardamos el documento.</span></span></label>
+        <label class="opcion"><input type="radio" name="cert" value="pedir"> <span><b>Lo pido ahora</b><br><span class="suave">Es gratis y se pide en la sede electrónica del Ministerio de Justicia. Suele llegar al momento.</span></span></label>
+        <p style="font-weight:650;margin:22px 0 10px">Videollamada de 15 minutos</p>
+        <div class="casillas" id="videollamada"></div>
+        <label style="display:flex;gap:10px;align-items:flex-start;margin-top:22px"><input type="checkbox" name="terminos" style="margin-top:5px"> <span>Acepto los <a href="legal.html#terminos">términos para profes</a> y la <a href="legal.html#privacidad">política de privacidad</a>.</span></label>
+      </section>
+
+      <p class="error" id="error" role="alert" style="margin-top:14px"></p>
+      <div class="navegacion">
+        <button class="boton sec" type="button" id="atras">← Atrás</button>
+        <span class="mono suave" id="pasoTxt">Paso 1 de 7</span>
+        <button class="boton" type="button" id="sigue">Siguiente →</button>
+      </div>
+    </form>
+    <section class="hoja hecho" id="hecho" hidden>
+      <div class="sello-ok">✓</div>
+      <h2>¡Perfil enviado!</h2>
+      <p class="suave" style="font-size:18px;margin:14px auto 0;max-width:520px" id="hechoTxt"></p>
+      <p style="margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a class="boton" href="panel.html?rol=profe">Ir a mi panel</a><a class="boton sec" href="index.html">Volver al inicio</a></p>
+    </section>
+  </div>
+
+  <aside class="vista-previa">
+    <p class="mono suave" style="margin-bottom:10px">Así te verán las familias</p>
+    <div id="previa"></div>
+    <p class="suave" style="font-size:13px;margin-top:12px">Tu perfil queda «pendiente» hasta la videollamada. Si luego cambias la titulación, vuelve a revisión.</p>
+  </aside>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/mapa.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s), form = $('#form');
+  const TOTAL = 7; let paso = 1;
+  const est = { asig: [], niveles: [], modo: 'ambas', zona: null, libre: [], foto: null, video: null };
+
+  // Recorrido
+  $('#recorrido').insertAdjacentHTML('beforeend', Array.from({ length: TOTAL }, (_, i) => `<div class="parada-r"><span>${i + 1}</span></div>`).join(''));
+
+  // Asignaturas y niveles
+  $('#asigs').innerHTML = D.ASIG.map(a => U.placa(a)).join('');
+  $('#asigs').onclick = e => { const b = e.target.closest('.placa-calle'); if (!b) return; const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); est.asig = [...$('#asigs').querySelectorAll('[aria-pressed="true"]')].map(x => x.dataset.asig); previa(); };
+  $('#niveles').innerHTML = D.NIVELES.map(n => `<label class="casilla"><input type="checkbox" value="${n}"><span>${n}</span></label>`).join('');
+  $('#niveles').onchange = () => { est.niveles = [...$('#niveles').querySelectorAll('input:checked')].map(x => x.value); previa(); };
+
+  // Foto
+  $('#foto').onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 3 * 1024 * 1024) { $('#error').textContent = 'La foto pesa más de 3 MB.'; return; }
+    const r = new FileReader();
+    r.onload = () => { est.foto = r.result; const c = $('#fotoCirculo'); c.style.backgroundImage = `url(${r.result})`; c.classList.add('con'); previa(); };
+    r.readAsDataURL(f);
+  };
+  $('#fotoCirculo').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#foto').click(); } };
+
+  // Buscador de titulaciones
+  const normal = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const tit = $('#titInput'), lista = $('#listaTit');
+  tit.oninput = () => {
+    const q = normal(tit.value.trim());
+    const res = q ? D.TITULACIONES.filter(t => normal(t).includes(q)).slice(0, 8) : [];
+    lista.innerHTML = res.map(t => `<button type="button" role="option">${t}</button>`).join('') || (q ? `<button type="button">Usar «${U.esc(tit.value.trim())}»</button>` : '');
+    lista.classList.toggle('ver', !!q);
+    previa();
+  };
+  lista.onclick = e => { const b = e.target.closest('button'); if (!b) return; tit.value = b.textContent.replace(/^Usar «|»$/g, ''); lista.classList.remove('ver'); previa(); };
+  tit.onblur = () => setTimeout(() => lista.classList.remove('ver'), 150);
+
+  // Contadores de texto
+  form.corta.oninput = () => { $('#cCorta').textContent = form.corta.value.length + '/120'; previa(); };
+  form.bio.oninput = () => { const n = form.bio.value.trim().length; $('#cBio').textContent = `${n} caracteres${n < 120 ? ' (mínimo 120)' : ' ✓'}`; };
+
+  // Modalidad y plano
+  let mapa = null;
+  const asegurarMapa = () => {
+    if (mapa) return;
+    mapa = crearMapa($('#mapaAlta'), { id: 'a', profes: [], sinOnline: true, elegirZona: true, botonesZoom: true,
+      onZona: id => { est.zona = id; mapa.zona(id, true); $('#zonaTxt').innerHTML = `Tu zona: <b>${D.zona(id).nombre}</b>. Las familias verán un círculo aproximado como este.`; previa(); } });
+  };
+  $('#modo').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return; est.modo = b.dataset.m;
+    $('#modo').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    $('#zonaBloque').hidden = est.modo === 'online'; previa();
+  };
+
+  // Precio, grupos y horario
+  const precioTxt = () => {
+    const p = +form.precio.value;
+    $('#tPrecio').textContent = p + ' €';
+    $('#precioAyuda').textContent = `Con la comisión que baja te llegan ${(p * .85).toFixed(2).replace('.', ',')} € por hora al principio y ${(p * .95).toFixed(2).replace('.', ',')} € a partir de la clase 21 con cada familia.`;
+    $('#grupoAyuda').textContent = form.grupos.checked ? `En un grupo de 3, cada familia pagaría ${D.precioGrupo(p, 3)} € y tú cobrarías ${D.precioGrupo(p, 3) * 3} € por hora.` : '';
+    previa();
+  };
+  form.precio.oninput = precioTxt; form.grupos.onchange = precioTxt;
+  $('#semana').innerHTML = '<span></span>' + D.DIAS.map(d => `<span class="d">${d}</span>`).join('') + D.HORAS.map(h => `<span class="h">${h}h</span>` + D.DIAS.map(d => `<button type="button" class="hueco" aria-pressed="false" data-h="${d + h}" aria-label="${d} ${h}h"></button>`).join('')).join('');
+  $('#semana').onclick = e => { const b = e.target.closest('.hueco'); if (!b) return; const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); est.libre = [...$('#semana').querySelectorAll('[aria-pressed="true"]')].map(x => x.dataset.h); };
+
+  // Videollamada: próximos 3 días laborables
+  const vs = []; const d0 = new Date();
+  for (let i = 1; vs.length < 6; i++) { const d = new Date(d0); d.setDate(d0.getDate() + i); if (d.getDay() === 0 || d.getDay() === 6) continue; ['10:00', '18:30'].forEach(h => vs.push(d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + h)); }
+  $('#videollamada').innerHTML = vs.map(v => `<label class="casilla"><input type="radio" name="video" value="${v}"><span>${v}</span></label>`).join('');
+
+  // Vista previa en vivo
+  function previa() {
+    const nombre = [form.nombre.value.trim() || 'Tu nombre', form.apellidos.value.trim()].join(' ').trim();
+    const p = { id: 'yo', nombre, estudios: tit.value.trim() || 'Tu titulación', corta: form.corta.value.trim() || 'Tu frase de presentación aparecerá aquí.',
+      asig: est.asig.length ? est.asig : ['mat'], modo: est.modo, zona: est.modo === 'online' ? null : est.zona, precio: +form.precio.value, nota: 5, clases: 0, grupos: form.grupos.checked, verificado: false };
+    let html = U.tarjetaProfe(p).replace(/<button class="fav"[\s\S]*?<\/button>/, '');
+    if (est.foto) html = html.replace(/<span class="cara "[^>]*>[^<]*<\/span>/, `<span class="cara" style="background:url(${est.foto}) center/cover"></span>`);
+    $('#previa').innerHTML = html;
+  }
+
+  // Validación por paso
+  const valida = n => {
+    const v = k => form[k].value.trim();
+    if (n === 1) {
+      if (!v('nombre') || !v('apellidos')) return 'Escribe tu nombre y tus apellidos.';
+      if (!/^\S+@\S+\.\S+$/.test(v('correo'))) return 'Escribe un correo válido.';
+      const nac = new Date(v('nacimiento')); const edad = (Date.now() - nac) / 31557600000;
+      if (!v('nacimiento') || isNaN(edad)) return 'Indica tu fecha de nacimiento.';
+      if (edad < 18) return 'Para dar clases en la web tienes que ser mayor de edad.';
+      if (form.clave.value.length < 8) return 'La contraseña necesita al menos 8 caracteres.';
+    }
+    if (n === 2) { if (!est.foto) return 'Sube una foto: es obligatoria.'; if (!form.cara.checked) return 'Confirma que en la foto se te ve la cara.'; }
+    if (n === 3 && !v('titulacion')) return 'Indica tu titulación.';
+    if (n === 4) { if (!est.asig.length) return 'Elige al menos una asignatura.'; if (!est.niveles.length) return 'Elige al menos un curso.'; if (!v('corta')) return 'Escribe tu frase de presentación.'; if (v('bio').length < 120) return 'Cuéntanos algo más sobre ti (mínimo 120 caracteres).'; }
+    if (n === 5 && est.modo !== 'online' && !est.zona) return 'Si das clases en persona, marca tu barrio en el plano.';
+    if (n === 6 && !est.libre.length) return 'Marca al menos un hueco libre en el horario.';
+    if (n === 7) { if (!form.cert.value) return 'Dinos cómo vas a presentar el certificado.'; if (!form.video.value) return 'Elige un hueco para la videollamada.'; if (!form.terminos.checked) return 'Acepta los términos para continuar.'; }
+    return '';
+  };
+
+  function ir(n) {
+    paso = n;
+    document.querySelectorAll('.paso-alta').forEach(s => s.classList.toggle('ver', +s.dataset.paso === n));
+    document.querySelectorAll('.parada-r').forEach((s, i) => { s.classList.toggle('hecha', i + 1 < n); s.classList.toggle('actual', i + 1 === n); });
+    $('#avance').style.width = `calc((100% - 28px) * ${(n - 1) / (TOTAL - 1)})`;
+    $('#pasoTxt').textContent = `Paso ${n} de ${TOTAL}`;
+    $('#atras').style.visibility = n === 1 ? 'hidden' : 'visible';
+    $('#sigue').textContent = n === TOTAL ? 'Enviar para revisión' : 'Siguiente →';
+    $('#error').textContent = '';
+    if (n === 5) asegurarMapa();
+    scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  $('#sigue').onclick = async () => {
+    const err = valida(paso);
+    if (err) { $('#error').textContent = err; document.querySelector('.paso-alta.ver').animate([{ transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'none' }], { duration: 260 }); return; }
+    if (paso < TOTAL) return ir(paso + 1);
+    if (!window.SUPA) { $('#error').textContent = 'No hay conexión con el servidor. Inténtalo en un rato.'; return; }
+    const borrador = { titulacion: tit.value.trim(), centro: form.centro.value.trim(), corta: form.corta.value.trim(), bio: form.bio.value.trim(),
+      modo: est.modo, zona: est.zona, precio: +form.precio.value, grupos: form.grupos.checked, libre: est.libre, asig: est.asig, niveles: est.niveles, foto: est.foto,
+      cert: form.cert.value, video: form.video.value };
+    const btn = $('#sigue'); btn.disabled = true; btn.textContent = 'Enviando…';
+    let confirmar = false;
+    try {
+      // Si la cuenta ya se creó en un intento anterior, solo falta guardar el perfil
+      const r = SUPA.usuario() ? { session: true } : await SUPA.registrar({ email: form.correo.value.trim().toLowerCase(), clave: form.clave.value, nombre: form.nombre.value.trim(), apellidos: form.apellidos.value.trim(), rol: 'profe',
+        extra: { nacimiento: form.nacimiento.value, videollamada: borrador.video, certificado: borrador.cert } });
+      if (r.session) await SUPA.guardarPerfilProfe(borrador);
+      else { confirmar = true; try { localStorage.setItem('borradorProfe', JSON.stringify(borrador)); } catch (x) {} }
+    } catch (x) { $('#error').textContent = x.message; btn.disabled = false; btn.textContent = 'Enviar para revisión'; return; }
+    form.hidden = true; $('#recorrido').hidden = true;
+    $('#hechoTxt').innerHTML = `Gracias, ${U.esc(form.nombre.value.trim())}. Te esperamos en la videollamada el <b>${U.esc(form.video.value)}</b>. ${confirmar ? `Antes, confirma tu correo con el enlace que te hemos mandado a <b>${U.esc(form.correo.value.trim())}</b>: al entrar terminamos de guardar tu perfil.` : `Te mandaremos el enlace a <b>${U.esc(form.correo.value.trim())}</b>.`} Después publicamos tu perfil en el mapa.`;
+    $('#hecho').hidden = false;
+    document.querySelectorAll('.parada-r').forEach(s => s.classList.add('hecha'));
+  };
+  $('#atras').onclick = () => paso > 1 && ir(paso - 1);
+  ['nombre', 'apellidos'].forEach(k => form[k].addEventListener('input', previa));
+  precioTxt(); ir(1);
+})();
+</script>
+</body>
+</html>

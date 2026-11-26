@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo se paga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-pago{display:grid;grid-template-columns:1fr 420px;gap:50px;align-items:center;padding:56px 0 70px}
+.recibo{background:var(--hoja);border:1px solid var(--linea);padding:28px 26px 34px;font-family:var(--mono);font-size:14px;position:relative;box-shadow:var(--sombra);border-radius:var(--r)}
+.recibo h3{text-align:center;font-size:20px}
+.recibo .l{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--linea)}
+.recibo .tot{font-size:18px;font-weight:600;border:0;padding-top:14px}
+.recibo .reparto{display:flex;height:26px;border-radius:99px;overflow:hidden;margin:16px 0 6px;height:12px}
+.recibo .reparto i{display:block;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.principios{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.principio{padding:24px}
+.principio .ic{font-size:30px;margin-bottom:12px}
+.tabla{width:100%;border-collapse:collapse;background:var(--hoja);border:1px solid var(--linea);border-radius:14px;overflow:hidden}
+.tabla th,.tabla td{padding:16px 18px;text-align:left;border-bottom:1px dashed var(--linea);vertical-align:top}
+.tabla th{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;background:var(--papel-2)}
+.tabla td:last-child{font-weight:650}
+.tabla td:last-child::before{content:"✓ ";color:var(--ok)}
+.linea-tiempo{position:relative;display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px}
+.linea-tiempo::before{content:"";position:absolute;top:22px;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--ok) 0 33%,var(--aviso) 33% 66%,#C0392B 66%);border-radius:4px}
+.hito{padding-top:50px;position:relative;padding-right:20px}
+.hito::before{content:"";position:absolute;top:12px;left:0;width:20px;height:20px;border-radius:50%;background:var(--hoja);border:3px solid var(--tinta)}
+.acordeon details{border-top:1px solid var(--linea);padding:18px 0}
+.acordeon summary{font-weight:750;font-size:19px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.acordeon summary::after{content:"+";font-size:26px;line-height:1;transition:transform .3s}
+.acordeon details[open] summary::after{transform:rotate(45deg)}
+.acordeon details p{margin-top:10px;max-width:760px}
+@media (max-width:1000px){.principios{grid-template-columns:1fr 1fr}.cab-pago{grid-template-columns:1fr}}
+@media (max-width:640px){.principios{grid-template-columns:1fr}.linea-tiempo{grid-template-columns:1fr;gap:10px}.linea-tiempo::before{display:none}.tabla th:nth-child(2),.tabla td:nth-child(2){display:none}}
+</style>
+</head>
+<body>
+<main>
+  <section class="envoltura cab-pago">
+    <div>
+      <p class="kicker">Cómo se paga</p>
+      <h1 style="font-size:clamp(42px,6.4vw,86px)">Sin cuotas. Pagas la clase y ya.</h1>
+      <p class="suave" style="font-size:19px;margin-top:20px;max-width:560px">Buscar, escribir y tener perfil es gratis para todos. Ganamos una parte de cada clase pagada en la web, y esa parte baja cuanto más tiempo seguís juntos.</p>
+      <label class="campo" style="margin-top:30px;max-width:480px"><span>Mueve el número de clases con el mismo profe: <b id="nTxt">1ª clase</b></span><input type="range" id="n" min="1" max="30" value="1"></label>
+      <label class="campo" style="margin-top:18px;max-width:480px"><span>Precio de la clase: <b id="pTxt">20 €</b></span><input type="range" id="p" min="10" max="35" value="20"></label>
+    </div>
+    <div class="recibo" aria-live="polite">
+      <h3>Ejemplo de una clase</h3>
+      <p style="text-align:center;color:var(--tinta-2);margin:4px 0 18px" id="fechaRec"></p>
+      <div class="l"><span>Clase de 60 min</span><span id="rPrecio">20,00 €</span></div>
+      <div class="l"><span>Gastos de gestión</span><span>0,00 €</span></div>
+      <div class="l"><span>Cuota mensual</span><span>no hay</span></div>
+      <div class="l tot"><span>Paga la familia</span><span id="rTotal">20,00 €</span></div>
+      <div class="reparto"><i id="bProfe" style="background:var(--ok)"></i><i id="bNos" style="background:var(--butano)"></i></div>
+      <div class="l"><span>Para el profe</span><span id="rProfe">17,00 €</span></div>
+      <div class="l" style="border:0"><span>Para nosotros (<span id="rPct">15</span> %)</span><span id="rNos">3,00 €</span></div>
+    </div>
+  </section>
+
+  <section class="envoltura" style="padding-bottom:80px">
+    <div class="principios">
+      <div class="hoja principio aparece"><h3>Sin cuotas</h3><p class="suave" style="margin-top:8px">Ni para escribir a profes ni para tener perfil. Nadie paga por mirar.</p></div>
+      <div class="hoja principio aparece"><h3>Comisión que baja</h3><p class="suave" style="margin-top:8px">15 % las 5 primeras, 10 % hasta la 20 y 5 % después. Quedarse sale más barato que irse por fuera.</p></div>
+      <div class="hoja principio aparece"><h3>Grupos de portal</h3><p class="suave" style="margin-top:8px">Hasta 4 alumnos del barrio: cada familia paga hasta la mitad y el profe gana más.</p></div>
+      <div class="hoja principio aparece"><h3>Primera a prueba</h3><p class="suave" style="margin-top:8px">Si no encaja, devolvemos el dinero a la familia y al profe le pagamos la mitad nosotros.</p></div>
+    </div>
+  </section>
+
+  <section class="seccion" style="background:var(--papel-2);border-block:1px solid var(--linea-2)">
+    <div class="envoltura">
+      <p class="kicker">Comparado con lo habitual</p>
+      <h2 style="margin-bottom:30px">Por qué este modelo es mejor para las dos partes.</h2>
+      <table class="tabla">
+        <thead><tr><th>Tema</th><th>Lo habitual en otras webs</th><th>Aquí</th></tr></thead>
+        <tbody>
+          <tr><td>Escribir a un profe</td><td>Cuota mensual para poder contactar</td><td>Gratis, siempre</td></tr>
+          <tr><td>Lo que gana el profe</td><td>Pago por salir destacado o comisión fija para siempre</td><td>Comisión que baja hasta el 5 %</td></tr>
+          <tr><td>Si la primera clase no va bien</td><td>Pagada y perdida</td><td>Te devolvemos el dinero</td></tr>
+          <tr><td>Clases en grupo</td><td>Cada uno busca por su cuenta</td><td>Grupos de vecinos ya formados</td></tr>
+          <tr><td>Seguimiento</td><td>Preguntar al alumno qué tal</td><td>Informe después de cada clase</td></tr>
+          <tr><td>Seguridad con menores</td><td>Perfiles sin revisar</td><td>Videollamada y certificado de delitos sexuales comprobado</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="envoltura">
+      <p class="kicker">Cancelaciones</p>
+      <h2>Claras desde el principio.</h2>
+      <div class="linea-tiempo">
+        <div class="hito"><h3>Más de 24 h antes</h3><p class="suave" style="margin-top:6px">Cancelas gratis. Te devolvemos todo.</p></div>
+        <div class="hito"><h3>Menos de 24 h</h3><p class="suave" style="margin-top:6px">Se paga la mitad, que va entera al profe por la hora reservada.</p></div>
+        <div class="hito"><h3>No te presentas</h3><p class="suave" style="margin-top:6px">Se paga la clase. Si el que falta es el profe, te devolvemos todo y le penalizamos.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="envoltura">
+      <h2 style="margin-bottom:20px">Preguntas sobre el dinero</h2>
+      <div class="acordeon" id="faq"></div>
+    </div>
+  </section>
+</main>
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const eur = n => n.toFixed(2).replace('.', ',') + ' €';
+  $('#fechaRec').textContent = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  const pintar = () => {
+    const n = +$('#n').value, p = +$('#p').value, pct = D.comision(n);
+    $('#nTxt').textContent = n + 'ª clase'; $('#pTxt').textContent = p + ' €';
+    $('#rPrecio').textContent = eur(p); $('#rTotal').textContent = eur(p);
+    $('#rProfe').textContent = eur(p * (1 - pct / 100)); $('#rNos').textContent = eur(p * pct / 100); $('#rPct').textContent = pct;
+    $('#bProfe').style.width = (100 - pct) + '%'; $('#bNos').style.width = pct + '%';
+  };
+  $('#n').oninput = pintar; $('#p').oninput = pintar; pintar();
+  $('#faq').innerHTML = D.FAQ.slice(0, 3).concat(D.FAQ.slice(6)).map(([q, a]) => `<details><summary>${q}</summary><p class="suave">${a}</p></details>`).join('');
+})();
+</script>
+</body>
+</html>

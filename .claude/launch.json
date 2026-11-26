@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "clasuno-web",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".claude/servidor-local.ps1", "-Carpeta", "web", "-Puerto", "8130"],
+      "port": 8130
+    },
+    {
+      "name": "clasuno-soon",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".claude/servidor-local.ps1", "-Carpeta", "soon", "-Puerto", "8131"],
+      "port": 8131
+    }
+  ]
+}

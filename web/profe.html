@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil del profe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.ficha-cab{padding:34px 0 30px;border-bottom:1px solid var(--linea-2)}
+.ficha-cab .fila{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center}
+.ficha-cab h1{font-size:clamp(38px,5.5vw,70px)}
+.datos-rapidos{display:flex;gap:30px;flex-wrap:wrap;margin-top:18px}
+.datos-rapidos b{display:block;font-size:28px;font-weight:700;line-height:1}
+.datos-rapidos span{font-size:13px;color:var(--tinta-2)}
+.cuerpo-ficha{display:grid;grid-template-columns:1fr 410px;gap:40px;padding:40px 0 70px;align-items:start}
+.bloque{padding:28px}
+.bloque+.bloque{margin-top:20px}
+.bloque h2{font-size:26px;margin-bottom:14px}
+.reserva{position:sticky;top:86px;padding:24px}
+.tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.tipo{border:1px solid var(--linea-2);border-radius:12px;padding:10px 12px;text-align:left;background:var(--hoja);transition:all .2s}
+.tipo b{display:block;font-size:15px}
+.tipo small{color:var(--tinta-2);font-size:12px}
+.tipo[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.tipo[aria-pressed="true"] small{color:color-mix(in srgb,var(--papel) 75%,transparent)}
+.semana{display:grid;grid-template-columns:34px repeat(6,1fr);gap:4px;font-size:12px;margin-top:10px}
+.semana .d{text-align:center;font-family:var(--mono);color:var(--tinta-2)}
+.semana .h{font-family:var(--mono);color:var(--tinta-2);display:flex;align-items:center}
+.hueco{height:30px;border-radius:6px;border:1px solid var(--linea);background:transparent}
+.hueco.libre{border:1.5px solid var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent);cursor:pointer}
+.hueco.libre:hover{background:color-mix(in srgb,var(--ok) 30%,transparent)}
+.hueco.elegido{background:var(--butano);border-color:var(--tinta);animation:latido .4s}
+@keyframes latido{50%{transform:scale(1.2)}}
+.desglose{margin:16px 0;font-size:15px}
+.desglose div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--linea)}
+.desglose .total{font-weight:700;font-size:20px;border:0;}
+.resumen-notas{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;margin-bottom:22px}
+.nota-grande{font-size:70px;font-weight:700;line-height:.9}
+.barra-nota{display:grid;grid-template-columns:20px 1fr 26px;gap:8px;align-items:center;font-size:13px}
+.barra-nota i{height:8px;border-radius:9px;background:var(--linea);overflow:hidden;display:block}
+.barra-nota i span{display:block;height:100%;background:var(--butano);width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.resena{padding:16px 0;border-top:1px dashed var(--linea)}
+.mini-mapa{max-width:520px}
+@media (max-width:980px){.cuerpo-ficha{grid-template-columns:1fr}.reserva{position:static}.ficha-cab .fila{grid-template-columns:auto 1fr}.ficha-cab .fila>:last-child{grid-column:1/-1}}
+@media (max-width:560px){.ficha-cab .fila{grid-template-columns:1fr}.cara.g{width:90px;height:90px;font-size:32px}}
+</style>
+</head>
+<body>
+<main id="ficha"></main>
+
+<dialog id="dlg"><button class="dlg-cerrar" type="button" aria-label="Cerrar" onclick="this.closest('dialog').close()">×</button><div class="dlg-cuerpo" id="dlgCuerpo"></div></dialog>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/mapa.js"></script>
+<script>
+D.listo.then(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const p = D.profe(U.param('id')) || D.PROFES[0];
+  document.title = p.nombre + ' · clases de ' + p.asig.map(a => D.asig(a).nombre).join(' y ');
+  const z = p.zona && D.zona(p.zona);
+  const fav = U.favs().includes(p.id);
+  const dist = [5, 4, 3, 2, 1].map(n => p.resenas.filter(r => r.estrellas === n).length);
+  const totalRes = Math.max(1, Math.round(p.clases / 6));
+  // Reparto aproximado para la maqueta
+  const reparto = [Math.round(totalRes * (p.nota - 4) ), 0, 0, 0, 0];
+  reparto[2] = p.nota >= 5 ? 0 : Math.round(totalRes * .04); reparto[1] = Math.max(0, totalRes - reparto[0] - reparto[2]);
+
+  $('#ficha').innerHTML = `
+  <section class="ficha-cab">
+    <div class="envoltura">
+      <p style="margin-bottom:22px"><a href="buscar.html" class="mono" style="text-decoration:none">← Volver al plano</a></p>
+      <div class="fila">
+        ${U.cara(p, 'g')}
+        <div>
+          <p class="kicker" style="margin-bottom:10px">${p.asig.map(a => D.asig(a).nombre).join(' · ')}</p>
+          <h1>${p.nombre}</h1>
+          <p class="suave" style="font-size:18px;margin-top:8px">${p.estudios}</p>
+          <p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+            <span class="etiqueta ok">✓ Comprobado en persona</span>
+            <span class="etiqueta ok">✓ Certificado para menores</span>
+            <span class="etiqueta">Responde en ${p.responde}</span>
+            ${p.grupos ? '<span class="etiqueta naranja">Grupos de portal</span>' : ''}
+          </p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="boton sec" type="button" data-fav="${p.id}" aria-pressed="${fav}" aria-label="Guardar en favoritos" style="font-size:20px;padding:10px 16px">${fav ? '♥' : '♡'}</button>
+          <a class="boton sec" href="panel.html?chat=${p.id}">Escribir a ${p.nombre.split(' ')[0]}</a>
+        </div>
+      </div>
+      <div class="datos-rapidos">
+        <div><b>${p.nota ? '★ ' + U.coma(p.nota) : 'Nuevo'}</b><span>${p.nota ? totalRes + ' reseñas' : 'sin reseñas aún'}</span></div>
+        <div><b>${p.clases}</b><span>clases en la web</span></div>
+        <div><b>${p.precio} €</b><span>la hora</span></div>
+        <div><b>${z ? z.nombre : 'Online'}</b><span>${U.modoTxt(p.modo)}</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="envoltura cuerpo-ficha">
+    <div>
+      <div class="hoja bloque aparece"><h2>Sobre ${p.nombre.split(' ')[0]}</h2><p style="font-size:18px">${p.bio}</p>
+        <p class="suave" style="margin-top:14px">Idiomas: ${p.idiomas.join(', ')}</p></div>
+      <div class="hoja bloque aparece"><h2>Qué enseña</h2>
+        <div class="placas">${p.asig.map(a => U.placa(D.asig(a), true, 'tabindex="-1"')).join('')}</div>
+        <p style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">${p.niveles.map(n => `<span class="etiqueta">${n}</span>`).join('')}</p>
+      </div>
+      <div class="hoja bloque aparece"><h2>Dónde da clase</h2>
+        ${z ? `<p class="suave" style="margin-bottom:14px">Por la zona de <b>${z.nombre}</b>. La dirección exacta no se publica: el sitio se acuerda por mensaje cuando hay una reserva.${p.modo === 'ambas' ? ' También da clases online.' : ''}</p><div class="mini-mapa" id="miniMapa"></div>`
+             : `<p>Solo da clases <b>online</b>, por videollamada, a cualquier barrio. El enlace llega con la reserva.</p>`}
+      </div>
+      ${!p.nota ? `<div class="hoja bloque aparece"><h2>Reseñas</h2><p class="suave">Todavía no tiene reseñas. Las escriben solo familias que han tenido una clase pagada en la web.</p></div>` : ''}<div class="hoja bloque aparece" ${p.nota ? '' : 'hidden'}><h2>Reseñas</h2>
+        <div class="resumen-notas">
+          <div><div class="nota-grande">${U.coma(p.nota)}</div><div class="estrellas">${U.estrellas(p.nota)}</div></div>
+          <div id="barrasNota">${[5, 4, 3, 2, 1].map((n, i) => `<div class="barra-nota"><span>${n}★</span><i><span data-w="${Math.round(Math.max(0, reparto[i]) / totalRes * 100)}"></span></i><span class="mono">${Math.max(0, reparto[i])}</span></div>`).join('')}</div>
+        </div>
+        <p class="suave" style="font-size:13px;margin-bottom:6px">Solo pueden opinar familias que han tenido clase pagada en la web.</p>
+        ${p.resenas.map(r => `<div class="resena"><p><b>${r.autor}</b> <span class="estrellas">${U.estrellas(r.estrellas)}</span></p><p style="margin-top:4px">${r.texto}</p></div>`).join('')}
+      </div>
+    </div>
+
+    <aside class="hoja reserva" aria-label="Reservar">
+      <h2 style="font-size:24px">Pedir clase</h2>
+      <div class="tipos" id="tipos">
+        <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>Si no encaja, no pagas</small></button>
+        <button class="tipo" type="button" aria-pressed="false" data-t="suelta"><b>Clase suelta</b><small>${p.precio} € la hora</small></button>
+        <button class="tipo" type="button" aria-pressed="false" data-t="bono"><b>Bono de 10</b><small>5 % menos</small></button>
+        ${p.grupos ? `<button class="tipo" type="button" aria-pressed="false" data-t="grupo"><b>Grupo de portal</b><small>${D.precioGrupo(p.precio, 3)} € por alumno</small></button>` : `<button class="tipo" type="button" disabled style="opacity:.4"><b>Grupo de portal</b><small>No hace grupos</small></button>`}
+      </div>
+      <label class="campo"><span>Duración</span>
+        <div class="segmentado" id="durSel" style="display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden">
+          ${[60, 90, 120].map((d, i) => `<button type="button" data-d="${d}" aria-pressed="${i === 0}" style="flex:1;border:0;padding:9px;font-weight:650;background:${i === 0 ? 'var(--tinta)' : 'transparent'};color:${i === 0 ? 'var(--papel)' : 'inherit'}">${d} min</button>`).join('')}
+        </div></label>
+      <p style="margin-top:16px;font-weight:650;font-size:14px">Elige hueco <span class="suave" style="font-weight:400">(esta semana)</span></p>
+      <div class="semana" id="semana"></div>
+      <div class="desglose" id="desglose"></div>
+      <button class="boton" type="button" id="pedir" style="width:100%" disabled>Elige un hueco</button>
+      <p class="suave" style="font-size:12.5px;margin-top:12px">No se cobra nada hasta que ${p.nombre.split(' ')[0]} acepta. Cancelación gratis hasta 24 h antes.</p>
+    </aside>
+  </section>`;
+  observarApariciones();
+
+  if (z) { const m = crearMapa($('#miniMapa'), { id: 'm', profes: [], sinOnline: true, sinTip: true }); m.zona(p.zona, true); setTimeout(() => m.zoom(p.zona, 2.6), 400); }
+  setTimeout(() => document.querySelectorAll('[data-w]').forEach(s => s.style.width = s.dataset.w + '%'), 300);
+
+  // Reserva
+  let tipo = 'prueba', dur = 60, hueco = null;
+  const sem = $('#semana');
+  sem.innerHTML = '<span></span>' + D.DIAS.map(d => `<span class="d">${d}</span>`).join('') +
+    D.HORAS.map(h => `<span class="h">${h}h</span>` + D.DIAS.map(d => `<button type="button" class="hueco ${p.libre.includes(d + h) ? 'libre' : ''}" data-h="${d + h}" ${p.libre.includes(d + h) ? `aria-label="${d} a las ${h}"` : 'disabled aria-hidden="true" tabindex="-1"'}></button>`).join('')).join('');
+  sem.onclick = e => {
+    const b = e.target.closest('.hueco.libre'); if (!b) return;
+    sem.querySelectorAll('.elegido').forEach(x => x.classList.remove('elegido'));
+    b.classList.add('elegido'); hueco = b.dataset.h; calc();
+  };
+  $('#tipos').onclick = e => { const b = e.target.closest('.tipo[data-t]'); if (!b) return; tipo = b.dataset.t; $('#tipos').querySelectorAll('.tipo').forEach(x => x.setAttribute('aria-pressed', x === b)); calc(); };
+  $('#durSel').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return; dur = +b.dataset.d;
+    $('#durSel').querySelectorAll('button').forEach(x => { const on = x === b; x.setAttribute('aria-pressed', on); x.style.background = on ? 'var(--tinta)' : 'transparent'; x.style.color = on ? 'var(--papel)' : 'inherit'; });
+    calc();
+  };
+  const eur = n => n.toFixed(2).replace('.', ',') + ' €';
+  const DIAS_L = { L: 'lunes', M: 'martes', X: 'miércoles', J: 'jueves', V: 'viernes', S: 'sábado' };
+  function calc() {
+    const h = dur / 60;
+    let filas = [], total;
+    if (tipo === 'bono') { const bruto = p.precio * h * 10; total = bruto * .95; filas = [[`10 clases de ${dur} min`, eur(bruto)], ['Descuento bono (5 %)', '−' + eur(bruto * .05)]]; }
+    else if (tipo === 'grupo') { total = D.precioGrupo(p.precio, 3) * h; filas = [[`Tu parte · grupo de 3 · ${dur} min`, eur(total)], ['Clase individual equivalente', `<s>${eur(p.precio * h)}</s>`]]; }
+    else { total = p.precio * h; filas = [[`Clase de ${dur} min`, eur(total)]]; if (tipo === 'prueba') filas.push(['Si no encaja (avisa en 24 h)', 'te lo devolvemos']); }
+    filas.push(['Gastos de gestión', '0,00 €']);
+    $('#desglose').innerHTML = filas.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') + `<div class="total"><span>Total</span><span>${eur(total)}</span></div>`;
+    const btn = $('#pedir');
+    btn.disabled = !hueco;
+    btn.textContent = hueco ? `Pedir para el ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00` : 'Elige un hueco';
+  }
+  calc();
+  // Próxima fecha real para un hueco «L16», «X18»…
+  const fechaHueco = h => { const dias = { L: 1, M: 2, X: 3, J: 4, V: 5, S: 6 }; const d = new Date(); d.setHours(+h.slice(1), 0, 0, 0); let suma = (dias[h[0]] - d.getDay() + 7) % 7; if (suma === 0 && d < new Date()) suma = 7; d.setDate(d.getDate() + suma); return d; };
+  $('#pedir').onclick = async () => {
+    if (p.real && window.SUPA) {
+      const u = SUPA.usuario();
+      if (!u) { location.href = 'entrar.html?alta=familia&volver=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
+      if (SUPA.rol() === 'profe') return U.tostada('Las clases las piden las familias desde su cuenta');
+      const btn = $('#pedir'); btn.disabled = true; btn.textContent = 'Enviando…';
+      try { const ses = U.sesion() || {}; await SUPA.pedirClase({ teacherId: p.id, tipo, empieza: fechaHueco(hueco).toISOString(), minutos: dur, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null }); }
+      catch (x) { U.tostada(x.message); btn.disabled = false; calc(); return; }
+      calc();
+    }
+    $('#dlgCuerpo').innerHTML = `
+      <p class="kicker">Solicitud enviada</p>
+      <h2 style="font-size:32px">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
+      <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de portal' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min.</p>
+      <ol style="margin:18px 0 0;padding-left:20px;line-height:1.8">
+        <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora (suele tardar ${p.responde}).</li>
+        <li>Pagas entonces; el dinero queda guardado hasta después de la clase.</li>
+        <li>Al terminar recibes el informe de la clase en tu panel.</li>
+      </ol>
+      <p style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap"><a class="boton" href="panel.html">Ir a mi panel</a><button class="boton sec" type="button" onclick="this.closest('dialog').close()">Seguir mirando</button></p>`;
+    $('#dlg').showModal();
+  };
+});
+</script>
+</body>
+</html>

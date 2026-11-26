@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aviso legal y privacidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.legal{display:grid;grid-template-columns:220px 1fr;gap:40px;padding:50px 0 70px;align-items:start}
+.indice{position:sticky;top:90px;display:grid;gap:6px}
+.indice a{text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600}
+.indice a:hover{background:var(--papel-2)}
+.texto section{padding:28px;margin-bottom:18px;scroll-margin-top:90px}
+.texto h2{font-size:30px;margin-bottom:12px}
+.texto p+p{margin-top:10px}
+.pendiente{background:color-mix(in srgb,var(--aviso) 18%,transparent);border:1.5px dashed var(--aviso);border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:24px}
+.hueco-dato{font-family:var(--mono);background:var(--papel-2);border-radius:4px;padding:1px 6px;font-size:14px}
+@media (max-width:800px){.legal{grid-template-columns:1fr}.indice{position:static;grid-auto-flow:column;overflow-x:auto}}
+</style>
+</head>
+<body>
+<main class="envoltura legal">
+  <nav class="indice" aria-label="Apartados"><a href="#aviso">Aviso legal</a><a href="#privacidad">Privacidad</a><a href="#cookies">Cookies</a><a href="#terminos">Términos</a></nav>
+  <div class="texto">
+    <h1 style="font-size:clamp(38px,5vw,64px);margin-bottom:20px">Lo legal, claro.</h1>
+    <p class="pendiente"><b>Borrador pendiente de revisión</b> por un gestor o abogado antes de publicar. Los huecos grises se rellenan cuando la empresa tenga nombre y datos registrales.</p>
+    <section class="hoja" id="aviso"><h2>Aviso legal</h2>
+      <p>Titular: <span class="hueco-dato">razón social</span> · NIF <span class="hueco-dato">B-00000000</span> · domicilio <span class="hueco-dato">dirección, Madrid</span> · correo <span class="hueco-dato">hola@dominio.es</span>.</p>
+      <p>La web pone en contacto a familias y alumnos con profes particulares y gestiona el pago de las clases. Los profes trabajan por su cuenta: no son empleados de la plataforma.</p></section>
+    <section class="hoja" id="privacidad"><h2>Privacidad</h2>
+      <p>Tratamos solo los datos necesarios para que funcione el servicio: nombre, correo, barrio aproximado, cursos de los hijos, mensajes y pagos. No guardamos el DNI ni copias del certificado de delitos sexuales: solo anotamos que se ha comprobado.</p>
+      <p>Los datos de menores los facilita su madre, padre o tutor, que es quien abre la cuenta. Puedes acceder, corregir o borrar tus datos escribiendo a <span class="hueco-dato">privacidad@dominio.es</span>. Los datos se guardan en servidores de la Unión Europea (Fráncfort).</p></section>
+    <section class="hoja" id="cookies"><h2>Cookies</h2>
+      <p>Usamos solo las cookies necesarias para mantener tu sesión iniciada. No usamos cookies de publicidad. Si en el futuro añadimos analítica, te pediremos permiso antes.</p></section>
+    <section class="hoja" id="terminos"><h2>Términos de uso</h2>
+      <p><b>Sin cuotas.</b> Registrarse, buscar y escribir es gratis. La plataforma cobra una comisión sobre cada clase pagada en la web: 15 % en las 5 primeras clases entre el mismo profe y la misma familia, 10 % de la 6 a la 20 y 5 % desde la 21.</p>
+      <p><b>Primera clase a prueba.</b> Si la familia avisa en las 24 horas siguientes de que no encaja, se le devuelve el importe y la plataforma paga al profe el 50 %. Una vez por profe y familia.</p>
+      <p><b>Cancelaciones.</b> Gratis hasta 24 horas antes; después se paga el 50 %. Si cancela el profe, se devuelve todo.</p>
+      <p><b>Profes.</b> Deben ser mayores de edad, tener foto real, superar la videollamada y presentar el certificado negativo de delitos de naturaleza sexual. Se paga a las 48 horas de cada clase.</p></section>
+  </div>
+</main>
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+</body>
+</html>

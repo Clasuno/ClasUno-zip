@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buscar profe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.filtros{border-bottom:1px solid var(--linea-2);background:var(--papel);padding:18px 0}
+.fila-filtros{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:12px;align-items:end}
+.segmentado{display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden;background:var(--hoja)}
+.segmentado button{flex:1;border:0;background:transparent;padding:11px 6px;font-weight:650;font-size:14px}
+.segmentado button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.barra-ia{display:flex;align-items:center;gap:10px;background:var(--hoja);border:1px solid var(--linea);border-radius:16px;padding:8px 8px 8px 16px;margin-bottom:16px;box-shadow:var(--sombra);transition:border-color .2s,box-shadow .2s}
+.barra-ia:focus-within{border-color:var(--butano);box-shadow:0 0 0 4px var(--butano-claro)}
+.barra-ia input{flex:1;border:0;background:transparent;font-size:16px;outline:none;min-width:0;padding:8px 0}
+.punto-ia{width:8px;height:8px;border-radius:50%;background:var(--butano);box-shadow:0 0 0 4px var(--butano-claro);flex:none}
+.entendido-ia{font-size:14px;color:var(--tinta-2);margin:-6px 0 16px;animation:sube .4s both}
+.entendido-ia b{color:var(--tinta);font-weight:550}
+.mas-filtros{display:flex;gap:18px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.interruptor{display:inline-flex;gap:10px;align-items:center;font-weight:650;font-size:14px;cursor:pointer}
+.interruptor input{appearance:none;width:42px;height:24px;border-radius:99px;background:var(--linea);position:relative;cursor:pointer;transition:background .2s;margin:0;border:1px solid var(--linea-2)}
+.interruptor input::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:var(--hoja);border:1px solid var(--linea-2);transition:transform .25s cubic-bezier(.3,1.5,.5,1)}
+.interruptor input:checked{background:var(--butano)}
+.interruptor input:checked::after{transform:translateX(18px)}
+.zona-busqueda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:26px;padding:26px 0 60px}
+.lista{display:grid;gap:14px;align-content:start}
+.lista .tarjeta-profe{animation:sube .5s both cubic-bezier(.2,.8,.2,1)}
+@keyframes sube{from{opacity:0;transform:translateY(18px)}}
+.pegado{position:sticky;top:84px;align-self:start}
+.cabeza-lista{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.vacio{padding:40px;text-align:center}
+.cambiar-vista{display:none;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:30}
+@media (max-width:1000px){.fila-filtros{grid-template-columns:1fr 1fr}.fila-filtros>:first-child{grid-column:1/-1}}
+@media (max-width:860px){
+  .zona-busqueda{grid-template-columns:1fr}
+  .pegado{position:static;display:none}
+  body.ver-mapa .pegado{display:block}
+  body.ver-mapa .lista{display:none}
+  .cambiar-vista{display:inline-flex}
+  #placas{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:-20px;padding-inline:20px}
+  #placas .placa-calle{flex:none}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="filtros">
+    <div class="envoltura">
+      <form class="barra-ia" id="fIA">
+        <span class="punto-ia" aria-hidden="true"></span>
+        <input id="textoIA" autocomplete="off" placeholder="Escríbelo con tus palabras: «3º de ESO, mates, Chamberí, martes por la tarde, hasta 20 €»" aria-label="Buscar escribiendo con tus palabras">
+        <button class="boton peq">Aplicar</button>
+      </form>
+      <p class="entendido-ia" id="entendidoIA" hidden></p>
+      <div class="fila-filtros">
+        <label class="campo"><span>Buscar</span><input class="entrada" id="texto" type="search" placeholder="Nombre, tema, examen… (p. ej. «PAU»)"></label>
+        <label class="campo"><span>Curso</span><select class="entrada" id="nivel"><option value="">Todos</option></select></label>
+        <label class="campo"><span>Cerca de</span><select class="entrada" id="zona"><option value="">Toda la ciudad</option></select></label>
+        <label class="campo"><span>Hasta <b id="precioTxt">30 €</b> la hora</span><input type="range" id="precio" min="10" max="30" value="30"></label>
+        <div class="campo"><span style="display:block;margin-bottom:6px;font-weight:650;font-size:14px">Clase</span>
+          <div class="segmentado" id="modo"><button type="button" aria-pressed="true" data-m="">Todas</button><button type="button" aria-pressed="false" data-m="presencial">En persona</button><button type="button" aria-pressed="false" data-m="online">Online</button></div>
+        </div>
+      </div>
+      <div class="mas-filtros">
+        <div class="placas" id="placas"></div>
+      </div>
+      <div class="mas-filtros">
+        <label class="interruptor"><input type="checkbox" id="soloGrupos"> Hace grupos de portal</label>
+        <label class="interruptor"><input type="checkbox" id="soloFavs"> Solo mis favoritos</label>
+        <button class="enlace-btn" type="button" id="limpiar">Quitar filtros</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="envoltura zona-busqueda">
+    <div>
+      <div class="cabeza-lista" style="margin-bottom:14px">
+        <h1 style="font-size:28px" id="titulo">23 profes</h1>
+        <label class="campo" style="display:flex;gap:8px;align-items:center"><span style="margin:0">Ordenar</span>
+          <select class="entrada" id="orden" style="width:auto;padding:8px 10px"><option value="cerca">Más cerca</option><option value="nota">Mejor nota</option><option value="precio">Más barato</option><option value="clases">Más clases dadas</option></select></label>
+      </div>
+      <div class="lista" id="lista"></div>
+    </div>
+    <div class="pegado">
+      <div id="mapa"></div>
+      <p class="suave" style="font-size:13px;margin-top:10px">Cada profe sale en su barrio aproximado, nunca en su dirección. Pulsa un barrio para buscar cerca.</p>
+    </div>
+  </section>
+  <button class="boton placa cambiar-vista" type="button" id="cambiarVista">Ver plano</button>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/mapa.js"></script>
+<script src="assets/ia.js"></script>
+<script>
+D.listo.then(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const f = { texto: '', nivel: '', zona: U.param('zona') || '', precio: 30, modo: '', asig: U.param('asig') || '', grupos: false, favs: U.param('favs') === '1', orden: 'cerca' };
+
+  D.NIVELES.forEach(n => $('#nivel').insertAdjacentHTML('beforeend', `<option>${n}</option>`));
+  [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(z => $('#zona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`));
+  $('#placas').innerHTML = D.ASIG.map(a => U.placa(a, a.id === f.asig)).join('');
+  $('#zona').value = f.zona; $('#soloFavs').checked = f.favs;
+
+  const mapa = crearMapa($('#mapa'), {
+    id: 'b', elegirZona: true, botonesZoom: true,
+    onZona: id => { f.zona = id; $('#zona').value = id; pintar(true); },
+    onHover: id => document.querySelectorAll('.tarjeta-profe').forEach(t => t.classList.toggle('foco', t.dataset.id === id)),
+    onPin: id => {
+      const t = document.querySelector(`.tarjeta-profe[data-id="${id}"]`);
+      if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.animate([{ boxShadow: '0 0 0 6px var(--butano)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 1200 }); }
+      else location.href = 'profe.html?id=' + id;
+    }
+  });
+
+  const normal = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const cumple = p => {
+    if (f.asig && !p.asig.includes(f.asig)) return false;
+    if (f.nivel && !p.niveles.includes(f.nivel)) return false;
+    if (p.precio > f.precio) return false;
+    if (f.modo === 'presencial' && p.modo === 'online') return false;
+    if (f.modo === 'online' && p.modo === 'presencial') return false;
+    if (f.grupos && !p.grupos) return false;
+    if (f.favs && !U.favs().includes(p.id)) return false;
+    if (f.texto) {
+      const t = normal([p.nombre, p.estudios, p.corta, p.bio, p.asig.map(a => D.asig(a).nombre).join(' ')].join(' '));
+      if (!normal(f.texto).split(/\s+/).every(w => t.includes(w))) return false;
+    }
+    // En persona: que no esté demasiado lejos (≈ 9 km) si se ha elegido barrio
+    if (f.zona && p.zona && f.modo !== 'online' && D.distancia(f.zona, p.zona) > 120 && p.modo === 'presencial') return false;
+    return true;
+  };
+
+  function pintar(moverMapa) {
+    const res = D.PROFES.filter(cumple);
+    res.sort({
+      cerca: (a, b) => (f.zona ? (a.zona ? D.distancia(f.zona, a.zona) : 60) - (b.zona ? D.distancia(f.zona, b.zona) : 60) : 0) || b.nota - a.nota,
+      nota: (a, b) => b.nota - a.nota || b.clases - a.clases,
+      precio: (a, b) => a.precio - b.precio,
+      clases: (a, b) => b.clases - a.clases
+    }[f.orden]);
+    mapa.filtrar(cumple);
+    mapa.zona(f.zona || null);
+    if (moverMapa) mapa.zoom(f.zona || null, 1.7);
+    $('#titulo').textContent = `${res.length} profe${res.length === 1 ? '' : 's'}${f.zona ? ' cerca de ' + D.zona(f.zona).nombre : ''}`;
+    $('#lista').innerHTML = res.length
+      ? res.map((p, i) => U.tarjetaProfe(p, f.zona).replace('class="hoja tarjeta-profe"', `class="hoja tarjeta-profe" style="animation-delay:${Math.min(i, 10) * 40}ms"`)).join('')
+      : `<div class="hoja vacio"><h3>Nadie con esos filtros… todavía</h3><p class="suave" style="margin:10px 0 18px">Prueba a subir el precio o quitar algún filtro. Si quieres, te avisamos cuando llegue un profe así a tu barrio.</p><button class="boton" type="button" onclick="U.tostada('Te avisaremos por correo')">Avisarme</button></div>`;
+    document.querySelectorAll('.tarjeta-profe').forEach(t => {
+      t.addEventListener('mouseenter', () => mapa.foco(t.dataset.id));
+      t.addEventListener('mouseleave', () => mapa.foco(null));
+    });
+    const qs = new URLSearchParams(); if (f.asig) qs.set('asig', f.asig); if (f.zona) qs.set('zona', f.zona);
+    history.replaceState(null, '', 'buscar.html' + (qs.toString() ? '?' + qs : ''));
+  }
+
+  $('#texto').oninput = e => { f.texto = e.target.value.trim(); pintar(); };
+  $('#nivel').onchange = e => { f.nivel = e.target.value; pintar(); };
+  $('#zona').onchange = e => { f.zona = e.target.value; pintar(true); };
+  $('#precio').oninput = e => { f.precio = +e.target.value; $('#precioTxt').textContent = f.precio + ' €'; pintar(); };
+  $('#orden').onchange = e => { f.orden = e.target.value; pintar(); };
+  $('#soloGrupos').onchange = e => { f.grupos = e.target.checked; pintar(); };
+  $('#soloFavs').onchange = e => { f.favs = e.target.checked; pintar(); };
+  $('#modo').onclick = e => { const b = e.target.closest('button'); if (!b) return; f.modo = b.dataset.m; $('#modo').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); pintar(); };
+  $('#placas').onclick = e => {
+    const b = e.target.closest('.placa-calle'); if (!b) return;
+    f.asig = f.asig === b.dataset.asig ? '' : b.dataset.asig;
+    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', x.dataset.asig === f.asig));
+    pintar();
+  };
+  $('#limpiar').onclick = () => {
+    Object.assign(f, { texto: '', nivel: '', zona: '', precio: 30, modo: '', asig: '', grupos: false, favs: false });
+    $('#texto').value = ''; $('#nivel').value = ''; $('#zona').value = ''; $('#precio').value = 30; $('#precioTxt').textContent = '30 €';
+    $('#soloGrupos').checked = false; $('#soloFavs').checked = false;
+    $('#modo').querySelectorAll('button').forEach((x, i) => x.setAttribute('aria-pressed', i === 0));
+    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    pintar(true);
+  };
+  document.addEventListener('click', e => { if (e.target.closest('[data-fav]') && f.favs) setTimeout(pintar, 50); });
+  $('#cambiarVista').onclick = () => { const m = document.body.classList.toggle('ver-mapa'); $('#cambiarVista').textContent = m ? 'Ver lista' : 'Ver plano'; scrollTo({ top: 0 }); };
+  // Búsqueda escrita con tus palabras → filtros
+  function aplicarIA(txt) {
+    const n = IA.interpretar(txt), puesto = [];
+    if (n.asig.length) { f.asig = n.asig[0]; puesto.push(D.asig(f.asig).nombre); }
+    if (n.nivel) { f.nivel = n.nivel; $('#nivel').value = n.nivel; puesto.push(n.curso || n.nivel); }
+    if (n.zona) { f.zona = n.zona; $('#zona').value = n.zona; puesto.push('cerca de ' + D.zona(n.zona).nombre); }
+    if (n.precioMax) { f.precio = Math.min(30, n.precioMax); $('#precio').value = f.precio; $('#precioTxt').textContent = f.precio + ' €'; puesto.push('hasta ' + n.precioMax + ' €'); }
+    if (n.modo) { f.modo = n.modo; $('#modo').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.m === n.modo)); puesto.push(n.modo === 'online' ? 'online' : 'en persona'); }
+    if (n.grupo) { f.grupos = true; $('#soloGrupos').checked = true; puesto.push('en grupo'); }
+    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', x.dataset.asig === f.asig));
+    const e = $('#entendidoIA'); e.hidden = false;
+    e.innerHTML = puesto.length ? 'He puesto: ' + puesto.map(x => `<b>${U.esc(x)}</b>`).join(' · ') + (n.dias.length ? ` · ordenado por quien está libre el ${n.dias.map(d => IA.DIA_TXT[d]).join(' o ')}` : '') : 'No he sacado filtros de eso. Prueba con la asignatura, el curso o el barrio.';
+    if (n.dias.length) { const libres = p => p.libre.filter(h => n.dias.includes(h[0])).length; D.PROFES.sort((a, b) => libres(b) - libres(a)); }
+    pintar(true);
+  }
+  $('#fIA').onsubmit = e => { e.preventDefault(); const t = $('#textoIA').value.trim(); if (t) aplicarIA(t); };
+  if (U.param('q')) { $('#textoIA').value = U.param('q'); aplicarIA(U.param('q')); } else
+  pintar(!!f.zona);
+});
+</script>
+</body>
+</html>

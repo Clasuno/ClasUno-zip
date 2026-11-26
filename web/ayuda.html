@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayuda y seguridad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-ayuda{padding:56px 0 40px;text-align:center}
+.cab-ayuda h1{font-size:clamp(42px,6.4vw,84px)}
+.busca-ayuda{max-width:620px;margin:28px auto 0;position:relative}
+.busca-ayuda input{padding:18px 20px 18px 52px;font-size:18px;border-width:2px;box-shadow:4px 4px 0 var(--tinta)}
+.busca-ayuda::before{content:"⌕";position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--tinta-2)}
+.acordeon details{border-top:1px solid var(--linea);padding:18px 0}
+.acordeon summary{font-weight:750;font-size:19px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.acordeon summary::after{content:"+";font-size:26px;line-height:1;transition:transform .3s}
+.acordeon details[open] summary::after{transform:rotate(45deg)}
+.acordeon details p{margin-top:10px;max-width:760px}
+.acordeon mark{background:color-mix(in srgb,var(--butano) 30%,transparent);color:inherit;border-radius:3px}
+.escudo{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.escudo .hoja{padding:24px}
+.escudo .n{font-family:var(--mono);color:var(--butano)}
+.contacto{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+@media (max-width:900px){.escudo,.contacto{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <section class="envoltura cab-ayuda">
+    <p class="kicker">Ayuda</p>
+    <h1>¿En qué te echamos una mano?</h1>
+    <div class="busca-ayuda"><input class="entrada" type="search" id="q" placeholder="Busca: cancelar, pagos, menores, grupos…" aria-label="Buscar en la ayuda"></div>
+  </section>
+  <section class="envoltura" style="padding-bottom:60px">
+    <div class="acordeon" id="faq"></div>
+    <p class="suave" id="nada" hidden style="padding:20px 0">No encontramos nada con eso. <a href="#contacto">Escríbenos</a> y te respondemos en el día.</p>
+  </section>
+
+  <section class="seccion tinta" id="seguridad">
+    <div class="envoltura">
+      <p class="kicker" style="color:inherit">Seguridad</p>
+      <h2 style="max-width:820px">Lo que hacemos para que dejes a tu hijo con un profe tranquilo.</h2>
+      <div class="escudo">
+        <div class="hoja"><p class="n">01</p><h3>Videollamada con cada profe</h3><p class="suave" style="margin-top:8px">Hablamos con todos antes de publicar su perfil y comprobamos su titulación.</p></div>
+        <div class="hoja"><p class="n">02</p><h3>Certificado para menores</h3><p class="suave" style="margin-top:8px">Pedimos el certificado negativo del Registro Central de Delitos Sexuales y lo revisamos cada año.</p></div>
+        <div class="hoja"><p class="n">03</p><h3>Sin DNI guardado</h3><p class="suave" style="margin-top:8px">Comprobamos los documentos en la llamada y solo apuntamos «comprobado». No almacenamos copias.</p></div>
+        <div class="hoja"><p class="n">04</p><h3>Solo el barrio</h3><p class="suave" style="margin-top:8px">Nadie ve direcciones. El sitio de la clase se acuerda por mensaje cuando ya hay reserva.</p></div>
+        <div class="hoja"><p class="n">05</p><h3>Chat de la familia</h3><p class="suave" style="margin-top:8px">Con menores, los mensajes van a la cuenta de la madre, el padre o el tutor. Ocultamos teléfonos antes de la reserva.</p></div>
+        <div class="hoja"><p class="n">06</p><h3>Reseñas de verdad</h3><p class="suave" style="margin-top:8px">Solo opina quien ha tenido una clase pagada en la web. Ni una reseña inventada.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="contacto">
+    <div class="envoltura contacto">
+      <div><p class="kicker">Contacto</p><h2>¿No está tu pregunta?</h2><p class="suave" style="margin-top:14px;font-size:18px">Respondemos en el mismo día, de lunes a sábado. Si es algo urgente durante una clase, márcalo y te llamamos.</p></div>
+      <form class="hoja" style="padding:26px" id="fContacto" novalidate>
+        <label class="campo"><span>Tu correo</span><input class="entrada" type="email" name="correo" required></label>
+        <label class="campo" style="margin-top:14px"><span>Tema</span><select class="entrada" name="tema"><option>Una clase</option><option>Pagos</option><option>Mi perfil de profe</option><option>Seguridad</option><option>Otra cosa</option></select></label>
+        <label class="campo" style="margin-top:14px"><span>Mensaje</span><textarea class="entrada" name="msj" required></textarea></label>
+        <label style="display:flex;gap:10px;margin-top:14px"><input type="checkbox" name="urgente"> Es urgente</label>
+        <p class="error" role="alert"></p>
+        <button class="boton" style="margin-top:14px;width:100%">Enviar</button>
+      </form>
+    </div>
+  </section>
+</main>
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const normal = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const marcar = (txt, q) => { if (!q) return txt; const n = normal(txt), i = n.indexOf(q); return i < 0 ? txt : txt.slice(0, i) + '<mark>' + txt.slice(i, i + q.length) + '</mark>' + txt.slice(i + q.length); };
+  const pintar = () => {
+    const q = normal($('#q').value.trim());
+    const res = D.FAQ.filter(([a, b]) => !q || normal(a + ' ' + b).includes(q));
+    $('#faq').innerHTML = res.map(([a, b]) => `<details ${q ? 'open' : ''}><summary>${marcar(a, q)}</summary><p class="suave">${marcar(b, q)}</p></details>`).join('');
+    $('#nada').hidden = res.length > 0;
+  };
+  $('#q').oninput = pintar; pintar();
+  $('#fContacto').onsubmit = async e => {
+    e.preventDefault(); const f = e.target;
+    if (!/^\S+@\S+\.\S+$/.test(f.correo.value.trim()) || !f.msj.value.trim()) { f.querySelector('.error').textContent = 'Escribe tu correo y el mensaje.'; return; }
+    if (window.SUPA) { try { await SUPA.soporte(f.correo.value.trim(), `[${f.tema.value}${f.urgente.checked ? ' · URGENTE' : ''}] ${f.msj.value.trim()}`); } catch (x) { f.querySelector('.error').textContent = 'No se ha podido enviar: ' + x.message; return; } }
+    f.innerHTML = `<h3>¡Recibido!</h3><p class="suave" style="margin-top:8px">${f.urgente.checked ? 'Lo hemos marcado como urgente. Te llamamos en menos de una hora.' : 'Te respondemos hoy mismo por correo.'}</p>`;
+  };
+})();
+</script>
+</body>
+</html>

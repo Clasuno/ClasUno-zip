@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.panel{display:grid;grid-template-columns:250px 1fr;gap:30px;padding:30px 0 70px;align-items:start}
+.lateral{position:sticky;top:86px}
+.lateral nav{display:grid;gap:4px;margin-top:16px}
+.lateral nav button{border:0;background:transparent;text-align:left;padding:11px 14px;border-radius:10px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
+.lateral nav button:hover{background:var(--papel-2)}
+.lateral nav button[aria-current="true"]{background:var(--tinta);color:var(--papel)}
+.lateral nav .num{background:var(--butano);color:#fff;border-radius:99px;font-size:12px;padding:1px 8px;font-family:var(--mono)}
+.rol{display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden;background:var(--hoja)}
+.rol button{flex:1;border:0;background:transparent;padding:9px;font-weight:650;font-size:14px}
+.rol button[aria-pressed="true"]{background:var(--butano);color:#fff}
+.vista{animation:entraV .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes entraV{from{opacity:0;transform:translateY(14px)}}
+.vista h1{font-size:clamp(34px,4.6vw,56px);margin-bottom:22px}
+.tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
+.dato{padding:20px}
+.dato b{display:block;font-size:38px;font-weight:700;line-height:1;margin-top:6px}
+.fila-clase{display:grid;grid-template-columns:76px 1fr auto;gap:16px;align-items:center;padding:16px 20px}
+.fila-clase+.fila-clase{border-top:1px dashed var(--linea)}
+.fecha{border:1px solid var(--linea-2);border-radius:10px;text-align:center;overflow:hidden;background:var(--hoja)}
+.fecha span{display:block;background:var(--butano);color:#fff;font-family:var(--mono);font-size:11px;padding:2px;text-transform:uppercase}
+.fecha b{display:block;font-size:26px;padding:4px 0}
+.informe{padding:24px}
+.informe+.informe{margin-top:16px}
+.informe .tres{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.informe .tres div{border-left:3px solid var(--c);padding-left:12px}
+.informe .tres p:first-child{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--c)}
+.chat{display:grid;grid-template-columns:260px 1fr;height:560px;overflow:hidden;padding:0}
+.convs{border-right:1px solid var(--linea-2);overflow:auto}
+.convs button{display:flex;gap:10px;width:100%;border:0;border-bottom:1px dashed var(--linea);background:transparent;padding:14px;text-align:left;align-items:center}
+.convs button[aria-current="true"]{background:var(--papel-2)}
+.convs small{display:block;color:var(--tinta-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.hilo{display:flex;flex-direction:column;min-width:0}
+.hilo-cab{padding:14px 18px;border-bottom:1px solid var(--linea-2);display:flex;gap:10px;align-items:center}
+.mensajes{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:8px;background-image:radial-gradient(rgba(29,36,32,.05) 1px,transparent 1px);background-size:16px 16px}
+.msj{max-width:75%;padding:10px 14px;border-radius:14px;border:1px solid var(--linea-2);background:var(--hoja);animation:msj .3s cubic-bezier(.2,1.3,.4,1)}
+.msj.mio{align-self:flex-end;background:var(--placa);color:#fff;border-color:var(--placa)}
+.msj small{display:block;font-family:var(--mono);font-size:10px;opacity:.7;margin-top:4px}
+@keyframes msj{from{opacity:0;transform:scale(.9) translateY(8px)}}
+.escribe{display:flex;gap:8px;padding:12px;border-top:1px solid var(--linea-2)}
+.escribiendo{font-size:13px;color:var(--tinta-2);padding:0 18px 8px;height:22px}
+.aviso-chat{font-size:12px;color:var(--tinta-2);text-align:center;padding:6px 18px}
+.tramo{margin-top:10px}
+.tramo-barra{display:flex;height:12px;border-radius:9px;overflow:hidden;border:1px solid var(--linea-2);margin:8px 0 4px}
+.tramo-barra i{display:block;height:100%}
+.ingresos{display:flex;align-items:flex-end;gap:12px;height:200px;padding-top:20px}
+.ingresos div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.ingresos i{width:100%;background:var(--ok);border:1px solid var(--linea-2);border-radius:6px 6px 0 0;display:block;transition:height .8s cubic-bezier(.2,.8,.2,1)}
+.ingresos span{font-family:var(--mono);font-size:11px;color:var(--tinta-2)}
+.bienvenida{padding:22px 26px;background:var(--ok);color:#fff;border-color:var(--tinta);margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+@media (max-width:980px){.panel{grid-template-columns:1fr}.lateral{position:static}.lateral nav{grid-auto-flow:column;overflow-x:auto;grid-auto-columns:max-content}.tarjetas{grid-template-columns:1fr 1fr}.informe .tres{grid-template-columns:1fr}}
+@media (max-width:700px){.chat{grid-template-columns:1fr;height:auto}.convs{border-right:0;border-bottom:1px solid var(--linea-2);display:flex;overflow-x:auto}.convs button{min-width:200px;border-bottom:0;border-right:1px dashed var(--linea)}.mensajes{height:380px}.tarjetas{grid-template-columns:1fr}.fila-clase{grid-template-columns:60px 1fr}.fila-clase>:last-child{grid-column:1/-1}}
+/* ---------- Asistente ---------- */
+.punto-ia{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--butano);box-shadow:0 0 0 4px var(--butano-claro);margin-right:8px;vertical-align:middle}
+.aviso-ia{padding:20px 22px;margin-bottom:22px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;border-color:var(--butano)}
+.aviso-ia p{color:var(--tinta-2);margin-top:4px}
+.asis{display:flex;flex-direction:column;height:min(620px,72vh);padding:0;overflow:hidden}
+.asis-msjs{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px}
+.burbuja{max-width:80%;padding:12px 16px;border-radius:18px;background:var(--papel-2);animation:msj .3s both;line-height:1.5}
+.burbuja.yo{align-self:flex-end;background:var(--tinta);color:var(--papel);border-bottom-right-radius:6px}
+.burbuja.ia{border-bottom-left-radius:6px}
+.burbuja .extra{margin-top:10px}
+.sugerencias{display:flex;gap:8px;flex-wrap:wrap;padding:0 22px 12px}
+.sugerencias button{border:1px solid var(--linea-2);background:var(--hoja);border-radius:99px;padding:7px 13px;font-size:14px;color:var(--tinta-2)}
+.sugerencias button:hover{color:var(--tinta);border-color:var(--tinta)}
+.asis form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--linea)}
+.puntos{display:inline-flex;gap:4px}.puntos i{width:6px;height:6px;border-radius:50%;background:var(--tinta-2);animation:pt 1s infinite}
+.puntos i:nth-child(2){animation-delay:.15s}.puntos i:nth-child(3){animation-delay:.3s}
+@keyframes pt{50%{opacity:.2}}
+.mini-tabla{width:100%;border-collapse:collapse;font-size:14px}
+.mini-tabla td{padding:6px 0;border-top:1px solid var(--linea)}
+.mini-tabla td:last-child{text-align:right;font-weight:600}
+.resumen-mes{padding:24px;margin-bottom:20px}
+.tendencias{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.tendencias div{background:var(--papel-2);border-radius:14px;padding:14px 16px}
+.tendencias b{display:block;font-size:22px;letter-spacing:-.03em}
+.grabadora{display:flex;gap:14px;align-items:center;padding:16px;border-radius:16px;background:var(--papel-2);margin-top:16px}
+.grabar{width:52px;height:52px;border-radius:50%;border:0;background:#E5484D;color:#fff;font-size:18px;flex:none}
+.grabar.on{animation:late 1s infinite}
+@keyframes late{50%{transform:scale(1.08)}}
+.ondas-p{flex:1;display:flex;align-items:center;gap:3px;height:36px}
+.ondas-p i{flex:1;height:20%;background:var(--linea-2);border-radius:9px;transition:height .12s}
+.estructura{display:grid;gap:8px;margin-top:14px}
+.estructura div{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center}
+.estructura span{font-weight:650;font-size:14px;background:var(--butano-claro);color:var(--butano);border-radius:8px;text-align:center;padding:4px 0}
+.ejercicios{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px;counter-reset:ej}
+.ejercicio{border:1px solid var(--linea);border-radius:14px;padding:14px 16px;font-size:18px;letter-spacing:-.01em;counter-increment:ej;animation:msj .35s both}
+.ejercicio::before{content:counter(ej);display:block;font-size:12px;color:var(--tinta-2);margin-bottom:4px}
+.ejercicio small{display:block;font-size:13px;color:var(--ok);margin-top:6px}
+.sugerida{margin:0 20px 16px;padding:14px 16px;border-radius:14px;background:var(--butano-claro);font-size:15px;animation:msj .3s both}
+.sugerida p{margin-bottom:10px}
+@media (max-width:700px){.aviso-ia{grid-template-columns:1fr}.burbuja{max-width:92%}}
+</style>
+</head>
+<body>
+<main class="envoltura panel">
+  <aside class="lateral">
+    <div class="rol" id="rol" aria-label="Ver el panel como"><button type="button" data-r="familia">Familia</button><button type="button" data-r="profe">Profe</button></div>
+    <p class="mono suave" style="font-size:11px;margin-top:6px">Maqueta: cambia de vista para ver los dos paneles</p>
+    <nav id="menu"></nav>
+  </aside>
+  <section id="vista"></section>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script src="assets/ia.js"></script>
+<script>
+D.listo.then(async () => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const s = U.sesion() || { nombre: 'Marta', rol: 'familia', hijos: [{ nombre: 'Lucas', curso: '3º ESO' }, { nombre: 'Sofía', curso: '6º Primaria' }] };
+  let rol = U.param('rol') === 'profe' ? 'profe' : 'familia';
+  const hijo = (s.hijos && s.hijos[0]) || { nombre: s.nombre, curso: '' };
+  const hoy = new Date();
+  const dia = n => { const d = new Date(hoy); d.setDate(hoy.getDate() + n); return d; };
+  const fmt = (d, o) => d.toLocaleDateString('es-ES', o);
+
+  // ---------- Datos simulados ----------
+  let PROXIMAS = [
+    { profe: 'laura', quien: hijo.nombre, d: dia(2), hora: '18:00', tipo: 'Grupo de portal · 4º ESO', lugar: 'Chamberí' },
+    { profe: 'daniel', quien: hijo.nombre, d: dia(3), hora: '17:00', tipo: 'Clase suelta · 60 min', lugar: 'Online' },
+    { profe: 'laura', quien: hijo.nombre, d: dia(9), hora: '18:00', tipo: 'Grupo de portal · 4º ESO', lugar: 'Chamberí' }
+  ];
+  let INFORMES = [
+    { profe: 'laura', d: dia(-5), tema: 'Ecuaciones de segundo grado', bien: 'Ya aplica la fórmula sin mirar los apuntes.', cuesta: 'Se lía con los signos al despejar.', luego: 'Problemas con enunciado y repaso de signos.', nivel: [2, 2, 3, 3, 4] },
+    { profe: 'daniel', d: dia(-4), tema: 'Present perfect vs past simple', bien: 'Mucho más suelto hablando, sin miedo.', cuesta: 'Los participios irregulares.', luego: 'Lista de 20 irregulares y una redacción corta.', nivel: [3, 3, 3, 4] },
+    { profe: 'laura', d: dia(-12), tema: 'Factorización de polinomios', bien: 'Domina el factor común.', cuesta: 'La regla de Ruffini todavía.', luego: 'Ecuaciones de segundo grado.', nivel: [2, 2, 3] }
+  ];
+  let CHATS = {
+    laura: [['ella', 'Hola, Marta. Hoy hemos avanzado mucho con las ecuaciones. Le he dejado 5 ejercicios para el jueves.'], ['yo', '¡Genial, gracias! ¿El martes podríais ver también problemas?'], ['ella', 'Claro, lo preparo.']],
+    daniel: [['ella', 'Te confirmo la clase del jueves a las 17:00. El enlace de la videollamada te llega una hora antes.']]
+  };
+  try { const g = JSON.parse(localStorage.getItem('chats') || 'null'); if (g) CHATS = g; } catch (e) {}
+  const guardarChats = () => { try { localStorage.setItem('chats', JSON.stringify(CHATS)); } catch (e) {} };
+  let SOLICITUDES = [
+    { familia: 'Rosa T.', alumno: 'Iker · 2º ESO', tipo: 'Primera a prueba', cuando: 'Lunes 18:00', zona: 'Chamberí' },
+    { familia: 'Andrés M.', alumno: 'Nora · 1º Bachillerato', tipo: 'Bono de 10', cuando: 'Miércoles 19:00', zona: 'Centro' },
+    { familia: 'Lucía R.', alumno: 'Plaza en grupo 4º ESO', tipo: 'Grupo de portal', cuando: 'Martes 18:00', zona: 'Chamberí' }
+  ];
+  let ALUMNOS = [['Familia García · Lucas', 14], ['Familia Pérez · Nora', 4], ['Familia Ruiz · Pablo', 27], ['Familia Soto · Alba', 8]];
+  let PAGOS = [[-5, 'Grupo de portal · Laura', 11.6], [-4, 'Clase suelta · Daniel', 15], [-30, 'Bono 10 clases · Laura', 171], [-34, 'Primera a prueba · Daniel', 15]];
+  let GASTOS = [['Grupo de portal · Laura', 11.6], ['Clase suelta · Daniel', 15]];
+  const STATS = { mes: '1.184 €', semana: 9, nota: '★ 4,9', ingresos: [612, 780, 905, 1010, 1102, 1184], proximoPago: '184,30 € a tu cuenta ···· 0817' };
+
+  // ---------- Datos de verdad, si has entrado con una cuenta ----------
+  let REAL = false, CLASES = [], yo = null, quitarEscucha = null;
+  const CONV = {};
+  const TIPO_TXT = { prueba: 'Primera a prueba', suelta: 'Clase suelta', bono: 'Bono de 10', grupo: 'Grupo de portal' };
+  const persona = id => D.profe(id) || { id, nombre: 'Familia', asig: ['mat'], libre: [], responde: '—', precio: 0 };
+  const hora = d => d.toTimeString().slice(0, 5);
+  if (window.SUPA && (await SUPA.sesionLista) && SUPA.usuario()) {
+    REAL = true; rol = SUPA.rol(); yo = SUPA.usuario().id;
+    try {
+      CLASES = await SUPA.misClases();
+      PROXIMAS = CLASES.filter(c => c.familia_id === yo && new Date(c.empieza) >= hoy && ['pedida', 'aceptada'].includes(c.estado)).map(c => {
+        const p = persona(c.teacher_id), d = new Date(c.empieza);
+        return { profe: c.teacher_id, quien: c.alumno || hijo.nombre, d, hora: hora(d), tipo: `${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.estado === 'pedida' ? ' · esperando respuesta' : ''}`, lugar: p.zona ? D.zona(p.zona).nombre : 'Online' };
+      }).filter(c => D.profe(c.profe));
+      INFORMES = (await SUPA.misInformes()).map(i => ({ profe: i.teacher_id, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
+      SOLICITUDES = CLASES.filter(c => c.teacher_id === yo && c.estado === 'pedida').map(c => { const d = new Date(c.empieza); return { id: c.id, familia: 'Familia', alumno: c.alumno || 'Alumno', tipo: TIPO_TXT[c.tipo], cuando: `${fmt(d, { weekday: 'long', day: 'numeric' })} ${hora(d)}`, zona: c.minutos + ' min' }; });
+      const porAlumno = {}; CLASES.filter(c => c.teacher_id === yo && c.estado === 'hecha').forEach(c => { const k = c.alumno || 'Alumno'; porAlumno[k] = (porAlumno[k] || 0) + 1; });
+      ALUMNOS = Object.entries(porAlumno).map(([n, c]) => ['Familia · ' + n, c]);
+      const vivas = CLASES.filter(c => c.familia_id === yo && !['cancelada', 'rechazada'].includes(c.estado));
+      PAGOS = vivas.map(c => [Math.round((new Date(c.empieza) - hoy) / 864e5), `${TIPO_TXT[c.tipo]} · ${persona(c.teacher_id).nombre}`, +c.precio]);
+      GASTOS = vivas.filter(c => new Date(c.empieza).getMonth() === hoy.getMonth()).map(c => [`${TIPO_TXT[c.tipo]} · ${persona(c.teacher_id).nombre.split(' ')[0]}`, +c.precio]);
+      const hechas = CLASES.filter(c => c.teacher_id === yo && c.estado === 'hecha');
+      STATS.ingresos = Array.from({ length: 6 }, (_, i) => { const m = new Date(hoy); m.setMonth(hoy.getMonth() - 5 + i); return Math.round(hechas.filter(c => { const d = new Date(c.empieza); return d.getMonth() === m.getMonth() && d.getFullYear() === m.getFullYear(); }).reduce((a, c) => a + c.precio * (1 - c.comision / 100), 0)); });
+      STATS.mes = STATS.ingresos[5].toLocaleString('es-ES') + ' €';
+      const sem = new Date(hoy); sem.setDate(hoy.getDate() + 7);
+      STATS.semana = CLASES.filter(c => c.teacher_id === yo && c.estado === 'aceptada' && new Date(c.empieza) >= hoy && new Date(c.empieza) < sem).length;
+      const yoProfe = D.profe(yo); STATS.nota = yoProfe && yoProfe.nota ? '★ ' + U.coma(yoProfe.nota) : 'Nuevo';
+      STATS.proximoPago = 'cuando esté activada la pasarela de pago';
+      CHATS = {};
+      for (const c of await SUPA.conversaciones()) {
+        const otro = c.student_id === yo ? c.teacher_id : c.student_id;
+        CONV[otro] = c.id;
+        CHATS[otro] = (await SUPA.mensajes(c.id)).map(m => [m.sender_id === yo ? 'yo' : 'ella', m.body]);
+      }
+    } catch (e) { console.warn(e); U.tostada('No se han podido cargar tus datos: ' + e.message); }
+    $('#rol').hidden = true; $('#rol').nextElementSibling.hidden = true;
+  }
+
+  // ---------- Menús ----------
+  const MENUS = {
+    familia: [['inicio', 'Inicio'], ['asistente', 'Asistente'], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['favoritos', 'Favoritos'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
+    profe: [['inicio', 'Inicio'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos']]
+  };
+  let chatPedido = U.param('chat');
+  let actual = location.hash.slice(1) || (chatPedido ? 'mensajes' : 'inicio');
+
+  function menu() {
+    $('#rol').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.r === rol));
+    if (!MENUS[rol].some(m => m[0] === actual)) actual = 'inicio';
+    $('#menu').innerHTML = MENUS[rol].map(([id, t, n]) => `<button type="button" data-v="${id}" aria-current="${id === actual}">${t}${n ? `<span class="num">${n}</span>` : ''}</button>`).join('');
+  }
+  $('#menu').onclick = e => { const b = e.target.closest('button'); if (!b) return; ir(b.dataset.v); };
+  $('#rol').onclick = e => { const b = e.target.closest('button'); if (!b) return; rol = b.dataset.r; actual = 'inicio'; ir('inicio'); };
+
+  function ir(v, sinAnim) {
+    actual = v; history.replaceState(null, '', `panel.html${rol === 'profe' && !REAL ? '?rol=profe' : ''}#${v}`);
+    menu();
+    const pintar = () => { $('#vista').innerHTML = `<div class="vista">${VISTAS[rol][v]()}</div>`; DESPUES[v] && DESPUES[v](); };
+    // Transición si se puede; si el navegador no llega a pintarla (pestaña en segundo plano), cambiamos igual
+    if (document.startViewTransition && !sinAnim && !document.hidden) {
+      let hecho = false; const una = () => { if (!hecho) { hecho = true; pintar(); } };
+      const vt = document.startViewTransition(una); vt.ready.catch(() => {}); vt.finished.catch(() => {});
+      setTimeout(una, 350);
+    } else pintar();
+  }
+
+  const filaClase = c => { const p = D.profe(c.profe); return `<div class="fila-clase">
+      <div class="fecha"><span>${fmt(c.d, { weekday: 'short' })}</span><b>${c.d.getDate()}</b></div>
+      <div><b>${D.asig(p.asig[0]).nombre} con ${p.nombre}</b><p class="suave" style="font-size:14px">${c.quien} · ${c.tipo} · ${c.hora} · ${c.lugar}</p></div>
+      <div style="display:flex;gap:8px"><button class="boton sec peq" type="button" onclick="U.tostada('Hemos pedido a ${p.nombre.split(' ')[0]} otra hora')">Cambiar</button><button class="boton sec peq" type="button" data-chat="${p.id}">Escribir</button></div></div>`; };
+  const chispa = arr => { const w = 120, h = 34, m = 5; const pts = arr.map((v, i) => `${(i / (arr.length - 1 || 1)) * w},${h - (v / m) * h}`).join(' ');
+    return `<svg width="${w}" height="${h + 4}" viewBox="0 -2 ${w} ${h + 4}" aria-label="Evolución"><polyline points="${pts}" fill="none" stroke="var(--ok)" stroke-width="2.5" stroke-linejoin="round"/>${arr.map((v, i) => `<circle cx="${(i / (arr.length - 1 || 1)) * w}" cy="${h - (v / m) * h}" r="3" fill="var(--ok)"/>`).join('')}</svg>`; };
+  const tarjetaInforme = r => { const p = D.profe(r.profe), c = D.asig(p.asig[0]).c; return `<article class="hoja informe">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:12px;align-items:center">${U.cara(p, 'p')}<div><b>${r.tema}</b><p class="suave" style="font-size:14px">${p.nombre} · ${fmt(r.d, { weekday: 'long', day: 'numeric', month: 'long' })}</p></div></div>
+        <div style="text-align:right"><p class="mono suave" style="font-size:11px">Seguridad en el tema</p>${chispa(r.nivel)}</div></div>
+      <div class="tres" style="--c:${c}"><div><p>Qué ha ido bien</p><p>${r.bien}</p></div><div><p>Qué cuesta</p><p>${r.cuesta}</p></div><div><p>Qué toca después</p><p>${r.luego}</p></div></div></article>`; };
+
+  // ---------- Vistas ----------
+  const VISTAS = {
+    familia: {
+      inicio: () => `${U.param('nuevo') ? `<div class="hoja bienvenida"><div><b style="font-size:22px">¡Cuenta creada, ${U.esc(s.nombre)}!</b><p>Ya puedes escribir a profes. Tu primera clase con cada profe es a prueba.</p></div><a class="boton sec" href="buscar.html${s.zona ? '?zona=' + s.zona : ''}">Buscar profe</a></div>` : ''}
+        <h1>Hola, ${U.esc(s.nombre)}.</h1>
+        <div class="hoja aviso-ia" ${REAL ? 'hidden' : ''}><div><b><span class="punto-ia"></span>${U.esc(hijo.nombre)} repite el mismo fallo en dos clases seguidas</b><p>Los signos al despejar en Matemáticas. Laura ya lo sabe y empezará por ahí el ${fmt(PROXIMAS[0].d, { weekday: 'long' })}. Mientras, 10 minutos de práctica con el asistente le vendrían bien.</p></div>
+          <button class="boton peq" type="button" data-pregunta="¿Qué le cuesta más a ${U.esc(hijo.nombre)}?">Ver detalles</button></div>
+        <div class="tarjetas"><div class="hoja dato"><span class="suave">Próximas clases</span><b>${PROXIMAS.length}</b></div><div class="hoja dato"><span class="suave">Informes nuevos</span><b>${INFORMES.length}</b></div><div class="hoja dato"><span class="suave">Clases en el bono</span><b>${REAL ? '—' : '6/10'}</b></div></div>
+        <h2 style="font-size:26px;margin-bottom:12px">Próximas clases</h2>
+        <div class="hoja">${PROXIMAS.length ? PROXIMAS.map(filaClase).join('') : '<p class="suave" style="padding:22px">No tienes clases reservadas. <a href="buscar.html">Busca profe</a>.</p>'}</div>
+        <h2 style="font-size:26px;margin:30px 0 12px">Último informe</h2>${INFORMES[0] ? tarjetaInforme(INFORMES[0]) : '<p class="suave">Después de la primera clase, aquí verás el resumen del profe.</p>'}`,
+      mensajes: vistaChat,
+      informes: () => `<h1>Informes de clase</h1>
+        <div class="hoja resumen-mes" ${REAL && INFORMES.length < 2 ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Resumen del mes</p>
+          <p id="resMes" style="font-size:18px;margin-top:8px;letter-spacing:-.01em;min-height:54px"></p>
+          <div class="tendencias"><div><span class="suave">Matemáticas</span><b>2 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Inglés</span><b>3 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Clases este mes</span><b>7</b><span class="suave" style="font-size:13px">sin faltar a ninguna</span></div></div></div>
+        ${INFORMES.length ? INFORMES.map(tarjetaInforme).join('') : '<p class="suave">Todavía no hay informes. El profe lo escribe al acabar cada clase.</p>'}`,
+      asistente: () => `<h1>Asistente</h1><p class="suave" style="margin:-10px 0 20px">Pregúntale lo que quieras sobre las clases de ${U.esc(hijo.nombre)}. Responde con lo que han escrito sus profes.</p>
+        <div class="hoja asis"><div class="asis-msjs" id="asisMsjs"></div>
+          <div class="sugerencias" id="asisSug">${[`¿Cómo va ${hijo.nombre}?`, '¿Qué le cuesta más?', '¿Cuándo es la próxima clase?', '¿Cuánto llevamos gastado este mes?', 'Hazme un plan para el examen de mates del día 18'].map(q => `<button type="button">${U.esc(q)}</button>`).join('')}</div>
+          <form id="fAsis"><input class="entrada" placeholder="Escribe tu pregunta…" aria-label="Pregunta" autocomplete="off"><button class="boton">Preguntar</button></form></div>`,
+      favoritos: () => { const f = U.favs().map(D.profe).filter(Boolean); return `<h1>Favoritos</h1>${f.length ? `<div style="display:grid;gap:14px">${f.map(p => U.tarjetaProfe(p, s.zona)).join('')}</div>` : `<div class="hoja" style="padding:40px;text-align:center"><h3>Aún no has guardado a nadie</h3><p class="suave" style="margin:10px 0 18px">Pulsa el corazón en cualquier profe para tenerlo aquí.</p><a class="boton" href="buscar.html">Buscar en el plano</a></div>`}`; },
+      pagos: () => `<h1>Pagos y bonos</h1>
+        <div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><div><b style="font-size:20px">Bono de 10 clases · Laura Méndez</b><p class="suave">Quedan 6 clases · comprado el ${fmt(dia(-30), { day: 'numeric', month: 'long' })}</p></div><a class="boton peq" href="profe.html?id=laura">Renovar</a></div>
+          <div class="tramo-barra" style="height:18px"><i style="width:40%;background:var(--tinta)"></i><i style="width:60%;background:var(--ok)"></i></div>
+          <p class="suave" style="font-size:13px">Llevas 14 clases con Laura: nuestra comisión ya ha bajado al 10 %, así que ella se lleva más de lo que pagas. A partir de la 21, al 5 %.</p></div>
+        <div class="hoja">${PAGOS.length ? '' : '<p class="suave" style="padding:22px">Aún no hay pagos.</p>'}${PAGOS.map(([d, t, e]) => `<div class="fila-clase" style="grid-template-columns:1fr auto"><div><b>${t}</b><p class="suave" style="font-size:14px">${fmt(dia(d), { day: 'numeric', month: 'long' })} · ${REAL ? 'se paga al aceptar (pasarela pendiente)' : 'tarjeta ···· 4242'}</p></div><b>${e.toFixed(2).replace('.', ',')} €</b></div>`).join('')}</div>`,
+      ajustes: () => `<h1>Ajustes</h1><div class="hoja" style="padding:26px"><h3>Hijos en la cuenta</h3>
+        ${(s.hijos || []).map(h => `<p style="margin-top:10px">👤 <b>${U.esc(h.nombre)}</b> <span class="suave">· ${U.esc(h.curso)}</span></p>`).join('') || '<p class="suave">Cuenta de alumno adulto.</p>'}
+        <hr class="regla" style="margin:20px 0"><h3>Avisos</h3>
+        ${['Informe después de cada clase', 'Recordatorio el día antes', 'Nuevos grupos de portal en mi barrio'].map(t => `<label style="display:flex;gap:10px;margin-top:12px"><input type="checkbox" checked> ${t}</label>`).join('')}
+        <hr class="regla" style="margin:20px 0"><button class="boton sec" type="button" id="salir">Cerrar sesión</button></div>`
+    },
+    profe: {
+      inicio: () => `<h1>Hola, ${U.esc(REAL ? s.nombre : 'Laura')}.</h1>
+        <div class="tarjetas"><div class="hoja dato"><span class="suave">Este mes te llegan</span><b>${STATS.mes}</b></div><div class="hoja dato"><span class="suave">Clases esta semana</span><b>${STATS.semana}</b></div><div class="hoja dato"><span class="suave">Nota media</span><b>${STATS.nota}</b></div></div>
+        <div class="hoja" style="padding:22px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;border-color:var(--butano)" ${REAL ? 'hidden' : ''}><div><b>Tienes un informe sin rellenar</b><p class="suave">Clase de ayer con Lucas (4º ESO). Son dos minutos.</p></div><button class="boton peq" type="button" data-ir="informe">Rellenar ahora</button></div>
+        <h2 style="font-size:26px;margin:30px 0 12px">Solicitudes nuevas</h2>${vistaSolicitudes(true)}`,
+      solicitudes: () => `<h1>Solicitudes</h1>${vistaSolicitudes()}`,
+      preparar: () => `<h1>Preparar la próxima clase</h1>
+        ${REAL ? '<div class="hoja" style="padding:24px;margin-bottom:18px"><p>Cuando tus alumnos practiquen con el asistente entre clases, aquí verás en qué se han atascado y una propuesta para la siguiente clase. Mientras, puedes generar ejercicios.</p></div>' : ''}<div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Lucas · 4º ESO · ${fmt(PROXIMAS[0].d, { weekday: 'long', day: 'numeric' })} a las 18:00</p>
+          <p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Desde la última clase ha practicado 3 veces con el asistente (34 min). Se ha atascado 4 veces con el mismo paso: <b>cambiar el signo al pasar un término al otro lado</b>. La fórmula de segundo grado ya la domina.</p>
+          <h3 style="margin-top:22px;font-size:17px">Propuesta para 60 minutos</h3>
+          <div class="estructura"><div><span>10'</span>Repaso de signos con 4 ejercicios rápidos (abajo).</div><div><span>25'</span>Problemas con enunciado, lo que pusiste en el último informe.</div><div><span>15'</span>Dos problemas él solo; tú solo miras.</div><div><span>10'</span>Resumen y deberes para el jueves.</div></div></div>
+        <div class="hoja" style="padding:24px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><h3>Ejercicios de signos, a su nivel</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="conSol"> Con soluciones</label><button class="boton sec peq" type="button" id="otrosEj">Otros ejercicios</button><button class="boton peq" type="button" onclick="U.tostada('Ejercicios enviados a Lucas y a su familia')">Enviar a Lucas</button></div></div>
+          <div class="ejercicios" id="ejercicios"></div></div>`,
+      mensajes: vistaChat,
+      informe: () => `<h1>Informe de la clase</h1><form class="hoja" style="padding:26px" id="fInforme">
+        ${REAL ? `<label class="campo" style="margin-top:6px"><span>Clase</span><select class="entrada" id="infClase">${CLASES.filter(c => c.teacher_id === yo && ['aceptada', 'hecha'].includes(c.estado)).map(c => `<option value="${c.id}">${fmt(new Date(c.empieza), { day: 'numeric', month: 'short' })} · ${U.esc(c.alumno || 'Alumno')}</option>`).join('') || '<option value="">Todavía no tienes clases aceptadas</option>'}</select></label>` : '<p class="suave">Clase de ayer · Lucas · 4º ESO · Matemáticas</p>'}
+        <div class="grabadora"><button class="grabar" type="button" id="grabar" aria-label="Grabar nota de voz">●</button>
+          <div style="flex:1"><b id="grabTxt">Cuéntalo en voz alta y lo rellenamos por ti</b><div class="ondas-p" id="ondasP">${'<i></i>'.repeat(48)}</div></div></div>
+        <label class="campo" style="margin-top:18px"><span>Tema</span><input class="entrada" id="infTema" required value="${REAL ? '' : 'Ecuaciones de segundo grado'}"></label>
+        <label class="campo" style="margin-top:14px"><span>Qué ha ido bien</span><textarea class="entrada" id="infBien" required style="min-height:70px"></textarea></label>
+        <label class="campo" style="margin-top:14px"><span>Qué cuesta</span><textarea class="entrada" id="infCuesta" required style="min-height:70px"></textarea></label>
+        <label class="campo" style="margin-top:14px"><span>Qué toca después</span><textarea class="entrada" id="infLuego" required style="min-height:70px"></textarea></label>
+        <p style="font-weight:650;margin-top:16px">¿Qué seguridad tiene en el tema?</p>
+        <div style="display:flex;gap:8px;margin-top:8px" id="nivelInf">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="boton sec peq" aria-pressed="false">${n}</button>`).join('')}</div>
+        <button class="boton" style="margin-top:22px">Enviar a la familia</button></form>`,
+      alumnos: () => `<h1>Mis alumnos</h1><p class="suave" style="margin:-10px 0 22px">Cuantas más clases con la misma familia, menos comisión pagas.</p>
+        ${ALUMNOS.length ? '' : '<p class="suave">Cuando des tus primeras clases, aquí verás a cada familia y cuánto baja tu comisión con ella.</p>'}${ALUMNOS.map(([n, c]) => { const pct = D.comision(c + 1); const sig = c < 5 ? 5 : c < 20 ? 20 : null; return `<div class="hoja" style="padding:20px;margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>${n}</b><span class="etiqueta ${pct === 5 ? 'ok' : 'naranja'}">Comisión actual ${pct} %</span></div>
+          <div class="tramo"><div class="tramo-barra"><i style="width:${Math.min(c, 5) / 25 * 100}%;background:var(--butano)"></i><i style="width:${Math.max(0, Math.min(c, 20) - 5) / 25 * 100}%;background:var(--aviso)"></i><i style="width:${Math.max(0, Math.min(c, 25) - 20) / 25 * 100}%;background:var(--ok)"></i></div>
+          <p class="suave" style="font-size:13px">${c} clases juntos${sig ? ` · en ${sig - c} clase${sig - c === 1 ? '' : 's'} bajas al ${sig === 5 ? 10 : 5} %` : ' · ya estás en el tramo más bajo'}</p></div></div>`; }).join('')}`,
+      ingresos: () => { const m = STATS.ingresos, tope = Math.max(1, ...m); const meses = Array.from({ length: 6 }, (_, i) => { const d = new Date(hoy); d.setMonth(hoy.getMonth() - 5 + i); return fmt(d, { month: 'short' }); });
+        return `<h1>Ingresos</h1><div class="hoja" style="padding:26px"><p class="suave">Lo que te ha llegado cada mes, ya sin comisión</p>
+          <div class="ingresos">${m.map((v, i) => `<div><b style="font-size:13px">${v} €</b><i data-h="${(v / tope * 78).toFixed(1)}" style="height:0"></i><span>${meses[i]}</span></div>`).join('')}</div>
+          <hr class="regla" style="margin:20px 0"><p>Próximo pago: <b>${fmt(dia(2), { weekday: 'long', day: 'numeric', month: 'long' })}</b> · ${STATS.proximoPago}</p></div>`; }
+    }
+  };
+  function vistaSolicitudes(corta) {
+    return `<div class="hoja" id="solicitudes">${SOLICITUDES.slice(0, corta ? 2 : 9).map((r, i) => `<div class="fila-clase" style="grid-template-columns:1fr auto" data-i="${i}">
+      <div><b>${r.familia} · ${r.alumno}</b><p class="suave" style="font-size:14px">${r.tipo} · ${r.cuando} · ${r.zona}</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="boton peq" type="button" data-acepta>Aceptar</button><button class="boton sec peq" type="button" data-otra>Proponer otra hora</button><button class="boton sec peq" type="button" data-sug="${i}"><span class="punto-ia"></span>Respuesta sugerida</button></div></div>`).join('')}</div>`;
+  }
+  function vistaChat() {
+    const ids = Object.keys(CHATS); const pedido = chatPedido;
+    if (pedido && D.profe(pedido) && !CHATS[pedido]) { CHATS[pedido] = []; ids.unshift(pedido); }
+    const abierto = (pedido && CHATS[pedido]) ? pedido : ids[0];
+    return `<h1>Mensajes</h1><div class="hoja chat">
+      <div class="convs">${ids.map(id => { const p = persona(id), u = CHATS[id][CHATS[id].length - 1]; return `<button type="button" data-conv="${id}" aria-current="${id === abierto}">${U.cara(p, 'p')}<span><b>${rol === 'profe' ? (REAL ? 'Familia' : 'Familia García') : p.nombre}</b><small>${u ? U.esc(u[1]) : 'Nueva conversación'}</small></span></button>`; }).join('')}</div>
+      <div class="hilo" data-abierto="${abierto}"></div></div>`;
+  }
+  function pintarHilo(id) {
+    const p = persona(id), h = document.querySelector('.hilo'); if (!h) return;
+    if (REAL && CONV[id] && h.dataset.escucha !== CONV[id]) {
+      if (quitarEscucha) quitarEscucha();
+      h.dataset.escucha = CONV[id];
+      quitarEscucha = SUPA.escuchar(CONV[id], m => { if (m.sender_id === yo) return; CHATS[id].push(['ella', m.body]); if (document.querySelector('.hilo')?.dataset.abierto === id) pintarHilo(id); });
+    }
+    h.dataset.abierto = id;
+    document.querySelectorAll('.convs button').forEach(b => b.setAttribute('aria-current', b.dataset.conv === id));
+    h.innerHTML = `<div class="hilo-cab">${U.cara(p, 'p')}<div><b>${rol === 'profe' ? (REAL ? 'Familia' : 'Familia García') : p.nombre}</b><p class="suave" style="font-size:13px">${rol === 'profe' ? (REAL ? 'Alumno' : 'Lucas · 4º ESO') : 'Suele responder en ' + p.responde}</p></div>
+      ${rol === 'familia' ? `<a class="boton peq" style="margin-left:auto" href="profe.html?id=${p.id}">Pedir clase</a>` : ''}</div>
+      <p class="aviso-chat">🔒 Por seguridad, no compartas teléfonos ni direcciones hasta tener una reserva.</p>
+      <div class="mensajes" id="msjs">${CHATS[id].map(([q, t]) => `<div class="msj ${q === 'yo' ? 'mio' : ''}">${U.esc(t)}</div>`).join('') || `<p class="suave" style="text-align:center;margin:auto">Empieza la conversación. Cuéntale qué necesitas y para qué curso.</p>`}</div>
+      <div class="escribiendo" id="escribiendo"></div>
+      <form class="escribe" id="fMsj"><button class="boton sec peq" type="button" id="sugerir" title="Sugerir respuesta" aria-label="Sugerir respuesta"><span class="punto-ia" style="margin:0"></span></button><input class="entrada" placeholder="Escribe un mensaje…" aria-label="Mensaje" autocomplete="off"><button class="boton">Enviar</button></form>`;
+    const m = $('#msjs'); m.scrollTop = m.scrollHeight;
+    $('#sugerir').onclick = async () => {
+      const ult = [...CHATS[id]].reverse().find(x => x[0] !== 'yo');
+      const d0 = p.libre[0] ? IA.DIA_TXT[p.libre[0][0]] : null;
+      const t = rol === 'profe'
+        ? (ult && /problema|martes/i.test(ult[1]) ? 'Claro que sí. El martes empezamos con 10 minutos de signos y luego problemas con enunciado. Le llevo ejercicios preparados.' : '¡Gracias! Lucas va mejorando mucho. El martes seguimos con problemas con enunciado.')
+        : (ult ? (/ejercicio|deberes/i.test(ult[1]) ? '¡Muchas gracias! Le recuerdo que los haga. ¿Te parece si el martes veis también problemas con enunciado?' : '¡Perfecto, gracias! Nos vemos en la próxima clase.')
+          : `Hola, ${p.nombre.split(' ')[0]}. Mi hijo está en ${hijo.curso || '3º ESO'} y le cuesta ${D.asig(p.asig[0]).nombre.toLowerCase()}. ¿Tendrías hueco ${d0 ? 'el ' + d0 : 'esta semana'} por la tarde para una primera clase a prueba?`);
+      const inp = $('#fMsj input'); inp.value = ''; inp.focus();
+      for (let i = 1; i <= t.length; i += 2) { inp.value = t.slice(0, i); await IA.espera(8); }
+      inp.value = t;
+    };
+    $('#fMsj').onsubmit = async e => {
+      e.preventDefault(); const inp = e.target.querySelector('input'); const t = inp.value.trim(); if (!t) return;
+      // Aviso si se comparte un teléfono
+      const reTel = /(\+?34)?\s?[6789]\d{2}\s?\d{3}\s?\d{3}/g, tel = reTel.test(t);
+      const texto = tel ? t.replace(reTel, m => (/^\s/.test(m) ? ' ' : '') + '[teléfono oculto]') : t;
+      if (REAL) {
+        try { if (!CONV[id]) CONV[id] = await SUPA.abrirConversacion(id); await SUPA.enviar(CONV[id], texto); }
+        catch (x) { return U.tostada(x.message); }
+        CHATS[id].push(['yo', texto]); inp.value = ''; pintarHilo(id); if (tel) U.tostada('Hemos ocultado el teléfono: compártelo cuando haya reserva'); return;
+      }
+      CHATS[id].push(['yo', texto]); guardarChats(); inp.value = '';
+      pintarHilo(id);
+      if (tel) U.tostada('Hemos ocultado el teléfono: compártelo cuando haya reserva');
+      setTimeout(() => { const e2 = $('#escribiendo'); if (e2) e2.textContent = `${rol === 'profe' ? 'La familia' : p.nombre.split(' ')[0]} está escribiendo…`; }, 600);
+      setTimeout(() => {
+        CHATS[id].push(['ella', rol === 'profe' ? '¡Perfecto, muchas gracias!' : `¡Hola! Encantada. Si te parece, empezamos con una primera clase a prueba y vemos el nivel. Tengo hueco ${p.libre[0] ? 'el ' + ({ L: 'lunes', M: 'martes', X: 'miércoles', J: 'jueves', V: 'viernes', S: 'sábado' })[p.libre[0][0]] + ' a las ' + p.libre[0].slice(1) : 'esta semana'}.`]);
+        guardarChats(); if (document.querySelector('.hilo')?.dataset.abierto === id) pintarHilo(id);
+      }, 2000);
+    };
+  }
+  /* ---------- Asistente de la familia (responde con los datos del panel) ---------- */
+  const DIAS_L = d => fmt(d, { weekday: 'long', day: 'numeric', month: 'long' });
+  function responder(q) {
+    const t = IA.normal(q);
+    const asigDe = r => { const p = persona(r.profe); return D.asig(p.asig[0]).nombre; };
+    if (/plan|examen/.test(t)) {
+      const m = t.match(/dia (\d{1,2})/); const f = new Date(hoy); if (m) { f.setDate(+m[1]); if (f <= hoy) f.setMonth(f.getMonth() + 1); } else f.setDate(f.getDate() + 21);
+      const temas = [...new Set(INFORMES.slice(0, 3).flatMap(r => [r.cuesta.replace(/\.$/, ''), r.tema]))].slice(0, 3);
+      const pl = IA.plan({ asig: 'mat', fecha: f, horas: 3, temas: temas.length ? temas : ['Repaso general'] });
+      return { txt: `Hasta el examen del ${DIAS_L(f)} quedan ${pl.dias} días. Te propongo esto${INFORMES.length ? ', empezando por lo que más le cuesta según sus profes' : ''}:`,
+        extra: `<table class="mini-tabla">${pl.semanas.map(x => `<tr><td>Semana ${x.semana} · ${fmt(x.ini, { day: 'numeric', month: 'short' })}</td><td>${U.esc(x.tema)}</td></tr>`).join('')}</table>` };
+    }
+    if (/gast|pagad|dinero|cuanto llevamos/.test(t)) {
+      if (!GASTOS.length) return { txt: 'Este mes no lleváis nada gastado.' };
+      const tot = GASTOS.reduce((a, g) => a + g[1], 0);
+      return { txt: `Este mes lleváis ${tot.toFixed(2).replace('.', ',')} € en ${GASTOS.length} ${GASTOS.length === 1 ? 'clase' : 'clases'}.`,
+        extra: `<table class="mini-tabla">${GASTOS.map(g => `<tr><td>${U.esc(g[0])}</td><td>${g[1].toFixed(2).replace('.', ',')} €</td></tr>`).join('')}<tr><td>Total</td><td>${tot.toFixed(2).replace('.', ',')} €</td></tr></table>` };
+    }
+    if (/proxima|cuando|a que hora/.test(t)) {
+      if (!PROXIMAS.length) return { txt: 'No tenéis ninguna clase reservada ahora mismo.', extra: '<a class="boton peq" href="buscar.html">Buscar profe</a>' };
+      const c = PROXIMAS[0], pr = persona(c.profe);
+      return { txt: `La próxima es el ${DIAS_L(c.d)} a las ${c.hora}: ${D.asig(pr.asig[0]).nombre} con ${pr.nombre}, ${c.lugar === 'Online' ? 'online' : 'en ' + c.lugar}.${PROXIMAS[1] ? ` Después, el ${fmt(PROXIMAS[1].d, { weekday: 'long' })} a las ${PROXIMAS[1].hora}.` : ''}` };
+    }
+    if (!INFORMES.length) return { txt: 'Todavía no hay informes de clases, así que no puedo contarte cómo va. En cuanto el profe escriba el primero, te lo resumo aquí.' };
+    if (/cuesta|dificil|falla|problema/.test(t)) {
+      const porAsig = {}; INFORMES.forEach(r => { const a = asigDe(r); (porAsig[a] = porAsig[a] || []).push(r.cuesta.replace(/\.$/, '').toLowerCase()); });
+      return { txt: 'Lo que más se repite en los informes: ' + Object.entries(porAsig).map(([a, l]) => `en ${a}, ${l[0]}${l.length > 1 && l[1] !== l[0] ? ' (antes: ' + l[1] + ')' : ''}`).join('; ') + '.' };
+    }
+    if (/cambiar|otro profe/.test(t)) return { txt: 'Puedo buscarte otro profe con las mismas condiciones sin cancelar nada de lo que tienes.', extra: '<a class="boton peq" href="buscar.html">Ver alternativas</a>' };
+    const porAsig = {}; INFORMES.slice().reverse().forEach(r => { const a = asigDe(r); (porAsig[a] = porAsig[a] || []).push(r); });
+    return { txt: `${hijo.nombre}: ` + Object.entries(porAsig).map(([a, l]) => { const ult = l[l.length - 1], ini = l[0].nivel[0], fin = ult.nivel[ult.nivel.length - 1];
+      return `en ${a}, ${ini !== fin ? `su seguridad ha pasado de ${ini} a ${fin} sobre 5` : `seguridad ${fin} sobre 5`}; lo último que destaca su profe: «${ult.bien.replace(/\.$/, '')}»`; }).join('. ') + '.' };
+  }
+  async function preguntar(q) {
+    const caja = $('#asisMsjs'); if (!caja) return;
+    caja.insertAdjacentHTML('beforeend', `<div class="burbuja yo">${U.esc(q)}</div>`);
+    const b = document.createElement('div'); b.className = 'burbuja ia'; b.innerHTML = '<span class="puntos"><i></i><i></i><i></i></span>'; caja.appendChild(b);
+    caja.scrollTop = caja.scrollHeight;
+    await IA.espera(700);
+    const r = responder(q); const pp = document.createElement('p'); b.innerHTML = ''; b.appendChild(pp);
+    await IA.escribir(pp, r.txt, 8);
+    if (r.extra) b.insertAdjacentHTML('beforeend', `<div class="extra">${r.extra}</div>`);
+    caja.scrollTop = caja.scrollHeight;
+  }
+  let preguntaPendiente = null;
+
+  /* Ejercicios generados: ax + b = c con solución entera */
+  function generarEjercicios() {
+    const r = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const sol = $('#conSol') && $('#conSol').checked;
+    $('#ejercicios').innerHTML = Array.from({ length: 8 }, (_, i) => {
+      const x = r(-6, 9) || 3, a = r(2, 7) * (i % 3 === 2 ? -1 : 1), b = r(-12, 12) || 5, c = a * x + b;
+      const izq = `${a < 0 ? '−' + Math.abs(a) : a}x ${b < 0 ? '−' : '+'} ${Math.abs(b)}`, der = c < 0 ? '−' + Math.abs(c) : String(c);
+      return `<div class="ejercicio" style="animation-delay:${i * 50}ms">${i < 4 ? izq + ' = ' + der : der + ' = ' + izq}${sol ? `<small>x = ${x < 0 ? '−' + Math.abs(x) : x}</small>` : ''}</div>`;
+    }).join('');
+  }
+
+  /* Informe por voz (simulado) */
+  const NOTA = { bien: 'Ya aplica la fórmula de segundo grado sin mirar los apuntes y resuelve las ecuaciones completas.', cuesta: 'Sigue cambiando mal el signo al pasar un término al otro lado.', luego: 'Cinco ejercicios de signos para el jueves. Próxima clase: problemas con enunciado.' };
+  async function grabarInforme() {
+    const btn = $('#grabar'), barras = [...document.querySelectorAll('#ondasP i')];
+    if (btn.classList.contains('on')) return;
+    btn.classList.add('on'); $('#grabTxt').textContent = 'Escuchando… (en la maqueta se simula una nota de 4 segundos)';
+    const anim = setInterval(() => barras.forEach(b => b.style.height = (15 + Math.random() * 85) + '%'), 120);
+    await IA.espera(4000); clearInterval(anim); barras.forEach(b => b.style.height = '20%');
+    btn.classList.remove('on'); $('#grabTxt').textContent = 'Nota convertida en informe. Revísalo y envíalo.';
+    for (const [id, k] of [['#infBien', 'bien'], ['#infCuesta', 'cuesta'], ['#infLuego', 'luego']]) {
+      const el = $(id); if (!el) return; el.value = '';
+      for (let i = 1; i <= NOTA[k].length; i += 2) { el.value = NOTA[k].slice(0, i); await IA.espera(6); }
+      el.value = NOTA[k];
+    }
+    document.querySelectorAll('#nivelInf button')[3].click();
+  }
+
+  const DESPUES = {
+    asistente: () => {
+      $('#asisMsjs').innerHTML = `<div class="burbuja ia">Hola, ${U.esc(s.nombre)}. Tengo los informes, las clases y los pagos de ${U.esc(hijo.nombre)}. ¿Qué quieres saber?</div>`;
+      $('#asisSug').onclick = e => { const b = e.target.closest('button'); if (b) preguntar(b.textContent); };
+      $('#fAsis').onsubmit = e => { e.preventDefault(); const i = e.target.querySelector('input'); const q = i.value.trim(); if (q) { i.value = ''; preguntar(q); } };
+      if (preguntaPendiente) { const q = preguntaPendiente; preguntaPendiente = null; preguntar(q); }
+    },
+    informes: () => IA.escribir($('#resMes'), `Buen mes para ${hijo.nombre}. Siete clases sin faltar a ninguna, y en las dos asignaturas ha ganado seguridad. Lo único que se repite es el signo al despejar en Matemáticas: Laura ya lo está trabajando.`, 8),
+    preparar: () => { generarEjercicios(); $('#otrosEj').onclick = generarEjercicios; $('#conSol').onchange = generarEjercicios; },
+    mensajes: () => { pintarHilo(document.querySelector('.hilo').dataset.abierto); document.querySelector('.convs').onclick = e => { const b = e.target.closest('[data-conv]'); if (b) pintarHilo(b.dataset.conv); }; },
+    ingresos: () => setTimeout(() => document.querySelectorAll('.ingresos i').forEach(i => i.style.height = i.dataset.h + '%'), 60),
+    informe: () => {
+      $('#grabar').onclick = grabarInforme;
+      $('#nivelInf').onclick = e => { const b = e.target.closest('button'); if (b) $('#nivelInf').querySelectorAll('button').forEach(x => { x.setAttribute('aria-pressed', x === b); x.style.background = x === b ? 'var(--ok)' : ''; x.style.color = x === b ? '#fff' : ''; }); };
+      $('#fInforme').onsubmit = async e => {
+        e.preventDefault(); if ([...e.target.querySelectorAll('textarea')].some(t => !t.value.trim())) return U.tostada('Rellena los tres apartados');
+        if (REAL) {
+          const c = CLASES.find(x => x.id === $('#infClase').value); if (!c) return U.tostada('Elige la clase');
+          const seg = document.querySelector('#nivelInf [aria-pressed="true"]');
+          try { await SUPA.enviarInforme({ clase_id: c.id, familia_id: c.familia_id, alumno: c.alumno, tema: $('#infTema').value.trim(), bien: $('#infBien').value.trim(), cuesta: $('#infCuesta').value.trim(), luego: $('#infLuego').value.trim(), seguridad: seg ? +seg.textContent : null }); }
+          catch (x) { return U.tostada(x.message); }
+        }
+        U.tostada('Informe enviado a la familia'); setTimeout(() => ir('inicio'), 900);
+      };
+    },
+    ajustes: () => { $('#salir').onclick = () => { try { localStorage.removeItem('sesion'); } catch (e) {} location.href = 'index.html'; }; }
+  };
+  // Delegación general
+  $('#vista').addEventListener('click', e => {
+    const c = e.target.closest('[data-chat]'); if (c) { chatPedido = c.dataset.chat; return ir('mensajes'); }
+    const v = e.target.closest('[data-ir]'); if (v) return ir(v.dataset.ir);
+    const pq = e.target.closest('[data-pregunta]'); if (pq) { preguntaPendiente = pq.dataset.pregunta; return ir('asistente'); }
+    const sg = e.target.closest('[data-sug]');
+    if (sg) {
+      const fila = sg.closest('.fila-clase'); const r = SOLICITUDES[+sg.dataset.sug];
+      if (fila.nextElementSibling && fila.nextElementSibling.classList.contains('sugerida')) return fila.nextElementSibling.remove();
+      const nombre = r.alumno.split(' · ')[0], fam = r.familia.split(' ')[0], cuando = r.cuando.toLowerCase().replace(/ (\d)/, ' a las $1');
+      const txt = r.tipo === 'Grupo de portal' ? `Hola, ${fam}. ¡Bienvenidos al grupo de 4º ESO! Nos vemos los ${cuando.replace('martes', 'martes')} en Chamberí. La primera clase hago un repaso de ecuaciones para ver el nivel de todos.`
+        : r.tipo === 'Bono de 10' ? `Hola, ${fam}. Encantada de dar clase a ${nombre}. El ${cuando} me va bien. En la primera vemos qué temas lleva peor y organizo el bono a partir de ahí.`
+        : `Hola, ${fam}. Me viene bien el ${cuando}. En esta primera clase a prueba veo cómo va ${nombre} y os cuento qué plan le propongo. Si no os convence, no la pagáis.`;
+      fila.insertAdjacentHTML('afterend', `<div class="sugerida"><p></p><button class="boton peq" type="button" onclick="this.closest('.sugerida').remove();U.tostada('Respuesta enviada y clase aceptada')">Enviar y aceptar</button> <button class="boton sec peq" type="button" onclick="U.tostada('Copiada para editarla en el chat')">Editar</button></div>`);
+      IA.escribir(fila.nextElementSibling.querySelector('p'), txt, 8);
+      return;
+    }
+    const a = e.target.closest('[data-acepta],[data-otra]');
+    if (a && REAL) {
+      const fila0 = a.closest('.fila-clase'), r0 = SOLICITUDES[+fila0.dataset.i];
+      if (r0 && r0.id) { SUPA.cambiarClase(r0.id, a.hasAttribute('data-acepta') ? 'aceptada' : 'rechazada').catch(x => U.tostada(x.message)); }
+    }
+    if (a) { const fila = a.closest('.fila-clase'); fila.style.transition = 'all .4s'; fila.style.opacity = 0; fila.style.transform = 'translateX(40px)'; setTimeout(() => fila.remove(), 400); U.tostada(a.hasAttribute('data-acepta') ? 'Aceptada: la familia ya puede pagar' : 'Te hemos abierto el chat para proponer hora'); }
+  });
+  ir(actual, true);
+});
+</script>
+</body>
+</html>

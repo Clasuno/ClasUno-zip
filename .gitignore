@@ -1,0 +1,18 @@
+# Claves y contraseñas: nunca a GitHub
+.env
+.env.*
+*.key
+*.pem
+
+# Dependencias y basura del sistema
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ajustes personales de Claude
+.claude/settings.local.json
+
+# Netlify / Vercel locales
+.netlify/
+.vercel/

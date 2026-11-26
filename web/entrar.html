@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar o crear cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.acceso{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 68px)}
+.lado-form{padding:50px clamp(20px,5vw,70px);display:flex;flex-direction:column;justify-content:center}
+.lado-form form{max-width:470px;width:100%}
+.pestanas{display:flex;gap:4px;border:1px solid var(--linea-2);border-radius:12px;padding:4px;background:var(--hoja);max-width:470px;margin-bottom:28px}
+.pestanas button{flex:1;border:0;background:transparent;padding:11px;border-radius:9px;font-weight:700}
+.pestanas button[aria-selected="true"]{background:var(--tinta);color:var(--papel)}
+.campos{display:grid;gap:14px;margin-top:22px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.quien{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.quien label{border:1px solid var(--linea-2);border-radius:12px;padding:14px;cursor:pointer;background:var(--hoja)}
+.quien label:has(input:checked){background:var(--tinta);color:var(--papel)}
+.quien input{position:absolute;opacity:0}
+.quien b{display:block}
+.hijo{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;animation:entraH .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes entraH{from{opacity:0;transform:translateY(-8px)}}
+.quitar{border:1px solid var(--linea-2);background:var(--hoja);border-radius:10px;width:44px;height:46px;font-size:18px}
+.lado-dibujo{position:relative;overflow:hidden;margin:16px;border-radius:24px}
+.lado-dibujo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lado-dibujo::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(0,0,0,.65))}
+.llavero{width:min(380px,70%);transform-origin:50% 8%;animation:balanceo 4s ease-in-out infinite}
+@keyframes balanceo{50%{transform:rotate(7deg)}}
+.lado-dibujo p{position:absolute;bottom:36px;left:36px;right:36px;color:#fff;font-size:22px;font-weight:600;z-index:1}
+@media (max-width:900px){.acceso{grid-template-columns:1fr}.lado-dibujo{display:none}}
+@media (max-width:480px){.dos,.quien{grid-template-columns:1fr}.hijo{grid-template-columns:1fr 1fr}.hijo .quitar{grid-column:1/-1;width:100%}}
+</style>
+</head>
+<body>
+<main class="acceso">
+  <div class="lado-form">
+    <div class="pestanas" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-t="entrar">Entrar</button>
+      <button type="button" role="tab" aria-selected="false" data-t="alta">Crear cuenta</button>
+    </div>
+
+    <form id="fEntrar" novalidate>
+      <h1 style="font-size:46px">Hola de nuevo.</h1>
+      <div class="campos">
+        <label class="campo"><span>Correo electrónico</span><input class="entrada" type="email" name="correo" autocomplete="email" required></label>
+        <label class="campo"><span>Contraseña</span><input class="entrada" type="password" name="clave" autocomplete="current-password" required></label>
+      </div>
+      <p style="margin-top:10px"><button type="button" class="enlace-btn" style="font-weight:500" id="olvido">He olvidado la contraseña</button></p>
+      <p class="error" role="alert"></p>
+      <button class="boton" style="width:100%;margin-top:16px">Entrar</button>
+      <p class="suave" style="margin-top:16px;font-size:14px">¿Eres profe y aún no tienes perfil? <a href="alta-profe.html">Créalo aquí</a>.</p>
+    </form>
+
+    <form id="fAlta" novalidate hidden>
+      <h1 style="font-size:46px">Crea tu cuenta.</h1>
+      <p class="suave" style="margin-top:8px">Gratis y sin cuotas. Para profes hay un <a href="alta-profe.html">alta aparte</a>.</p>
+      <div class="quien">
+        <label><input type="radio" name="tipo" value="familia" checked><b>Soy madre, padre o tutor</b><span style="font-size:13px;opacity:.8">Busco profe para mis hijos</span></label>
+        <label><input type="radio" name="tipo" value="alumno"><b>Soy alumno adulto</b><span style="font-size:13px;opacity:.8">Tengo 18 años o más</span></label>
+      </div>
+      <div class="campos">
+        <div class="dos">
+          <label class="campo"><span>Nombre</span><input class="entrada" name="nombre" autocomplete="given-name" required></label>
+          <label class="campo"><span>Apellidos</span><input class="entrada" name="apellidos" autocomplete="family-name" required></label>
+        </div>
+        <label class="campo"><span>Correo electrónico</span><input class="entrada" type="email" name="correo" autocomplete="email" required></label>
+        <label class="campo"><span>Contraseña</span><input class="entrada" type="password" name="clave" autocomplete="new-password" minlength="8" required><p class="ayuda">Mínimo 8 caracteres.</p></label>
+        <label class="campo"><span>Tu barrio <span class="suave">(para enseñarte lo más cerca)</span></span><select class="entrada" name="zona" id="zona"></select></label>
+      </div>
+      <div id="bloqueHijos" style="margin-top:22px">
+        <p style="font-weight:650">Tus hijos <span class="suave" style="font-weight:400">— los mensajes con profes llegan a tu cuenta</span></p>
+        <div id="hijos" class="campos" style="margin-top:10px"></div>
+        <button type="button" class="enlace-btn" id="otroHijo" style="margin-top:12px">+ Añadir otro hijo</button>
+      </div>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:20px;font-size:14px"><input type="checkbox" name="terminos" style="margin-top:4px"> <span>Acepto los <a href="legal.html#terminos">términos de uso</a> y la <a href="legal.html#privacidad">política de privacidad</a>.</span></label>
+      <p class="error" role="alert"></p>
+      <button class="boton" style="width:100%;margin-top:16px">Crear cuenta</button>
+    </form>
+  </div>
+  <div class="lado-dibujo" aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1758687126493-c31e40d92dbd?auto=format&fit=crop&w=1200&q=70" alt="">
+    <p>Una cuenta para toda la familia: clases, informes y mensajes en el mismo sitio.</p>
+  </div>
+</main>
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const fE = $('#fEntrar'), fA = $('#fAlta');
+  $('#zona').innerHTML = '<option value="">Elige…</option>' + [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).map(z => `<option value="${z.id}">${z.nombre}</option>`).join('');
+  const pestana = t => {
+    document.querySelectorAll('.pestanas button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t));
+    fE.hidden = t !== 'entrar'; fA.hidden = t !== 'alta';
+  };
+  document.querySelector('.pestanas').onclick = e => { const b = e.target.closest('button'); if (b) pestana(b.dataset.t); };
+  if (U.param('alta')) pestana('alta');
+
+  const CURSOS = ['1º Primaria', '2º Primaria', '3º Primaria', '4º Primaria', '5º Primaria', '6º Primaria', '1º ESO', '2º ESO', '3º ESO', '4º ESO', '1º Bachillerato', '2º Bachillerato', 'FP Grado medio', 'FP Grado superior', 'Universidad'];
+  const anadirHijo = () => {
+    const d = document.createElement('div'); d.className = 'hijo';
+    d.innerHTML = `<label class="campo"><span>Nombre</span><input class="entrada" name="hijo"></label>
+      <label class="campo"><span>Curso</span><select class="entrada" name="curso">${CURSOS.map(c => `<option>${c}</option>`).join('')}</select></label>
+      <button type="button" class="quitar" aria-label="Quitar">×</button>`;
+    d.querySelector('.quitar').onclick = () => { if ($('#hijos').children.length > 1) d.remove(); };
+    $('#hijos').append(d);
+  };
+  anadirHijo();
+  $('#otroHijo').onclick = anadirHijo;
+  fA.addEventListener('change', e => { if (e.target.name === 'tipo') $('#bloqueHijos').hidden = e.target.value !== 'familia'; });
+
+  const err = (f, t) => { f.querySelector('.error').textContent = t; return false; };
+  const ocupado = (f, on, txt) => { const b = f.querySelector('button.boton:not([type=button])'); b.disabled = on; if (txt) b.textContent = txt; };
+  fE.onsubmit = async e => {
+    e.preventDefault(); err(fE, '');
+    if (!/^\S+@\S+\.\S+$/.test(fE.correo.value.trim()) || !fE.clave.value) return err(fE, 'Escribe tu correo y tu contraseña.');
+    if (!window.SUPA) return err(fE, 'No hay conexión con el servidor. Inténtalo en un rato.');
+    ocupado(fE, true, 'Entrando…');
+    try { await SUPA.entrar(fE.correo.value.trim().toLowerCase(), fE.clave.value); location.href = U.param('volver') && /^[a-z-]+\.html/.test(U.param('volver')) ? U.param('volver') : (SUPA.rol() === 'profe' ? 'panel.html?rol=profe' : 'panel.html'); }
+    catch (x) { err(fE, x.message); ocupado(fE, false, 'Entrar'); }
+  };
+  $('#olvido').onclick = async () => {
+    const c = fE.correo.value.trim(); if (!/^\S+@\S+\.\S+$/.test(c)) return err(fE, 'Escribe tu correo arriba y vuelve a pulsar.');
+    try { await SUPA.recuperar(c); U.tostada('Te hemos enviado un enlace para cambiar la contraseña'); } catch (x) { err(fE, x.message); }
+  };
+  fA.onsubmit = async e => {
+    e.preventDefault(); err(fA, '');
+    const v = k => (fA[k].value || '').trim();
+    if (!v('nombre') || !v('apellidos')) return err(fA, 'Escribe tu nombre y tus apellidos.');
+    if (!/^\S+@\S+\.\S+$/.test(v('correo'))) return err(fA, 'Escribe un correo válido.');
+    if (fA.clave.value.length < 8) return err(fA, 'La contraseña necesita al menos 8 caracteres.');
+    const tipo = fA.tipo.value;
+    const hijos = [...document.querySelectorAll('.hijo')].map(h => ({ nombre: h.querySelector('[name=hijo]').value.trim(), curso: h.querySelector('[name=curso]').value })).filter(h => h.nombre);
+    if (tipo === 'familia' && !hijos.length) return err(fA, 'Añade al menos el nombre de un hijo.');
+    if (!fA.terminos.checked) return err(fA, 'Acepta los términos y la política de privacidad.');
+    if (!window.SUPA) return err(fA, 'No hay conexión con el servidor. Inténtalo en un rato.');
+    ocupado(fA, true, 'Creando cuenta…');
+    try {
+      const r = await SUPA.registrar({ email: v('correo').toLowerCase(), clave: fA.clave.value, nombre: v('nombre'), apellidos: v('apellidos'), rol: 'familia', extra: { tipo, zona: v('zona'), hijos } });
+      if (r.session) { location.href = 'panel.html?nuevo=1'; return; }
+      fA.innerHTML = `<h1 style="font-size:42px">Mira tu correo.</h1><p class="suave" style="margin-top:12px;font-size:18px">Te hemos mandado un enlace a <b>${U.esc(v('correo'))}</b>. Púlsalo para confirmar la cuenta y entrarás directamente en tu panel.</p>`;
+    } catch (x) { err(fA, x.message); ocupado(fA, false, 'Crear cuenta'); }
+  };
+})();
+</script>
+</body>
+</html>

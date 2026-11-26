@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dar clases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-profes{background:#15171C;color:#fff;padding:90px 0 100px;position:relative;overflow:hidden}
+.cab-profes .cab-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45}
+.cab-profes .envoltura{position:relative}
+.cab-profes h1{font-size:clamp(40px,6vw,76px);max-width:820px}
+.cab-profes .placa-gigante{position:absolute;right:-40px;top:40px;transform:rotate(-8deg);border:4px solid #fff;border-radius:18px;padding:20px 30px;font-family:var(--mono);font-size:22px;opacity:.16;white-space:nowrap}
+.calc{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:start}
+.calc .hoja{padding:28px}
+.calc label.campo+label.campo{margin-top:22px}
+.ganancia{font-size:clamp(52px,7vw,88px);font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--butano)}
+.meses{display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:26px}
+.mes{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.mes i{width:100%;background:var(--butano);border-radius:8px 8px 0 0;transition:height .6s cubic-bezier(.2,.8,.2,1);display:block}
+.mes span{font-family:var(--mono);font-size:11px;color:var(--tinta-2)}
+.mes b{font-size:13px}
+.pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:p;border:1px solid var(--linea);border-radius:16px;overflow:hidden;background:var(--hoja)}
+.paso{padding:26px;border-right:1px solid var(--linea);counter-increment:p}
+.paso:last-child{border:0}
+.paso::before{content:counter(p);width:36px;height:36px;border-radius:10px;background:var(--butano-claro);color:var(--butano);font-weight:700;display:grid;place-items:center;margin-bottom:14px}
+.requisitos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+.req{display:flex;gap:14px;align-items:flex-start;padding:18px}
+.req .ck{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-weight:800}
+@media (max-width:900px){.calc,.requisitos{grid-template-columns:1fr}.pasos{grid-template-columns:1fr 1fr}.paso:nth-child(2){border-right:0}.paso{border-bottom:1px solid var(--linea)}}
+@media (max-width:520px){.pasos{grid-template-columns:1fr}.paso{border-right:0}}
+</style>
+</head>
+<body>
+<main>
+  <section class="cab-profes">
+    <img class="cab-foto" src="https://images.unsplash.com/photo-1758525861725-e0fcc0c1301c?auto=format&fit=crop&w=1800&q=70" alt="" aria-hidden="true">
+    <div class="envoltura">
+      <p class="kicker" style="color:#fff">Para profes</p>
+      <h1>Da clases a cinco minutos de casa.</h1>
+      <p style="font-size:19px;margin-top:20px;max-width:620px;opacity:.9">Perfil gratis, alumnos de tu barrio, grupos ya formados y cobro a las 48 horas de cada clase. Cuanto más tiempo sigues con una familia, menos comisión pagas.</p>
+      <p style="margin-top:30px;display:flex;gap:12px;flex-wrap:wrap"><a class="boton" href="alta-profe.html">Crear mi perfil</a><a class="boton sec" href="#calculadora">¿Cuánto ganaría?</a></p>
+    </div>
+  </section>
+
+  <section class="seccion" id="calculadora">
+    <div class="envoltura calc">
+      <div class="hoja">
+        <p class="kicker">Calculadora</p>
+        <h2 style="font-size:34px;margin-bottom:24px">Echa cuentas.</h2>
+        <label class="campo"><span>Tu precio por hora: <b id="tPrecio">18 €</b></span><input type="range" id="precio" min="10" max="35" value="18"></label>
+        <label class="campo"><span>Horas de clase a la semana: <b id="tHoras">8 h</b></span><input type="range" id="horas" min="1" max="30" value="8"></label>
+        <label class="campo"><span>De esas, en grupo de portal: <b id="tGrupo">25 %</b></span><input type="range" id="grupo" min="0" max="100" step="25" value="25"></label>
+        <p class="ayuda">En los grupos de 3 cobras unas 1,7 veces tu precio por hora.</p>
+      </div>
+      <div>
+        <p class="mono suave">Lo que te llega al mes cuando ya llevas medio año</p>
+        <div class="ganancia" id="ganancia">0 €</div>
+        <p class="suave" style="margin-top:10px" id="explica"></p>
+        <div class="meses" id="meses"></div>
+        <p class="suave" style="font-size:13px;margin-top:10px">Cálculo orientativo con una clase por semana y alumno, 4,3 semanas por mes. La comisión baja sola: 15 % las 5 primeras clases con cada familia, 10 % hasta la 20 y 5 % después.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="envoltura">
+      <p class="kicker">Cómo entras</p>
+      <h2 style="margin-bottom:30px">Cuatro pasos y sales en el plano.</h2>
+      <div class="pasos aparece">
+        <div class="paso"><h3>Creas tu perfil</h3><p class="suave" style="margin-top:8px">Diez minutos: foto, estudios, qué enseñas, barrio y precio.</p></div>
+        <div class="paso"><h3>Videollamada</h3><p class="suave" style="margin-top:8px">Quince minutos con nosotros para conocerte y comprobar tu titulación.</p></div>
+        <div class="paso"><h3>Certificado</h3><p class="suave" style="margin-top:8px">Nos enseñas el certificado negativo de delitos sexuales. Es gratis y se pide online.</p></div>
+        <div class="paso"><h3>Publicado</h3><p class="suave" style="margin-top:8px">Apareces en el plano de tu barrio y empiezan a llegarte mensajes.</p></div>
+      </div>
+      <div class="requisitos">
+        <div class="hoja req aparece"><span class="ck">✓</span><div><b>Foto en la que se te vea la cara</b><p class="suave">Las familias quieren saber quién va a ir a casa.</p></div></div>
+        <div class="hoja req aparece"><span class="ck">✓</span><div><b>Estudios de lo que enseñas</b><p class="suave">Grado, ciclo, máster, conservatorio o estar cursándolos.</p></div></div>
+        <div class="hoja req aparece"><span class="ck">✓</span><div><b>Mayor de 18 años</b><p class="suave">Y con cuenta bancaria española para cobrar.</p></div></div>
+        <div class="hoja req aparece"><span class="ck">✓</span><div><b>Un barrio aproximado</b><p class="suave">Si das clases en persona. Nunca mostramos tu dirección.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="envoltura" style="padding-bottom:70px">
+    <div class="hoja" style="padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+      <div><h2 style="font-size:36px">¿Empezamos?</h2><p class="suave" style="margin-top:8px">Sin permanencia. Puedes pausar tu perfil cuando quieras.</p></div>
+      <a class="boton" href="alta-profe.html">Crear mi perfil de profe</a>
+    </div>
+  </section>
+</main>
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  // Comisión media del mes m (1..6) con una clase por semana y alumno
+  const comMes = m => { let s = 0; for (let c = 1; c <= 4; c++) s += D.comision((m - 1) * 4 + c); return s / 4 / 100; };
+  const pintar = () => {
+    const precio = +$('#precio').value, horas = +$('#horas').value, grupo = +$('#grupo').value / 100;
+    $('#tPrecio').textContent = precio + ' €'; $('#tHoras').textContent = horas + ' h'; $('#tGrupo').textContent = Math.round(grupo * 100) + ' %';
+    const brutoHora = (1 - grupo) * precio + grupo * D.precioGrupo(precio, 3) * 3;
+    const brutoMes = brutoHora * horas * 4.3;
+    const netos = [1, 2, 3, 4, 5, 6].map(m => brutoMes * (1 - comMes(m)));
+    U.contar($('#ganancia'), Math.round(netos[5]), 600, ' €');
+    $('#explica').textContent = `El primer mes: ${Math.round(netos[0]).toLocaleString('es-ES')} €. Sin cambiar nada, cada mes te queda más porque la comisión baja.`;
+    const max = Math.max(...netos);
+    $('#meses').innerHTML = netos.map((n, i) => `<div class="mes"><b>${Math.round(n)}</b><i style="height:${(n / max * 72).toFixed(1)}%"></i><span>mes ${i + 1}</span></div>`).join('');
+  };
+  ['precio', 'horas', 'grupo'].forEach(id => $('#' + id).oninput = pintar); pintar();
+})();
+</script>
+</body>
+</html>

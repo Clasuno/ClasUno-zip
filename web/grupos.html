@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grupos de portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-grupos{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding:56px 0 40px}
+.reglas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:10px 0 50px}
+.reglas .hoja{padding:22px}
+.reglas b{font-size:36px;font-weight:700;letter-spacing:-.03em;color:var(--butano);display:block;line-height:1;margin-bottom:6px}
+.tablon{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.grupo{padding:22px;position:relative;overflow:hidden;transition:transform .25s}
+
+.tablon .grupo:hover{transform:translateY(-3px)}
+.asientos{display:flex;gap:6px;margin:16px 0}
+.asiento{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--linea-2);display:grid;place-items:center;font-size:14px}
+.asiento.ocupado{background:var(--tinta);color:var(--papel)}
+.asiento.libre{border-style:dashed;color:var(--tinta-2)}
+.asiento.tuyo{background:var(--butano);color:#fff;animation:latido .5s}
+@keyframes latido{50%{transform:scale(1.3)}}
+.precio-grupo{display:flex;justify-content:space-between;align-items:end;margin-top:6px}
+.precio-grupo b{font-size:30px;font-weight:700}
+.proponer{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.barra-espera{height:14px;border-radius:9px;overflow:hidden;background:var(--papel-2);margin:14px 0}
+.barra-espera i{display:block;height:100%;background:var(--butano);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:900px){.cab-grupos,.proponer{grid-template-columns:1fr}.reglas{grid-template-columns:1fr}}
+@media (max-width:520px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <section class="envoltura cab-grupos">
+    <div>
+      <p class="kicker">Grupos de portal</p>
+      <h1 style="font-size:clamp(40px,6vw,80px)">Mismo barrio, mismo curso, un profe para todos.</h1>
+    </div>
+    <p class="suave" style="font-size:18px">Entre 2 y 4 alumnos comparten clase. Cada familia paga hasta la mitad y el profe gana más por hora. Te unes a un grupo que ya existe o propones uno y te avisamos cuando haya más gente.</p>
+  </section>
+  <section class="envoltura">
+    <div class="reglas">
+      <div class="hoja aparece"><b>2–4</b><p>alumnos como mucho, para que la clase siga siendo particular.</p></div>
+      <div class="hoja aparece"><b>−50 %</b><p>paga cada familia en un grupo de cuatro frente a una clase individual.</p></div>
+      <div class="hoja aparece"><b>0 €</b><p>si el grupo no llega a dos alumnos: no se cobra nada.</p></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px">
+      <h2>Grupos abiertos</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <select class="entrada" id="fZona" style="width:auto"><option value="">Todos los barrios</option></select>
+        <select class="entrada" id="fAsig" style="width:auto"><option value="">Todas las asignaturas</option></select>
+      </div>
+    </div>
+    <div class="tablon" id="tablon"></div>
+  </section>
+
+  <section class="seccion" id="proponer">
+    <div class="envoltura proponer">
+      <div>
+        <p class="kicker">¿No hay grupo para ti?</p>
+        <h2>Propón uno y lo llenamos con gente de tu barrio.</h2>
+        <p class="suave" style="margin-top:16px;font-size:18px">Avisamos a las familias de la zona con el mismo curso. En cuanto haya dos, buscamos profe y os proponemos hora.</p>
+      </div>
+      <form class="hoja" style="padding:26px" id="formGrupo">
+        <div class="form-grid">
+          <label class="campo"><span>Asignatura</span><select class="entrada" name="asig" required id="pAsig"></select></label>
+          <label class="campo"><span>Curso</span><input class="entrada" name="curso" required placeholder="p. ej. 2º ESO"></label>
+          <label class="campo"><span>Barrio</span><select class="entrada" name="zona" required id="pZona"></select></label>
+          <label class="campo"><span>Mejor día</span><select class="entrada" name="dia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option></select></label>
+        </div>
+        <button class="boton" style="margin-top:18px;width:100%">Proponer grupo</button>
+        <div id="espera" hidden>
+          <div class="barra-espera"><i id="barraEspera"></i></div>
+          <p id="esperaTxt"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg"><button class="dlg-cerrar" type="button" aria-label="Cerrar" onclick="this.closest('dialog').close()">×</button><div class="dlg-cuerpo" id="dlgCuerpo"></div></dialog>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+D.listo.then(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  const zonas = [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre));
+  zonas.forEach(z => { $('#fZona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`); $('#pZona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`); });
+  D.ASIG.forEach(a => { $('#fAsig').insertAdjacentHTML('beforeend', `<option value="${a.id}">${a.nombre}</option>`); $('#pAsig').insertAdjacentHTML('beforeend', `<option value="${a.id}">${a.nombre}</option>`); });
+  let unidos = []; try { unidos = JSON.parse(localStorage.getItem('grupos') || '[]'); } catch (e) {}
+
+  function pintar() {
+    const fz = $('#fZona').value, fa = $('#fAsig').value;
+    const gs = D.GRUPOS.filter(g => (!fz || g.zona === fz) && (!fa || g.asig === fa));
+    $('#tablon').innerHTML = gs.length ? gs.map(g => {
+      const p = D.profe(g.profe), a = D.asig(g.asig), z = D.zona(g.zona);
+      const yo = unidos.includes(g.id), ocup = g.ocupadas + (yo ? 1 : 0);
+      const ahora = D.precioGrupo(p.precio, Math.max(2, ocup)), lleno = D.precioGrupo(p.precio, g.plazas);
+      return `<article class="hoja grupo">
+        <p style="color:${a.c};font-weight:600;font-size:14px">${a.nombre}</p>
+        <h3 style="margin-top:6px">${g.curso}</h3>
+        <p class="suave">📍 ${z.nombre} · ${g.dia} ${g.hora}</p>
+        <div class="asientos">${Array.from({ length: g.plazas }, (_, i) => i < g.ocupadas ? '<span class="asiento ocupado">●</span>' : i === g.ocupadas && yo ? '<span class="asiento tuyo">tú</span>' : '<span class="asiento libre">+</span>').join('')}</div>
+        <p style="display:flex;gap:10px;align-items:center">${U.cara(p, 'p')}<span><a href="profe.html?id=${p.id}"><b>${p.nombre}</b></a><br><span class="suave" style="font-size:13px">${p.nota ? '★ ' + U.coma(p.nota) + ' · ' : ''}${p.clases ? p.clases + ' clases' : 'Nuevo'}</span></span></p>
+        <div class="precio-grupo"><div><span class="suave" style="font-size:13px">Por alumno ahora</span><br><b>${ahora} €</b><span class="suave">/h</span></div>
+          <div style="text-align:right"><span class="suave" style="font-size:13px">Si se llena</span><br><b style="font-size:20px;color:var(--ok)">${lleno} €</b></div></div>
+        <button class="boton ${yo ? 'sec' : ''}" style="width:100%;margin-top:16px" data-g="${g.id}" ${ocup >= g.plazas && !yo ? 'disabled' : ''}>${yo ? 'Salir del grupo' : ocup >= g.plazas ? 'Completo' : 'Unirme'}</button>
+      </article>`;
+    }).join('') : '<p class="suave">No hay grupos abiertos con esos filtros. <a href="#proponer">Propón uno</a>.</p>';
+  }
+  $('#fZona').onchange = pintar; $('#fAsig').onchange = pintar;
+  $('#tablon').onclick = async e => {
+    const b = e.target.closest('[data-g]'); if (!b) return;
+    const id = b.dataset.g, i = unidos.indexOf(id);
+    const gr = D.GRUPOS.find(x => x.id === id);
+    if (gr && gr.real && window.SUPA) {
+      if (!SUPA.usuario()) { location.href = 'entrar.html?alta=familia'; return; }
+      try { const ses = U.sesion() || {}; if (i >= 0) await SUPA.salirGrupo(id); else await SUPA.unirseGrupo(id, (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null); }
+      catch (x) { return U.tostada(x.message); }
+    }
+    if (i >= 0) { unidos.splice(i, 1); U.tostada('Has dejado el grupo'); }
+    else {
+      unidos.push(id);
+      const g = D.GRUPOS.find(x => x.id === id), p = D.profe(g.profe);
+      $('#dlgCuerpo').innerHTML = `<p class="kicker">Plaza reservada</p><h2 style="font-size:30px">Ya estás en el grupo de ${g.curso}.</h2>
+        <p style="margin-top:12px">${D.asig(g.asig).nombre} con ${p.nombre} · ${g.dia} a las ${g.hora} · ${D.zona(g.zona).nombre}.</p>
+        <p class="suave" style="margin-top:10px">No se cobra hasta la primera clase. Si entra alguien más, el precio baja para todos y te avisamos.</p>
+        <p style="margin-top:20px"><a class="boton" href="panel.html">Ver en mi panel</a></p>`;
+      $('#dlg').showModal();
+    }
+    try { localStorage.setItem('grupos', JSON.stringify(unidos)); } catch (e) {}
+    pintar();
+  };
+  $('#formGrupo').onsubmit = async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const z = D.zona(fd.get('zona')), a = D.asig(fd.get('asig'));
+    if (window.SUPA && SUPA.usuario()) { try { await SUPA.proponerGrupo({ asignatura: a.nombre, curso: fd.get('curso'), zona: SUPA.nombreZonaBD(z.id), dia: fd.get('dia') }); } catch (x) { return U.tostada(x.message); } }
+    const vecinos = 1 + (fd.get('curso').length + z.nombre.length) % 3;
+    $('#espera').hidden = false;
+    $('#esperaTxt').innerHTML = `Hemos avisado a las familias de <b>${z.nombre}</b> con ${a.nombre} de <b>${U.esc(fd.get('curso'))}</b>. Ya hay <b>${vecinos} interesada${vecinos > 1 ? 's' : ''}</b> además de ti. Te escribimos en cuanto el grupo esté listo.`;
+    requestAnimationFrame(() => $('#barraEspera').style.width = Math.min(100, (vecinos + 1) / 3 * 100) + '%');
+  };
+  pintar();
+});
+</script>
+</body>
+</html>
