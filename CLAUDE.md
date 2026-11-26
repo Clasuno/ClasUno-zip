@@ -19,7 +19,7 @@ Plataforma de clases particulares (profes y familias, Madrid). Web estática en 
 Servidor `clasuno-web` (puerto 8130) en `.claude/launch.json`. Usa `.claude/servidor-local.ps1` (PowerShell, no hace falta Node ni Python).
 
 ## Supabase
-Proyecto `ywfrtfypmhypacbktjch` (Fráncfort). La seguridad la ponen las reglas RLS.
+Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La seguridad la ponen las reglas RLS.
 - **Pendiente antes de abrir al público:** volver a activar «Confirm email» (Authentication → Sign In / Providers → Email) con un SMTP propio.
 
 ## Cuentas de prueba

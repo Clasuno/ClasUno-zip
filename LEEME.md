@@ -45,7 +45,7 @@ Todo funciona con **datos de ejemplo** (`assets/datos.js`) y `localStorage`. Fal
 Desde Claude: servidor `clasuno-web` (puerto 8130) en `.claude/launch.json` de este repositorio.
 
 ## Supabase (conectado el 26-nov-2026)
-Proyecto `ywfrtfypmhypacbktjch` (Fráncfort). La web usa la clave pública (publishable) en `web/assets/supa.js`; la seguridad la ponen las reglas RLS.
+Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La web usa la clave pública (publishable) en `web/assets/supa.js`; la seguridad la ponen las reglas RLS.
 
 **Qué hay conectado:** registro y entrada de familias (`entrar.html`), alta de profes con foto al bucket `avatars` (`alta-profe.html`), profes aprobados en portada, buscador y fichas, favoritos, petición de clases con precio y comisión calculados en la base de datos, grupos de portal (unirse y proponer), soporte, y en el panel: clases, solicitudes (aceptar/rechazar), informes, ingresos y chat en tiempo real.
 **Sin datos o sin conexión** la web sigue con los datos de ejemplo (el pie dice «Datos de ejemplo» o «Datos en directo»).
