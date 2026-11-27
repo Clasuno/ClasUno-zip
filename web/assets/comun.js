@@ -20,7 +20,7 @@
     <a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="nav" id="nav">
-      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
+      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina || (h === 'grupos.html' && pagina === 'grupo.html') ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
       <button class="tema-btn" type="button" aria-label="Cambiar entre tema claro y oscuro">◐</button>
       ${darClases}
       <a class="boton peq boton-entrar" href="${sesion() ? 'panel.html' : 'entrar.html'}">${sesion() ? 'Mi panel' : 'Entrar'}</a>

@@ -171,7 +171,8 @@ window.SUPA = (() => {
   const misInformes = async () => (await sb.from('informes').select('*').order('creado', { ascending: false })).data || [];
   async function enviarInforme(inf) { const { error } = await sb.from('informes').insert({ ...inf, teacher_id: usuario.id }); if (error) throw new Error(errorBonito(error)); }
   async function unirseGrupo(id, alumno) { const { error } = await sb.from('grupo_miembros').insert({ grupo_id: id, familia_id: usuario.id, alumno }); if (error) throw new Error(errorBonito(error)); }
-  async function salirGrupo(id) { await sb.from('grupo_miembros').delete().eq('grupo_id', id).eq('familia_id', usuario.id); }
+  // Si sale quien creó el grupo, pasa a otra familia (o se borra si no queda nadie): lo hace la base de datos
+  async function salirGrupo(id) { const { error } = await sb.rpc('salir_de_grupo', { gid: id }); if (error) throw new Error(errorBonito(error)); }
   async function proponerGrupo(p) { const { error } = await sb.from('grupo_propuestas').insert(p); if (error) throw new Error(errorBonito(error)); }
   // Crear un grupo como familia (público: sale en el tablón; privado: solo con el enlace de invitación)
   async function crearGrupo(p) {
@@ -182,6 +183,41 @@ window.SUPA = (() => {
   }
   async function grupoPorCodigo(c) { const { data, error } = await sb.rpc('grupo_por_codigo', { c }); return error ? null : aGrupo(data); }
   async function unirseConCodigo(c, alumno) { const { error } = await sb.rpc('unirse_con_codigo', { c, p_alumno: alumno || null }); if (error) throw new Error(errorBonito(error)); }
+
+  // ---------- Panel de un grupo (grupo.html) ----------
+  // Devuelve null si el grupo no existe o no estás dentro
+  async function grupoDetalle(id) {
+    const { data, error } = await sb.rpc('grupo_detalle', { gid: id });
+    if (error) throw new Error(errorBonito(error));
+    if (!data) return null;
+    const g = aGrupo(data) || { id: data.id, real: true, asig: asigDeNombre(data.asignatura) || 'mat', curso: data.curso, zona: zonaDeNombre(data.zona) || null,
+      dia: data.dia, hora: data.hora, plazas: data.plazas, ocupadas: Math.max(0, (Number(data.ocupadas) || 0) - (data.dentro ? 1 : 0)), privado: !!data.privado,
+      mio: !!data.mio, dentro: !!data.dentro, profe: null };
+    return Object.assign(g, { codigo: data.codigo, creado: data.creado, gestiona: !!data.gestiona, yo: data.yo, profeInfo: data.profe_info || null,
+      miembros: data.miembros || [], sesiones: data.sesiones || [] });
+  }
+  const mensajesGrupo = async id => (await sb.from('grupo_mensajes').select('id, autor_id, texto, creado').eq('grupo_id', id).order('creado').limit(300)).data || [];
+  async function enviarGrupo(id, texto) {
+    const { data, error } = await sb.from('grupo_mensajes').insert({ grupo_id: id, autor_id: usuario.id, texto }).select('id, autor_id, texto, creado').single();
+    if (error) throw new Error(errorBonito(error));
+    return data;
+  }
+  function escucharGrupo(id, alLlegar) {
+    const canal = sb.channel('grupo-' + id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'grupo_mensajes', filter: `grupo_id=eq.${id}` }, p => alLlegar(p.new)).subscribe();
+    return () => sb.removeChannel(canal);
+  }
+  async function ajustarGrupo(id, a) {
+    const { error } = await sb.rpc('ajustar_grupo', { gid: id, p_privado: a.privado ?? null, p_plazas: a.plazas ?? null, p_dia: a.dia ?? null, p_hora: a.hora ?? null });
+    if (error) throw new Error(errorBonito(error));
+  }
+  async function nuevoEnlaceGrupo(id) { const { data, error } = await sb.rpc('nuevo_enlace_grupo', { gid: id }); if (error) throw new Error(errorBonito(error)); return data; }
+  async function borrarGrupo(id) { const { error } = await sb.from('grupos').delete().eq('id', id); if (error) throw new Error(errorBonito(error)); }
+  async function marcarSesion(id, s) {
+    const { data, error } = await sb.from('grupo_sesiones').insert({ grupo_id: id, fecha: s.fecha, hora: s.hora || null, estado: s.estado, nota: s.nota || null }).select().single();
+    if (error) throw new Error(errorBonito(error));
+    return data;
+  }
+  async function quitarSesion(sesionId) { const { error } = await sb.from('grupo_sesiones').delete().eq('id', sesionId); if (error) throw new Error(errorBonito(error)); }
 
   // ---------- Chat ----------
   async function conversaciones() {
@@ -207,5 +243,6 @@ window.SUPA = (() => {
 
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
+    grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
     conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

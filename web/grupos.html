@@ -322,7 +322,8 @@ D.listo.then(async () => {
         ${quien}
         <div class="escalera" aria-label="Precio por alumno según cuántos seáis">${escalera}</div>
         <p class="baja">${baja}</p>
-        <button class="boton ${yo ? 'sec' : ''}" style="width:100%;margin-top:14px" data-g="${esc(g.id)}" ${completo && !yo ? 'disabled' : ''}>${yo ? 'Salir del grupo' : completo ? 'Completo' : `Unirme · ${apr}${eur(precio(b, Math.max(2, ocup + 1)))}/h`}</button>
+        ${yo ? `<a class="boton" style="width:100%;margin-top:14px" href="grupo.html?id=${encodeURIComponent(g.id)}">Abrir el grupo · calendario y chat</a>`
+          : `<button class="boton" style="width:100%;margin-top:14px" data-g="${esc(g.id)}" ${completo ? 'disabled' : ''}>${completo ? 'Completo' : `Unirme · ${apr}${eur(precio(b, Math.max(2, ocup + 1)))}/h`}</button>`}
         ${puedeInvitar ? `<div class="invitar"><button class="boton peq wa" type="button" data-wa="${esc(g.id)}">${ICONO_WA} Invitar por WhatsApp</button><button class="boton sec peq" type="button" data-copiar="${esc(g.id)}" title="Copiar enlace de invitación">🔗</button></div>` : ''}
       </article>`;
     }).join('') : '<p class="suave">No hay grupos abiertos con esos filtros. <a href="#crear">Crea uno</a>.</p>';
@@ -363,7 +364,7 @@ D.listo.then(async () => {
         <p class="suave" style="margin-top:10px">No se cobra hasta la primera clase. Si entra alguien más, el precio baja para todos y te avisamos.${p ? '' : ' En cuanto seáis dos, os proponemos profe.'}</p>
         ${hayHueco && (!g.privado || g.codigo) ? `<p class="baja" style="margin-top:16px">${ocup >= 2 ? `Estás pagando <b style="color:inherit">${unos}${eur(precio(b, ocup))}</b>. Si se apunta <b>1 más</b>, pagas <b>${unos}${eur(precio(b, ocup + 1))}</b>.` : `Con <b>1 alumno más</b> el grupo arranca y pagas <b>${unos}${eur(precio(b, 2))}</b>.`} ¿Conoces a alguien de tu zona y del mismo curso?</p>
         <div class="invitar"><button class="boton wa" type="button" id="dlgWa">${ICONO_WA} Invitar por WhatsApp</button></div>` : ''}
-        <p style="margin-top:16px"><a class="boton ${hayHueco ? 'sec' : ''}" href="panel.html">Ver en mi panel</a></p>`;
+        <p style="margin-top:16px"><a class="boton ${hayHueco ? 'sec' : ''}" href="grupo.html?id=${encodeURIComponent(g.id)}">Abrir el grupo: calendario y chat</a></p>`;
       $('#dlg').showModal();
       const dw = $('#dlgWa'); if (dw) dw.onclick = () => abrirWhatsApp(g);
     }
@@ -398,7 +399,8 @@ D.listo.then(async () => {
       <p style="margin-top:12px">${z.nombre} · ${esc(cuando(g))} · hasta ${g.plazas} alumnos. Ya estás dentro.</p>
       <p class="suave" style="margin-top:10px">${g.privado ? 'No sale en el tablón: solo podrán entrar las familias a las que mandes este enlace.' : 'Ya sale en el tablón para las familias de la zona. Si conoces a alguien, mándale el enlace.'} En cuanto seáis dos, os proponemos profe y hora.</p>
       <div class="enlace-inv"><input class="entrada" readonly value="${esc(enlace)}" aria-label="Enlace de invitación" onclick="this.select()"><button class="boton sec peq" type="button" id="dlgCopiar">Copiar</button></div>
-      <div class="invitar" style="margin-top:10px"><button class="boton wa" type="button" id="dlgWa">${ICONO_WA} Invitar por WhatsApp</button></div>`;
+      <div class="invitar" style="margin-top:10px"><button class="boton wa" type="button" id="dlgWa">${ICONO_WA} Invitar por WhatsApp</button></div>
+      <p style="margin-top:12px"><a class="boton sec" style="width:100%" href="grupo.html?id=${encodeURIComponent(g.id)}">Abrir el grupo: calendario, chat y ajustes</a></p>`;
     $('#dlg').showModal();
     $('#dlgWa').onclick = () => abrirWhatsApp(g);
     $('#dlgCopiar').onclick = () => copiarEnlace(g);

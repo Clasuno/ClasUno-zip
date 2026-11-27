@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu grupo de estudio</title>
+<meta name="description" content="El panel de tu grupo de estudio: quién está, el calendario de clases, el chat con las familias y el profe, y los ajustes.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/marca/icono.svg" type="image/svg+xml"><link rel="icon" href="assets/marca/icono-32.png" sizes="32x32"><link rel="apple-touch-icon" href="assets/marca/icono-apple.png"><meta name="theme-color" content="#0B0C0E">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-g{padding:34px 0 24px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
+.volver{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--tinta-2);text-decoration:none;margin-bottom:14px}
+.volver:hover{color:var(--tinta)}
+.cab-g h1{font-size:clamp(34px,5vw,60px);line-height:1.02}
+.meta-g{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;color:var(--tinta-2)}
+.etiqueta{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--papel-2);border:1px solid var(--linea);color:var(--tinta)}
+.etiqueta.priv{background:var(--butano-claro);border-color:transparent;color:var(--butano)}
+.cab-acciones{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.wa{background:#25D366;color:#06301A}
+.wa:hover{background:#1FB955}
+.wa svg{width:18px;height:18px}
+/* Pestañas */
+.pestanas{display:flex;gap:4px;border-bottom:1px solid var(--linea-2);margin-bottom:26px;overflow-x:auto;scrollbar-width:none}
+.pestanas button{border:0;background:transparent;padding:12px 16px;font-weight:650;font-size:15px;color:var(--tinta-2);border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;gap:7px;align-items:center}
+.pestanas button[aria-selected="true"]{color:var(--tinta);border-bottom-color:var(--butano)}
+.pestanas .num{background:var(--butano);color:var(--butano-t);border-radius:99px;font-size:11.5px;padding:0 7px;line-height:18px}
+.vista-g{padding-bottom:70px;animation:entraG .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes entraG{from{opacity:0;transform:translateY(10px)}}
+/* Resumen */
+.resumen{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+.resumen .hoja{padding:22px}
+.resumen h3{font-size:18px;margin-bottom:14px}
+.lista-m{display:grid;gap:10px}
+.miembro{display:flex;gap:12px;align-items:center}
+.miembro .ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--papel-2);border:1px solid var(--linea);flex:none}
+.miembro .ava.yo{background:var(--butano);color:var(--butano-t);border-color:var(--butano)}
+.miembro .ava.libre{border:1.5px dashed var(--linea-2);background:transparent;color:var(--tinta-2);font-weight:400}
+.miembro small{display:block;color:var(--tinta-2);font-size:13px}
+.proxima{display:flex;gap:14px;align-items:center}
+.fecha-g{border:1px solid var(--linea-2);border-radius:12px;text-align:center;overflow:hidden;min-width:64px;background:var(--hoja)}
+.fecha-g span{display:block;background:var(--butano);color:var(--butano-t);font-size:11px;font-weight:600;padding:3px;text-transform:uppercase;letter-spacing:.05em}
+.fecha-g b{display:block;font-size:26px;padding:4px 0}
+.precio-g .grande{font-size:34px;font-weight:700;letter-spacing:-.02em}
+.baja{margin-top:12px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--ok) 12%,transparent);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent);font-size:14.5px;line-height:1.4}
+.baja b{color:var(--ok)}
+/* Calendario */
+.cal-cont{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.cal{padding:20px}
+.cal-cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cal-cab h3{font-size:19px;text-transform:capitalize}
+.cal-cab button{width:38px;height:38px;border-radius:10px;border:1px solid var(--linea-2);background:transparent;font-size:18px}
+.cal-dias,.cal-rej{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dias span{text-align:center;font-size:12px;font-weight:600;color:var(--tinta-2);padding:4px 0}
+.dia{aspect-ratio:1;border:1px solid transparent;border-radius:10px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:14.5px;position:relative;color:var(--tinta)}
+.dia:hover{background:var(--papel-2)}
+.dia.fuera{visibility:hidden}
+.dia.hoy{border-color:var(--linea-2);font-weight:700}
+.dia.sel{border-color:var(--butano);background:var(--butano-claro)}
+.dia i{width:7px;height:7px;border-radius:50%;display:block}
+.dia.prevista i{background:var(--butano)}
+.dia.extra i{background:var(--ok)}
+.dia.cancelada i{background:transparent;border:1.5px solid var(--aviso)}
+.dia.cancelada{color:var(--tinta-2);text-decoration:line-through}
+.dia.pasada{opacity:.5}
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--tinta-2)}
+.leyenda i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.detalle-dia{padding:20px}
+.fila-sesion{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;padding:12px 0}
+.fila-sesion+.fila-sesion{border-top:1px dashed var(--linea)}
+.estado-s{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;display:inline-block;margin-top:4px}
+.estado-s.prevista{background:var(--butano-claro);color:var(--butano)}
+.estado-s.extra{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.estado-s.cancelada{background:color-mix(in srgb,var(--aviso) 15%,transparent);color:var(--aviso)}
+.aviso-g{padding:14px 18px;border-radius:14px;background:var(--papel-2);font-size:14.5px;margin-bottom:16px;line-height:1.45}
+/* Chat */
+.chat-g{display:flex;flex-direction:column;height:min(620px,72vh);padding:0;overflow:hidden}
+.chat-cab{padding:14px 18px;border-bottom:1px solid var(--linea-2);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.chat-cab small{color:var(--tinta-2)}
+.mensajes-g{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:6px;background-image:radial-gradient(rgba(29,36,32,.05) 1px,transparent 1px);background-size:16px 16px}
+.separa{align-self:center;font-size:12px;color:var(--tinta-2);background:var(--papel);border:1px solid var(--linea);border-radius:99px;padding:2px 10px;margin:8px 0}
+.msj-g{max-width:78%;padding:8px 12px 6px;border-radius:14px;border:1px solid var(--linea-2);background:var(--hoja);align-self:flex-start;animation:msjG .25s cubic-bezier(.2,1.3,.4,1);overflow-wrap:anywhere}
+.msj-g.mio{align-self:flex-end;background:var(--butano);color:var(--butano-t);border-color:var(--butano)}
+.msj-g .autor{display:block;font-size:12.5px;font-weight:700;margin-bottom:2px}
+.msj-g .autor.profe{color:var(--ok)}
+.msj-g p{margin:0;white-space:pre-line;line-height:1.4}
+.msj-g time{display:block;text-align:right;font-size:11px;opacity:.7;margin-top:2px}
+.sistema{align-self:center;max-width:90%;text-align:center;font-size:13px;color:var(--tinta-2);padding:4px 10px}
+@keyframes msjG{from{opacity:0;transform:scale(.95) translateY(6px)}}
+.escribe-g{display:flex;gap:8px;padding:12px;border-top:1px solid var(--linea-2)}
+.escribe-g textarea{flex:1;resize:none;min-height:44px;max-height:140px}
+.aviso-chat{font-size:12px;color:var(--tinta-2);text-align:center;padding:0 18px 10px}
+/* Ajustes */
+.ajustes{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.ajustes .hoja{padding:24px}
+.ajustes h3{font-size:19px;margin-bottom:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.visibilidad{border:0;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.visibilidad legend{font-size:14px;font-weight:600;margin-bottom:8px;padding:0}
+.vis-opcion{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1.5px solid var(--linea-2);border-radius:14px;cursor:pointer}
+.vis-opcion input{margin-top:3px;accent-color:var(--butano)}
+.vis-opcion b{display:block;font-size:15px}
+.vis-opcion small{display:block;color:var(--tinta-2);font-size:13px;line-height:1.35;margin-top:3px}
+.vis-opcion:has(input:checked){border-color:var(--butano);background:var(--butano-claro)}
+.vis-opcion:has(input:disabled){cursor:default;opacity:.75}
+.enlace-inv{display:flex;gap:8px;margin-top:14px}
+.enlace-inv input{flex:1;min-width:0;font-size:13.5px}
+.peligro{border-color:color-mix(in srgb,var(--aviso) 45%,var(--linea-2))}
+.boton.rojo{background:transparent;color:var(--aviso);border:1.5px solid color-mix(in srgb,var(--aviso) 55%,transparent)}
+.boton.rojo:hover{background:color-mix(in srgb,var(--aviso) 10%,transparent)}
+.vacio-g{padding:60px 0 90px;text-align:center;max-width:560px;margin:0 auto}
+@media (max-width:900px){.cab-g,.resumen,.cal-cont,.ajustes{grid-template-columns:1fr}.cab-acciones{justify-content:flex-start}}
+@media (max-width:520px){.form-grid{grid-template-columns:1fr}.msj-g{max-width:88%}.pestanas button{padding:12px 11px;font-size:14.5px}}
+</style>
+</head>
+<body>
+<main class="envoltura" id="app">
+  <p class="suave" style="padding:80px 0">Cargando el grupo…</p>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script>
+// Panel de un grupo de estudio: resumen, calendario de clases, chat y ajustes.
+// Con base de datos (y sesión iniciada) todo viene de Supabase; con los datos de ejemplo se guarda en este navegador.
+window.PanelGrupo = (() => {
+  const $ = s => document.querySelector(s), esc = U.esc;
+  const DIAS_SEMANA = { Domingo: 0, Lunes: 1, Martes: 2, 'Miércoles': 3, Jueves: 4, Viernes: 5, 'Sábado': 6 };
+  const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+  const FACTOR = { 1: 1, 2: .7, 3: .58, 4: .5 };
+  const precio = (base, n) => Math.round(base * FACTOR[Math.min(4, Math.max(1, n))] * 100) / 100;
+  const eur = n => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',')) + ' €';
+  const ICONO_WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
+  const leer = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } };
+  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  // ---------- Fechas ----------
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const deIso = s => { const [a, m, d] = String(s).slice(0, 10).split('-').map(Number); return new Date(a, m - 1, d); };
+  const hoyIso = () => iso(new Date());
+  const may = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const fechaLarga = s => { const d = deIso(s); return `${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`; };
+  const horaDe = t => new Date(t).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  const diaDe = t => { const d = new Date(t), h = new Date(), ay = new Date(); ay.setDate(h.getDate() - 1);
+    return iso(d) === iso(h) ? 'Hoy' : iso(d) === iso(ay) ? 'Ayer' : `${d.getDate()} de ${MESES[d.getMonth()]}`; };
+
+  // ---------- Estado ----------
+  let G = null;            // el grupo con miembros, sesiones…
+  let real = false;        // ¿viene de Supabase?
+  let pestana = 'resumen';
+  let mesVista = null;     // primer día del mes que enseña el calendario
+  let diaSel = null;       // 'AAAA-MM-DD'
+  let MSJ = [];            // mensajes del chat
+  let dejarDeEscuchar = null;
+
+  const profeDe = g => (g.profe && D.profe(g.profe)) || null;
+  function precioRef(asig) {
+    const med = l => { l = l.filter(n => n > 0).sort((a, b) => a - b); return l.length ? l[Math.floor(l.length / 2)] : 0; };
+    return med(D.PROFES.filter(p => (p.asig || []).includes(asig)).map(p => p.precio)) || med(D.PROFES.map(p => p.precio)) || 20;
+  }
+  const base = g => { const p = profeDe(g); return p ? p.precio : precioRef(g.asig); };
+  // Alumnos en el grupo. «ocupadas» son las plazas de los demás; el profe no ocupa plaza.
+  const enGrupo = () => G.ocupadas + (!real || G.dentro ? 1 : 0);
+  const hayProfe = () => !!(profeDe(G) || G.profeInfo);
+  const nombreProfe = () => (profeDe(G) || {}).nombre || (G.profeInfo || {}).nombre || '';
+  const enlaceGrupo = () => location.origin + location.pathname.replace(/grupo\.html$/, 'grupos.html') +
+    (G.privado && G.codigo ? '?invitacion=' + encodeURIComponent(G.codigo) : '?grupo=' + encodeURIComponent(G.id));
+  const cuando = () => (!G.dia || G.dia === 'Por decidir') ? 'Día por decidir' : G.dia + (G.hora && G.hora !== 'Por decidir' ? ' a las ' + G.hora : ' · hora por decidir');
+
+  // Quién es cada autor del chat
+  function etiquetaMiembro(m) { return m.alumno ? `Familia de ${m.alumno}` : (m.nombre ? m.nombre : 'Una familia'); }
+  function autor(id) {
+    if (id === G.yo) return { nombre: 'Tú', profe: false };
+    if (G.profeInfo && id === G.profeInfo.id) return { nombre: (G.profeInfo.nombre || 'Profe') + ' · profe', profe: true };
+    if (G.profe && id === G.profe) return { nombre: nombreProfe() + ' · profe', profe: true };
+    const m = (G.miembros || []).find(x => x.id === id);
+    return { nombre: m ? etiquetaMiembro(m) : 'Alguien que ya no está', profe: false };
+  }
+
+  // ---------- Carga ----------
+  // Datos de ejemplo: el grupo sale de D.GRUPOS o de los que se han creado en este navegador
+  function cargarEjemplo(id) {
+    const locales = leer('gruposCreados', []), unidos = leer('grupos', []);
+    const g = locales.find(x => x.id === id) || D.GRUPOS.find(x => x.id === id);
+    if (!g || !(g.mio || unidos.includes(id))) return null;
+    const ajustes = leer('grupoAjustes:' + id, {});
+    const ses = U.sesion() || {}, hijo = ses.hijos && ses.hijos[0] && ses.hijos[0].nombre;
+    const NOMBRES = ['Lucía', 'Hugo', 'Martina', 'Pablo', 'Sofía', 'Mateo'];
+    const otros = Array.from({ length: g.ocupadas }, (_, i) => ({ id: 'fam-' + i, alumno: NOMBRES[(i + id.length) % NOMBRES.length], creador: !g.mio && i === 0 }));
+    const creado = g.creado || leer('grupoCreado:' + id, null) || (() => { const d = new Date(); d.setDate(d.getDate() - 10); const v = d.toISOString(); guardar('grupoCreado:' + id, v); return v; })();
+    return Object.assign({}, g, ajustes, {
+      yo: 'yo', gestiona: !!g.mio, creado, profeInfo: null,
+      miembros: [{ id: 'yo', alumno: hijo || null, nombre: ses.nombre || 'Tú', creador: !!g.mio }, ...otros],
+      sesiones: leer('grupoSesiones:' + id, [])
+    });
+  }
+
+  async function cargar() {
+    const id = U.param('id');
+    if (!id) return vacio('Falta el grupo', 'Abre tu grupo desde la página de Grupos de estudio.');
+    real = D.modo === 'real' && !!window.SUPA;
+    if (real) {
+      await SUPA.sesionLista;
+      if (!SUPA.usuario()) { location.href = 'entrar.html?volver=' + encodeURIComponent('grupo.html?id=' + id); return; }
+      try { G = await SUPA.grupoDetalle(id); } catch (e) { return vacio('No se ha podido abrir el grupo', esc(e.message)); }
+    } else {
+      G = cargarEjemplo(id);
+    }
+    if (!G) return vacio('No estás en este grupo', 'Solo pueden entrar al panel las familias del grupo y su profe. Si te han invitado, abre el enlace de la invitación.');
+    pestana = ['resumen', 'calendario', 'chat', 'ajustes'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'resumen';
+    const prox = proximas(1)[0];
+    mesVista = prox ? deIso(prox.fecha) : new Date(); mesVista.setDate(1);
+    pintar();
+    cargarChat();
+  }
+
+  function vacio(titulo, texto) {
+    $('#app').innerHTML = `<div class="vacio-g"><p class="kicker">Grupos de estudio</p><h1 style="font-size:clamp(30px,4vw,44px)">${titulo}</h1>
+      <p class="suave" style="margin-top:14px;font-size:17px">${texto}</p><p style="margin-top:24px"><a class="boton" href="grupos.html">Ver grupos de estudio</a></p></div>`;
+  }
+
+  // ---------- Calendario: una clase cada semana el día del grupo, menos las canceladas, más las extra ----------
+  function clasesEntre(desde, hasta) {
+    const out = [], dia = DIAS_SEMANA[G.dia], ses = G.sesiones || [];
+    // Sin profe, las clases aún no han empezado: se enseñan desde hoy como «previstas»
+    const inicio = hayProfe() ? deIso(String(G.creado || hoyIso()).slice(0, 10)) : deIso(hoyIso());
+    if (dia != null) {
+      const d = new Date(Math.max(desde, inicio)); d.setHours(0, 0, 0, 0);
+      while (d.getDay() !== dia) d.setDate(d.getDate() + 1);
+      for (; d <= hasta; d.setDate(d.getDate() + 7)) {
+        const f = iso(d), c = ses.find(s => s.fecha === f && s.estado === 'cancelada');
+        out.push({ fecha: f, hora: G.hora, estado: c ? 'cancelada' : 'prevista', sesion: c || null });
+      }
+    }
+    ses.filter(s => s.estado === 'extra').forEach(s => { const d = deIso(s.fecha); if (d >= desde && d <= hasta) out.push({ fecha: s.fecha, hora: s.hora || G.hora, estado: 'extra', sesion: s, nota: s.nota }); });
+    return out.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  }
+  function proximas(n) {
+    const desde = deIso(hoyIso()), hasta = new Date(desde); hasta.setDate(hasta.getDate() + 120);
+    return clasesEntre(desde, hasta).filter(c => c.estado !== 'cancelada').slice(0, n);
+  }
+
+  // ---------- Pintar ----------
+  function cabecera() {
+    const a = D.asig(G.asig), z = D.zona(G.zona), hueco = enGrupo() < G.plazas;
+    return `<section class="cab-g">
+      <div>
+        <a class="volver" href="grupos.html">← Grupos de estudio</a>
+        <p class="kicker" style="color:${a.c}">${a.nombre}</p>
+        <h1>${esc(G.curso)}</h1>
+        <div class="meta-g"><span>📍 ${z ? z.nombre : ''}</span><span>·</span><span>${esc(cuando())}</span>
+          <span class="etiqueta ${G.privado ? 'priv' : ''}">${G.privado ? '🔒 Privado' : '🌍 Público'}</span>
+          ${G.gestiona ? '<span class="etiqueta">Creado por ti</span>' : ''}
+          <span class="etiqueta">${enGrupo()} de ${G.plazas} alumnos</span></div>
+      </div>
+      <div class="cab-acciones">${hueco && (!G.privado || G.codigo) ? `<button class="boton wa" type="button" data-accion="whatsapp">${ICONO_WA} Invitar por WhatsApp</button><button class="boton sec" type="button" data-accion="copiar">Copiar enlace</button>` : ''}</div>
+    </section>
+    <nav class="pestanas" role="tablist" aria-label="Secciones del grupo">
+      ${[['resumen', 'Resumen'], ['calendario', 'Calendario'], ['chat', 'Chat'], ['ajustes', 'Ajustes']].map(([k, t]) =>
+        `<button type="button" role="tab" data-pestana="${k}" aria-selected="${pestana === k}">${t}${k === 'chat' && noLeidos() ? `<span class="num">${noLeidos()}</span>` : ''}</button>`).join('')}
+    </nav>`;
+  }
+
+  function vistaResumen() {
+    const p = profeDe(G), b = base(G), n = enGrupo(), unos = p ? '' : 'unos ';
+    const prox = proximas(1)[0];
+    const asientos = [];
+    (G.miembros || []).forEach(m => asientos.push(`<div class="miembro"><span class="ava ${m.id === G.yo ? 'yo' : ''}">${esc((m.alumno || m.nombre || '?').slice(0, 1).toUpperCase())}</span>
+      <span><b>${m.id === G.yo ? 'Tú' + (m.alumno ? ` (${esc(m.alumno)})` : '') : esc(etiquetaMiembro(m))}</b><small>${m.creador ? 'Creó el grupo' : 'Familia del grupo'}</small></span></div>`));
+    for (let i = (G.miembros || []).length; i < G.plazas; i++) asientos.push(`<div class="miembro"><span class="ava libre">+</span><span><b>Plaza libre</b><small>${G.privado ? 'Solo con tu enlace de invitación' : 'Cualquier familia de la zona puede unirse'}</small></span></div>`);
+    const quien = p || G.profeInfo
+      ? `<div class="miembro">${p ? U.cara(p, 'p') : `<span class="ava">${esc((G.profeInfo.nombre || 'P').slice(0, 1))}</span>`}<span><b>${esc(nombreProfe())}</b><small>Profe del grupo${p ? ` · <a href="profe.html?id=${p.id}">ver ficha</a>` : ''}</small></span></div>`
+      : `<div class="miembro"><span class="ava libre">?</span><span><b>Profe por asignar</b><small>${n >= 2 ? 'Ya sois dos: estamos buscando profe de la zona y os escribimos por aquí.' : 'En cuanto seáis dos, os proponemos uno de la zona.'}</small></span></div>`;
+    return `<div class="resumen vista-g">
+      <div class="hoja"><h3>Quién está en el grupo</h3><div class="lista-m">${asientos.join('')}</div>
+        <h3 style="margin-top:22px">Profe</h3>${quien}</div>
+      <div style="display:grid;gap:18px;align-content:start">
+        <div class="hoja"><h3>Próxima clase</h3>${prox
+          ? `<div class="proxima"><div class="fecha-g"><span>${DIAS_CORTOS[deIso(prox.fecha).getDay()]}</span><b>${deIso(prox.fecha).getDate()}</b></div>
+              <div><b>${may(fechaLarga(prox.fecha))}</b><br><span class="suave">${esc(prox.hora && prox.hora !== 'Por decidir' ? prox.hora : 'Hora por decidir')}${hayProfe() ? '' : ' · pendiente de profe'}</span></div></div>
+             <p style="margin-top:14px"><button class="boton sec peq" type="button" data-pestana="calendario">Ver calendario</button></p>`
+          : `<p class="suave">Aún no hay día fijo. ${G.gestiona ? 'Elígelo en <a href="#ajustes" data-pestana="ajustes">Ajustes</a>.' : 'Lo elige quien creó el grupo.'}</p>`}</div>
+        <div class="hoja precio-g"><h3>Lo que pagáis</h3>
+          <p><b class="grande">${unos}${eur(precio(b, Math.max(2, n)))}</b> <span class="suave">la hora por alumno</span></p>
+          <p class="suave" style="margin-top:4px">En una clase individual serían ${eur(b)}: ${Math.round((1 - FACTOR[Math.max(2, Math.min(4, n))]) * 100)} % menos.</p>
+          ${n < G.plazas ? `<p class="baja">Si entra <b>1 alumno más</b>, cada familia pasa a pagar <b>${unos}${eur(precio(b, Math.min(4, Math.max(2, n + 1))))}</b>.</p>` : '<p class="baja">Grupo completo: <b>el precio más bajo</b>.</p>'}
+          ${p ? '' : '<p class="suave" style="font-size:13px;margin-top:8px">Precio orientativo hasta que haya profe.</p>'}
+          <p class="suave" style="font-size:13px;margin-top:8px">No se cobra nada hasta la primera clase.</p></div>
+      </div></div>`;
+  }
+
+  function vistaCalendario() {
+    const m = mesVista, primero = new Date(m.getFullYear(), m.getMonth(), 1), ultimo = new Date(m.getFullYear(), m.getMonth() + 1, 0);
+    const clases = clasesEntre(primero, ultimo), porDia = {}; clases.forEach(c => { (porDia[c.fecha] = porDia[c.fecha] || []).push(c); });
+    const huecoIni = (primero.getDay() + 6) % 7, hoy = hoyIso();
+    let celdas = '';
+    for (let i = 0; i < huecoIni; i++) celdas += '<span class="dia fuera"></span>';
+    for (let d = 1; d <= ultimo.getDate(); d++) {
+      const f = iso(new Date(m.getFullYear(), m.getMonth(), d)), cs = porDia[f] || [];
+      const est = cs.some(c => c.estado === 'extra') ? 'extra' : cs.some(c => c.estado === 'prevista') ? 'prevista' : cs.length ? 'cancelada' : '';
+      celdas += `<button type="button" class="dia ${est} ${f === hoy ? 'hoy' : ''} ${f === diaSel ? 'sel' : ''} ${f < hoy ? 'pasada' : ''}" data-dia="${f}" aria-label="${fechaLarga(f)}${est ? ': clase ' + est : ''}">${d}${est ? '<i></i>' : ''}</button>`;
+    }
+    const lista = proximas(6);
+    const aviso = !G.dia || G.dia === 'Por decidir'
+      ? `<p class="aviso-g">Aún no hay día fijo para las clases. ${G.gestiona ? 'Elígelo en <a href="#ajustes" data-pestana="ajustes">Ajustes</a> y saldrán aquí cada semana.' : 'Lo elige quien creó el grupo.'}</p>`
+      : !hayProfe() ? '<p class="aviso-g">Las clases empiezan cuando haya profe. Mientras, el calendario enseña cuándo serían, cada semana el mismo día.</p>' : '';
+    return `<div class="vista-g">${aviso}<div class="cal-cont">
+      <div class="hoja cal">
+        <div class="cal-cab"><button type="button" data-mes="-1" aria-label="Mes anterior">‹</button><h3>${MESES[m.getMonth()]} ${m.getFullYear()}</h3><button type="button" data-mes="1" aria-label="Mes siguiente">›</button></div>
+        <div class="cal-dias">${['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'].map(x => `<span>${x}</span>`).join('')}</div>
+        <div class="cal-rej">${celdas}</div>
+        <div class="leyenda"><span><i style="background:var(--butano)"></i>Clase</span><span><i style="background:var(--ok)"></i>Clase extra</span><span><i style="border:1.5px solid var(--aviso)"></i>Cancelada</span></div>
+      </div>
+      <div style="display:grid;gap:18px">
+        <div class="hoja detalle-dia" id="detalleDia">${detalleDia()}</div>
+        <div class="hoja detalle-dia"><h3 style="font-size:18px">Próximas clases</h3>${lista.length ? lista.map(filaSesion).join('') : '<p class="suave" style="margin-top:10px">No hay clases previstas.</p>'}</div>
+      </div></div></div>`;
+  }
+  function filaSesion(c) {
+    const d = deIso(c.fecha);
+    return `<div class="fila-sesion"><div class="fecha-g"><span>${DIAS_CORTOS[d.getDay()]}</span><b>${d.getDate()}</b></div>
+      <div><b>${may(fechaLarga(c.fecha))}</b> <span class="suave">${esc(c.hora && c.hora !== 'Por decidir' ? '· ' + c.hora : '')}</span><br>
+      <span class="estado-s ${c.estado}">${c.estado === 'extra' ? 'Clase extra' : c.estado === 'cancelada' ? 'Cancelada' : hayProfe() ? 'Clase' : 'Prevista · pendiente de profe'}</span>${c.nota ? ` <span class="suave" style="font-size:13px">${esc(c.nota)}</span>` : ''}</div></div>`;
+  }
+  function detalleDia() {
+    if (!diaSel) return '<h3 style="font-size:18px">Elige un día</h3><p class="suave" style="margin-top:8px">Pulsa un día del calendario para ver la clase' + (G.gestiona ? ', cancelarla o añadir una clase extra.' : '.') + '</p>';
+    const d = deIso(diaSel), cs = clasesEntre(d, d), pasado = diaSel < hoyIso();
+    let acciones = '';
+    if (G.gestiona && !pasado) {
+      const prev = cs.find(c => c.estado === 'prevista'), canc = cs.find(c => c.estado === 'cancelada'), ext = cs.find(c => c.estado === 'extra');
+      if (prev) acciones += '<button class="boton rojo peq" type="button" data-ses="cancelar">Cancelar esta clase</button> ';
+      if (canc) acciones += '<button class="boton sec peq" type="button" data-ses="recuperar">Volver a poner la clase</button> ';
+      if (ext) acciones += '<button class="boton rojo peq" type="button" data-ses="quitar-extra">Quitar la clase extra</button> ';
+      if (!prev && !ext) acciones += `<button class="boton peq" type="button" data-ses="extra">Añadir clase extra${G.hora && G.hora !== 'Por decidir' ? ' a las ' + esc(G.hora) : ''}</button>`;
+    }
+    return `<h3 style="font-size:18px">${may(fechaLarga(diaSel))}</h3>
+      ${cs.length ? cs.map(filaSesion).join('') : '<p class="suave" style="margin-top:8px">Este día no hay clase.</p>'}
+      ${acciones ? `<p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${acciones}</p>` : ''}
+      ${!G.gestiona && !pasado ? '<p class="suave" style="font-size:13px;margin-top:10px">Para cambiar una clase, escríbelo en el chat del grupo.</p>' : ''}`;
+  }
+
+  function vistaChat() {
+    const quien = (G.miembros || []).length + (hayProfe() ? 1 : 0);
+    return `<div class="vista-g"><div class="hoja chat-g">
+      <div class="chat-cab"><b>Chat del grupo</b><small>${quien} ${quien === 1 ? 'persona' : 'personas'}: ${hayProfe() ? 'las familias y ' + esc(nombreProfe().split(' ')[0]) : 'las familias del grupo; el profe entrará cuando lo haya'}</small></div>
+      <div class="mensajes-g" id="mensajes" aria-live="polite">${htmlMensajes()}</div>
+      <p class="aviso-chat">🔒 Por seguridad, no compartáis teléfonos ni direcciones aquí hasta la primera clase.</p>
+      <form class="escribe-g" id="fChat"><textarea class="entrada" name="texto" rows="1" maxlength="2000" placeholder="Escribe al grupo…" aria-label="Mensaje" required></textarea><button class="boton">Enviar</button></form>
+    </div></div>`;
+  }
+  function htmlMensajes() {
+    if (!MSJ.length) return `<p class="sistema">Aún no hay mensajes. Saluda al grupo y proponed cómo queréis empezar.</p>`;
+    let ultimoDia = '';
+    return MSJ.map(m => {
+      const dia = diaDe(m.creado), sep = dia !== ultimoDia ? `<span class="separa">${dia}</span>` : ''; ultimoDia = dia;
+      const a = autor(m.autor_id), mio = m.autor_id === G.yo;
+      return `${sep}<div class="msj-g ${mio ? 'mio' : ''}">${mio ? '' : `<span class="autor ${a.profe ? 'profe' : ''}">${esc(a.nombre)}</span>`}<p>${esc(m.texto)}</p><time>${horaDe(m.creado)}</time></div>`;
+    }).join('');
+  }
+  function noLeidos() {
+    if (pestana === 'chat') return 0;
+    const visto = leer('grupoVisto:' + (G && G.id), '');
+    return MSJ.filter(m => m.autor_id !== G.yo && m.creado > visto).length;
+  }
+  function marcarVisto() { if (MSJ.length) guardar('grupoVisto:' + G.id, MSJ[MSJ.length - 1].creado); }
+
+  function vistaAjustes() {
+    const n = enGrupo(), puede = G.gestiona, dis = puede ? '' : 'disabled';
+    const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Por decidir'];
+    const HORAS = ['10:00', '11:00', '12:00', '16:00', '17:00', '18:00', '19:00', '20:00', 'Por decidir'];
+    const opc = (lista, v) => lista.map(x => `<option ${x === v ? 'selected' : ''}>${x}</option>`).join('') + (v && !lista.includes(v) ? `<option selected>${esc(v)}</option>` : '');
+    return `<div class="ajustes vista-g">
+      <form class="hoja" id="fAjustes">
+        <h3>Ajustes del grupo</h3>
+        <p class="suave" style="font-size:14.5px">${puede ? 'Lo que cambies aquí lo verán todas las familias del grupo.' : 'Solo quien creó el grupo (o el profe) puede cambiar los ajustes. Si quieres proponer algo, escríbelo en el chat.'}</p>
+        <fieldset class="visibilidad"><legend>¿Quién puede unirse?</legend>
+          <label class="vis-opcion"><input type="radio" name="privado" value="0" ${G.privado ? '' : 'checked'} ${dis}><span><b>🌍 Público</b><small>Sale en el tablón y se puede unir cualquier familia.</small></span></label>
+          <label class="vis-opcion"><input type="radio" name="privado" value="1" ${G.privado ? 'checked' : ''} ${dis}><span><b>🔒 Privado</b><small>No sale en el tablón. Solo entra quien tenga el enlace de invitación.</small></span></label>
+        </fieldset>
+        <div class="form-grid">
+          <label class="campo"><span>Alumnos como mucho</span><select class="entrada" name="plazas" ${dis}>${[2, 3, 4].filter(x => x >= n).map(x => `<option value="${x}" ${x === G.plazas ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+          <span></span>
+          <label class="campo"><span>Día</span><select class="entrada" name="dia" ${dis}>${opc(DIAS, G.dia)}</select></label>
+          <label class="campo"><span>Hora</span><select class="entrada" name="hora" ${dis}>${opc(HORAS, G.hora)}</select></label>
+        </div>
+        ${puede ? '<button class="boton" style="margin-top:18px;width:100%">Guardar cambios</button>' : ''}
+      </form>
+      <div style="display:grid;gap:18px">
+        ${G.codigo || !G.privado ? `<div class="hoja"><h3>Enlace de invitación</h3>
+          <p class="suave" style="font-size:14.5px">${G.privado ? 'Es la única forma de entrar en el grupo. Compártelo solo con quien quieras.' : 'Lleva directo a este grupo.'}</p>
+          <div class="enlace-inv"><input class="entrada" readonly value="${esc(enlaceGrupo())}" aria-label="Enlace de invitación" onclick="this.select()"><button class="boton sec peq" type="button" data-accion="copiar">Copiar</button></div>
+          ${puede && G.privado ? '<p style="margin-top:12px"><button class="boton sec peq" type="button" data-accion="nuevo-enlace">Crear un enlace nuevo</button></p><p class="suave" style="font-size:13px;margin-top:6px">El enlace anterior dejará de funcionar. Úsalo si se ha compartido con quien no debía.</p>' : ''}</div>` : ''}
+        <div class="hoja peligro"><h3>Salir del grupo</h3>
+          <p class="suave" style="font-size:14.5px">${G.gestiona && (G.miembros || []).length > 1 ? 'El grupo seguirá para las demás familias y lo gestionará la que lleva más tiempo.' : G.gestiona ? 'Eres la única familia: si sales, el grupo se borra.' : 'Dejarás de ver el chat y el calendario. Puedes volver a entrar mientras haya plazas.'}</p>
+          <p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="boton rojo peq" type="button" data-accion="salir">Salir del grupo</button>
+          ${puede && real ? '<button class="boton rojo peq" type="button" data-accion="borrar">Borrar el grupo</button>' : ''}</p></div>
+      </div></div>`;
+  }
+
+  function pintar() {
+    document.title = `${D.asig(G.asig).nombre} ${G.curso} · Grupo de estudio`;
+    const vistas = { resumen: vistaResumen, calendario: vistaCalendario, chat: vistaChat, ajustes: vistaAjustes };
+    $('#app').innerHTML = cabecera() + vistas[pestana]();
+    if (pestana === 'chat') { bajarChat(); marcarVisto(); }
+  }
+  const bajarChat = () => { const m = $('#mensajes'); if (m) m.scrollTop = m.scrollHeight; };
+
+  // ---------- Chat ----------
+  async function cargarChat() {
+    if (real) {
+      MSJ = await SUPA.mensajesGrupo(G.id);
+      if (dejarDeEscuchar) dejarDeEscuchar();
+      dejarDeEscuchar = SUPA.escucharGrupo(G.id, m => { if (!MSJ.some(x => x.id === m.id)) { MSJ.push(m); refrescarChat(); } });
+    } else {
+      MSJ = leer('grupoChat:' + G.id, null);
+      if (!MSJ) {
+        // Primer mensaje de ejemplo del profe, para que se vea cómo funciona
+        const p = profeDe(G), t = new Date(); t.setHours(t.getHours() - 20);
+        MSJ = p ? [{ id: 'e1', autor_id: p.id, texto: `¡Hola a todos! Soy ${p.nombre.split(' ')[0]}. Empezamos el ${String(G.dia || '').toLowerCase()} a las ${G.hora}. Si hay algún tema que os cueste especialmente, contádmelo por aquí.`, creado: t.toISOString() }] : [];
+        if (p) G.profe = p.id;
+      }
+    }
+    refrescarChat();
+  }
+  function refrescarChat() {
+    if (pestana === 'chat') { const m = $('#mensajes'); if (m) { m.innerHTML = htmlMensajes(); bajarChat(); } marcarVisto(); }
+    else { const b = document.querySelector('[data-pestana="chat"]'); if (b) b.innerHTML = 'Chat' + (noLeidos() ? `<span class="num">${noLeidos()}</span>` : ''); }
+  }
+  async function enviarMensaje(texto) {
+    texto = texto.trim(); if (!texto) return;
+    if (real) {
+      // También llega por tiempo real; se añade aquí por si el tiempo real tarda
+      const m = await SUPA.enviarGrupo(G.id, texto);
+      if (m && !MSJ.some(x => x.id === m.id)) { MSJ.push(m); refrescarChat(); }
+      return;
+    }
+    MSJ.push({ id: 'l' + Date.now(), autor_id: G.yo, texto, creado: new Date().toISOString() });
+    guardar('grupoChat:' + G.id, MSJ);
+    refrescarChat();
+  }
+
+  // ---------- Acciones ----------
+  function mensajeWhatsApp() {
+    const a = D.asig(G.asig), z = D.zona(G.zona), b = base(G), unos = hayProfe() ? '' : 'unos ', n = enGrupo();
+    return `¡Hola! Estoy en un grupo de estudio${G.privado ? ' privado' : ''} de ${a.nombre} de ${G.curso} en ${z ? z.nombre : 'nuestra zona'}${G.dia && G.dia !== 'Por decidir' ? ', los ' + G.dia.toLowerCase() + (G.hora && G.hora !== 'Por decidir' ? ' a las ' + G.hora : '') : ''}.\n\n` +
+      (n >= 2 ? `Ahora sale a ${unos}${eur(precio(b, n))} la hora por alumno. Si te apuntas, bajamos todos a ${unos}${eur(precio(b, Math.min(4, n + 1)))}.` : `Si te apuntas, el grupo arranca y pagamos ${unos}${eur(precio(b, 2))} la hora cada uno, en vez de ${eur(b)}.`) +
+      `\n\n${G.privado ? 'Entra con este enlace' : 'Míralo aquí'}: ${enlaceGrupo()}`;
+  }
+  async function copiar(t, aviso) { try { await navigator.clipboard.writeText(t); U.tostada(aviso); } catch (e) { prompt('Copia esto:', t); } }
+
+  async function recargarDetalle() { if (real) { const g = await SUPA.grupoDetalle(G.id); if (g) G = g; } }
+
+  async function cambiarSesion(tipo) {
+    const cs = clasesEntre(deIso(diaSel), deIso(diaSel));
+    try {
+      if (real) {
+        if (tipo === 'cancelar') await SUPA.marcarSesion(G.id, { fecha: diaSel, estado: 'cancelada' });
+        if (tipo === 'extra') await SUPA.marcarSesion(G.id, { fecha: diaSel, estado: 'extra', hora: G.hora !== 'Por decidir' ? G.hora : null });
+        if (tipo === 'recuperar') await SUPA.quitarSesion(cs.find(c => c.estado === 'cancelada').sesion.id);
+        if (tipo === 'quitar-extra') await SUPA.quitarSesion(cs.find(c => c.estado === 'extra').sesion.id);
+        await recargarDetalle();
+      } else {
+        let ses = G.sesiones || [];
+        if (tipo === 'cancelar') ses.push({ id: 's' + Date.now(), fecha: diaSel, estado: 'cancelada' });
+        if (tipo === 'extra') ses.push({ id: 's' + Date.now(), fecha: diaSel, estado: 'extra', hora: G.hora });
+        if (tipo === 'recuperar') ses = ses.filter(s => !(s.fecha === diaSel && s.estado === 'cancelada'));
+        if (tipo === 'quitar-extra') ses = ses.filter(s => !(s.fecha === diaSel && s.estado === 'extra'));
+        G.sesiones = ses; guardar('grupoSesiones:' + G.id, ses);
+      }
+    } catch (e) { return U.tostada(e.message); }
+    U.tostada({ cancelar: 'Clase cancelada. Avisa al grupo por el chat.', extra: 'Clase extra añadida', recuperar: 'Clase recuperada', 'quitar-extra': 'Clase extra quitada' }[tipo]);
+    pintar();
+  }
+
+  async function guardarAjustes(f) {
+    const a = { privado: f.privado.value === '1', plazas: Number(f.plazas.value), dia: f.dia.value, hora: f.hora.value };
+    const btn = f.querySelector('button'); btn.disabled = true;
+    try {
+      if (real) { await SUPA.ajustarGrupo(G.id, a); await recargarDetalle(); }
+      else {
+        Object.assign(G, a);
+        const locales = leer('gruposCreados', []), i = locales.findIndex(x => x.id === G.id);
+        if (i >= 0) { Object.assign(locales[i], a); guardar('gruposCreados', locales); } else guardar('grupoAjustes:' + G.id, a);
+      }
+    } catch (e) { btn.disabled = false; return U.tostada(e.message); }
+    U.tostada(a.privado ? 'Guardado. El grupo es privado: solo se entra con el enlace.' : 'Guardado. El grupo es público y sale en el tablón.');
+    pintar();
+  }
+
+  async function salir() {
+    if (!confirm(G.gestiona && (G.miembros || []).length <= 1 ? '¿Salir y borrar el grupo? Eres la única familia.' : '¿Seguro que quieres salir del grupo?')) return;
+    try {
+      if (real) await SUPA.salirGrupo(G.id);
+      else {
+        guardar('grupos', leer('grupos', []).filter(x => x !== G.id));
+        if (G.gestiona) guardar('gruposCreados', leer('gruposCreados', []).filter(x => x.id !== G.id));
+      }
+    } catch (e) { return U.tostada(e.message); }
+    location.href = 'grupos.html';
+  }
+  async function borrar() {
+    if (!confirm('¿Borrar el grupo para todas las familias? Se borran también el chat y el calendario. No se puede deshacer.')) return;
+    try { await SUPA.borrarGrupo(G.id); } catch (e) { return U.tostada(e.message); }
+    location.href = 'grupos.html';
+  }
+  async function nuevoEnlace() {
+    if (!confirm('El enlace actual dejará de funcionar. ¿Crear uno nuevo?')) return;
+    try {
+      if (real) G.codigo = await SUPA.nuevoEnlaceGrupo(G.id);
+      else {
+        G.codigo = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)).replace(/-/g, '');
+        const locales = leer('gruposCreados', []), i = locales.findIndex(x => x.id === G.id);
+        if (i >= 0) { locales[i].codigo = G.codigo; guardar('gruposCreados', locales); }
+      }
+    } catch (e) { return U.tostada(e.message); }
+    U.tostada('Enlace nuevo creado. El anterior ya no sirve.');
+    pintar();
+  }
+
+  function irA(p) { pestana = p; history.replaceState(null, '', '#' + p); pintar(); window.scrollTo({ top: Math.min(window.scrollY, $('.pestanas').offsetTop - 80), behavior: 'smooth' }); }
+
+  document.addEventListener('click', e => {
+    if (!G) return;
+    const t = e.target.closest('[data-pestana]'); if (t) { e.preventDefault(); return irA(t.dataset.pestana); }
+    const mes = e.target.closest('[data-mes]'); if (mes) { mesVista.setMonth(mesVista.getMonth() + Number(mes.dataset.mes)); return pintar(); }
+    const dia = e.target.closest('[data-dia]'); if (dia) { diaSel = dia.dataset.dia; return pintar(); }
+    const ses = e.target.closest('[data-ses]'); if (ses) return cambiarSesion(ses.dataset.ses);
+    const ac = e.target.closest('[data-accion]'); if (!ac) return;
+    const a = ac.dataset.accion;
+    if (a === 'whatsapp') window.open('https://wa.me/?text=' + encodeURIComponent(mensajeWhatsApp()), '_blank', 'noopener');
+    if (a === 'copiar') copiar(enlaceGrupo(), 'Enlace copiado: pégalo donde quieras');
+    if (a === 'salir') salir();
+    if (a === 'borrar') borrar();
+    if (a === 'nuevo-enlace') nuevoEnlace();
+  });
+  document.addEventListener('submit', async e => {
+    if (!G) return;
+    if (e.target.id === 'fAjustes') { e.preventDefault(); return guardarAjustes(e.target); }
+    if (e.target.id === 'fChat') {
+      e.preventDefault();
+      const ta = e.target.texto, t = ta.value; ta.value = '';
+      try { await enviarMensaje(t); } catch (x) { ta.value = t; U.tostada(x.message); }
+      ta.focus();
+    }
+  });
+  // Intro envía; Mayúsculas+Intro hace salto de línea
+  document.addEventListener('keydown', e => {
+    if (e.target.name === 'texto' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.target.form.requestSubmit(); }
+  });
+  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (G && h !== pestana && ['resumen', 'calendario', 'chat', 'ajustes'].includes(h)) { pestana = h; pintar(); } });
+
+  return { iniciar: () => D.listo.then(cargar) };
+})();
+PanelGrupo.iniciar();
+</script>
+</body>
+</html>
