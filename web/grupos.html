@@ -156,13 +156,17 @@
       <form class="hoja" style="padding:26px" id="formGrupo">
         <div class="form-grid">
           <label class="campo"><span>Asignatura</span><select class="entrada" name="asig" required id="pAsig"></select></label>
-          <label class="campo"><span>Curso</span><input class="entrada" name="curso" required maxlength="40" placeholder="p. ej. 2º ESO" list="cursos" autocomplete="off"></label>
+          <label class="campo"><span>Curso</span><select class="entrada" name="curso" required>
+            <optgroup label="Primaria"><option>1º Primaria</option><option>2º Primaria</option><option>3º Primaria</option><option>4º Primaria</option><option>5º Primaria</option><option>6º Primaria</option></optgroup>
+            <optgroup label="ESO"><option>1º ESO</option><option>2º ESO</option><option selected>3º ESO</option><option>4º ESO</option></optgroup>
+            <optgroup label="Bachillerato"><option>1º Bachillerato</option><option>2º Bachillerato</option></optgroup>
+            <optgroup label="FP y otros"><option>FP Grado medio</option><option>FP Grado superior</option><option>Universidad</option><option>Adultos</option></optgroup>
+          </select></label>
           <label class="campo"><span>Barrio</span><select class="entrada" name="zona" required id="pZona"></select></label>
           <label class="campo"><span>Alumnos como mucho</span><select class="entrada" name="plazas"><option value="2">2</option><option value="3">3</option><option value="4" selected>4 (más barato)</option></select></label>
           <label class="campo"><span>Día</span><select class="entrada" name="dia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Por decidir</option></select></label>
           <label class="campo"><span>Hora</span><select class="entrada" name="hora"><option>10:00</option><option>11:00</option><option>12:00</option><option>16:00</option><option>17:00</option><option selected>18:00</option><option>19:00</option><option>20:00</option><option>Por decidir</option></select></label>
         </div>
-        <datalist id="cursos"><option>1º Primaria</option><option>2º Primaria</option><option>3º Primaria</option><option>4º Primaria</option><option>5º Primaria</option><option>6º Primaria</option><option>1º ESO</option><option>2º ESO</option><option>3º ESO</option><option>4º ESO</option><option>1º Bachillerato</option><option>2º Bachillerato</option><option>FP Grado medio</option><option>FP Grado superior</option></datalist>
         <fieldset class="visibilidad">
           <legend>¿Quién puede unirse?</legend>
           <label class="vis-opcion"><input type="radio" name="privado" value="0" checked><span><b>🌍 Público</b><small>Sale en el tablón y se puede unir cualquier familia.</small></span></label>
@@ -355,8 +359,8 @@ D.listo.then(async () => {
   // ---------- Crear un grupo (público o privado) ----------
   const fG = $('#formGrupo');
   function calcCrear() {
-    const n = Number(fG.plazas.value), b = precioRef(fG.asig.value), priv = fG.privado.value === '1';
-    $('#calcCrear').innerHTML = `Con ${n} alumnos, cada familia pagaría unos <b>${eur(precio(b, n))}</b> la hora en vez de ${eur(b)}.`;
+    const n = Number(fG.plazas.value), priv = fG.privado.value === '1';
+    $('#calcCrear').innerHTML = `Con ${n} alumnos, cada familia paga un <b>${Math.round((1 - FACTOR[n]) * 100)} % menos</b> que en una clase individual.`;
     $('#btnCrear').textContent = priv ? 'Crear grupo privado' : 'Crear grupo público';
   }
   fG.onchange = calcCrear;
