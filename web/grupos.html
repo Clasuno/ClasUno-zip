@@ -52,11 +52,25 @@
 .invitar .wa svg{width:18px;height:18px}
 .grupo.invitado{box-shadow:0 0 0 3px var(--butano),var(--sombra)}
 .aviso-invitado{display:flex;gap:12px;align-items:center;padding:14px 18px;border-radius:16px;background:var(--butano-claro);margin-bottom:18px;font-size:15px}
+/* Bloque «Invita a otra familia» con la vista previa del mensaje de WhatsApp */
+.invita{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;padding:30px;margin:0 0 50px}
+.invita .wa{flex:0 1 auto}
+.wa-chat{display:block;border-radius:18px;padding:22px 18px;background:color-mix(in srgb,#25D366 7%,var(--papel-2));text-decoration:none;color:var(--tinta);transition:transform .2s}
+.wa-chat:hover{transform:translateY(-2px)}
+.wa-burbuja{margin-left:auto;max-width:400px;background:color-mix(in srgb,#25D366 20%,var(--papel));border-radius:12px 4px 12px 12px;padding:5px 5px 8px;box-shadow:0 1px 2px rgba(0,0,0,.12);position:relative}
+.wa-tarjeta{border-radius:9px;overflow:hidden;background:color-mix(in srgb,var(--tinta) 6%,var(--papel))}
+.wa-tarjeta img{display:block;width:100%;height:auto}
+.wa-tarjeta-txt{display:flex;flex-direction:column;gap:3px;padding:8px 10px 9px;font-size:13px;line-height:1.3}
+.wa-tarjeta-txt span{color:var(--tinta-2)}
+.wa-tarjeta-txt small{color:var(--tinta-2);font-size:11.5px}
+.wa-texto{white-space:pre-line;font-size:14.5px;line-height:1.4;padding:8px 6px 4px;margin:0;overflow-wrap:anywhere}
+.wa-texto a,.wa-enlace{color:#027EB5}
+.wa-hora{display:block;text-align:right;font-size:11px;color:var(--tinta-2);padding:0 6px}
 .proponer{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .barra-espera{height:14px;border-radius:9px;overflow:hidden;background:var(--papel-2);margin:14px 0}
 .barra-espera i{display:block;height:100%;background:var(--butano);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
-@media (max-width:900px){.cab-grupos,.proponer{grid-template-columns:1fr}.reglas{grid-template-columns:1fr}}
+@media (max-width:900px){.cab-grupos,.proponer,.invita{grid-template-columns:1fr}.invita{padding:22px;gap:24px}.reglas{grid-template-columns:1fr}}
 @media (max-width:520px){.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -74,6 +88,29 @@
       <div class="hoja aparece"><b>2–4</b><p>alumnos como mucho, de la misma zona y curso, para que la clase siga siendo particular.</p></div>
       <div class="hoja aparece"><b>−50 %</b><p>paga cada familia en un grupo de cuatro frente a una clase individual.</p></div>
       <div class="hoja aparece"><b>0 €</b><p>si el grupo no llega a dos alumnos: no se cobra nada.</p></div>
+    </div>
+    <!-- Invitar a otra familia: así se ve el mensaje en WhatsApp, con la tarjeta del enlace -->
+    <div class="hoja invita aparece" id="invita">
+      <div>
+        <p class="kicker">Invita a otra familia</p>
+        <h2 style="font-size:clamp(28px,3.4vw,40px)">Cuantos más seáis, menos paga cada uno.</h2>
+        <p class="suave" style="margin-top:12px;font-size:17px">Manda este mensaje a alguien de tu zona con un hijo del mismo curso. Cuando se apunte, el precio baja para todas las familias del grupo.</p>
+        <div class="invitar" style="margin-top:20px;flex-wrap:wrap">
+          <button class="boton wa" type="button" id="invitaWa"></button>
+          <button class="boton sec" type="button" id="invitaCopiar">Copiar mensaje</button>
+        </div>
+        <p class="suave" style="font-size:13px;margin-top:10px" id="invitaNota"></p>
+      </div>
+      <a class="wa-chat" id="invitaVista" href="#" aria-label="Abrir el mensaje de invitación en WhatsApp">
+        <div class="wa-burbuja">
+          <div class="wa-tarjeta">
+            <img src="assets/marca/compartir-grupos.jpg" width="1200" height="630" alt="Tarjeta de ClasUno: únete a nuestro grupo de estudio y pagamos todos menos">
+            <div class="wa-tarjeta-txt"><b>Únete a nuestro grupo de estudio y pagamos todos menos</b><span>Misma zona y mismo curso, hasta 4 alumnos. Cada alumno que entra baja el precio para todas las familias.</span><small>clasuno</small></div>
+          </div>
+          <p class="wa-texto" id="invitaTexto"></p>
+          <span class="wa-hora">ahora ✓✓</span>
+        </div>
+      </a>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:22px">
       <h2>Grupos abiertos</h2>
@@ -139,13 +176,43 @@ D.listo.then(() => {
       (ocup >= 2 ? `Ahora sale a ${eur(precio(p.precio, ocup))} la hora por alumno. Si te apuntas, bajamos todos a ${eur(precio(p.precio, conTi))}.` : `Si te apuntas, el grupo arranca y pagamos ${eur(precio(p.precio, conTi))} la hora cada uno, en vez de ${eur(p.precio)}.`) +
       `\n\nMíralo aquí: ${enlaceGrupo(g.id)}`;
   }
-  const abrirWhatsApp = g => window.open('https://wa.me/?text=' + encodeURIComponent(mensaje(g)), '_blank', 'noopener');
+  const abrirTexto = t => window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank', 'noopener');
+  const abrirWhatsApp = g => abrirTexto(mensaje(g));
+
+  // Bloque «Invita a otra familia»: si ya estás en un grupo con plazas, el mensaje es el de ese grupo;
+  // si no, una invitación general a los grupos de estudio
+  function mensajeGeneral() {
+    return '¡Hola! En ClasUno se hacen grupos de estudio de 2 a 4 alumnos de la misma zona y del mismo curso, con un profe para todos.\n\n' +
+      'Cada alumno que entra baja el precio para todas las familias: con 2 pagamos un 30 % menos y con 4, la mitad. ¿Nos apuntamos juntos?\n\n' +
+      'Míralo aquí: ' + location.origin + location.pathname;
+  }
+  function grupoParaInvitar() {
+    return D.GRUPOS.find(g => unidos.includes(g.id) && g.ocupadas + 1 < g.plazas);
+  }
+  const textoInvitacion = () => { const g = grupoParaInvitar(); return g ? mensaje(g) : mensajeGeneral(); };
+  function pintarInvita() {
+    const g = grupoParaInvitar(), t = textoInvitacion();
+    // El enlace del final se pinta en azul, como en WhatsApp
+    $('#invitaTexto').innerHTML = U.esc(t).replace(/(https?:\/\/\S+)$/, '<span class="wa-enlace">$1</span>');
+    $('#invitaWa').innerHTML = ICONO_WA + (g ? ' Invitar a mi grupo' : ' Invitar por WhatsApp');
+    $('#invitaNota').textContent = g
+      ? `Es el mensaje de tu grupo de ${D.asig(g.asig).nombre} de ${g.curso}, con su precio y el enlace directo al grupo.`
+      : 'Cuando te unas a un grupo, el mensaje llevará su precio y el enlace directo a ese grupo.';
+  }
+  $('#invitaWa').onclick = () => abrirTexto(textoInvitacion());
+  $('#invitaVista').onclick = e => { e.preventDefault(); abrirTexto(textoInvitacion()); };
+  $('#invitaCopiar').onclick = async () => {
+    const t = textoInvitacion();
+    try { await navigator.clipboard.writeText(t); U.tostada('Mensaje copiado: pégalo donde quieras'); }
+    catch (e) { prompt('Copia este mensaje:', t); }
+  };
   async function copiarEnlace(g) {
     try { await navigator.clipboard.writeText(enlaceGrupo(g.id)); U.tostada('Enlace copiado: pégalo donde quieras'); }
     catch (e) { prompt('Copia este enlace:', enlaceGrupo(g.id)); }
   }
 
   function pintar() {
+    pintarInvita();
     const fz = $('#fZona').value, fa = $('#fAsig').value;
     const gs = D.GRUPOS.filter(g => g.id === invitado || ((!fz || g.zona === fz) && (!fa || g.asig === fa)));
     $('#tablon').innerHTML = gs.length ? gs.map(g => {
