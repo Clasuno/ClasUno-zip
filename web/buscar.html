@@ -11,12 +11,9 @@
 <link rel="stylesheet" href="assets/estilo.css">
 <style>
 .filtros{border-bottom:1px solid var(--linea-2);background:var(--papel);padding:18px 0}
-/* Buscador sencillo: una barra, tres desplegables y el resto plegado en «Más filtros» */
-.fila-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:end}
-.btn-mas{height:46px;white-space:nowrap}
-.btn-mas .num{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--butano);color:var(--butano-t);font-size:12px;font-weight:700}
-.btn-mas[aria-expanded="true"]{background:var(--papel-2)}
-.panel-mas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;gap:18px 24px;align-items:end;margin-top:14px;padding:16px 18px;border:1px solid var(--linea);border-radius:16px;background:var(--hoja);animation:sube .3s both}
+/* Buscador sencillo: una barra, tres desplegables y debajo el resto de filtros, siempre a la vista */
+.fila-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end}
+.panel-mas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;gap:18px 24px;align-items:end;margin-top:14px;padding:16px 18px;border:1px solid var(--linea);border-radius:16px;background:var(--hoja)}
 .panel-mas .interruptores{display:flex;flex-direction:column;gap:10px}
 .pie-filtros{display:flex;justify-content:flex-end;margin-top:10px}
 .pie-filtros:has(#limpiar[hidden]){display:none}
@@ -43,7 +40,7 @@
 .cabeza-lista{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .vacio{padding:40px;text-align:center}
 .cambiar-vista{display:none;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:30}
-@media (max-width:1000px){.fila-filtros{grid-template-columns:1fr 1fr 1fr}.fila-filtros .btn-mas{grid-column:1/-1}.panel-mas{grid-template-columns:1fr 1fr}.panel-mas .interruptores{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:18px}}
+@media (max-width:1000px){.panel-mas{grid-template-columns:1fr 1fr}.panel-mas .interruptores{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:18px}}
 @media (max-width:600px){.fila-filtros{grid-template-columns:1fr 1fr}.fila-filtros>label:nth-child(3){grid-column:1/-1}.panel-mas{grid-template-columns:1fr}}
 @media (max-width:860px){
   .zona-busqueda{grid-template-columns:1fr}
@@ -68,9 +65,8 @@
         <label class="campo"><span>Asignatura</span><select class="entrada" id="asig"><option value="">Todas</option></select></label>
         <label class="campo"><span>Curso</span><select class="entrada" id="nivel"><option value="">Todos</option></select></label>
         <label class="campo"><span>Cerca de</span><select class="entrada" id="zona"><option value="">Toda la ciudad</option></select></label>
-        <button class="boton sec btn-mas" type="button" id="btnMas" aria-expanded="false" aria-controls="panelMas">Más filtros</button>
       </div>
-      <div class="panel-mas" id="panelMas" hidden>
+      <div class="panel-mas" id="panelMas">
         <label class="campo"><span>Hasta <b id="precioTxt">30 €</b> la hora</span><input type="range" id="precio" min="10" max="30" value="30"></label>
         <div class="campo"><span style="display:block;margin-bottom:6px;font-weight:650;font-size:14px">Clase</span>
           <div class="segmentado" id="modo"><button type="button" aria-pressed="true" data-m="">Todas</button><button type="button" aria-pressed="false" data-m="presencial">En persona</button><button type="button" aria-pressed="false" data-m="online">Online</button></div>
@@ -118,14 +114,9 @@ D.listo.then(() => {
   [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(z => $('#zona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`));
   $('#asig').value = f.asig; $('#zona').value = f.zona; $('#soloFavs').checked = f.favs;
 
-  // «Más filtros»: se abre y se cierra; el botón cuenta los que hay puestos dentro
-  const abrirMas = abierto => { $('#panelMas').hidden = !abierto; $('#btnMas').setAttribute('aria-expanded', abierto); };
-  $('#btnMas').onclick = () => abrirMas($('#panelMas').hidden);
-  if (f.favs) abrirMas(true);
+  // «Quitar filtros» solo se ve si hay alguno puesto
   function resumenFiltros() {
-    const dentro = (f.precio < 30) + !!f.modo + f.grupos + f.favs;
-    $('#btnMas').innerHTML = 'Más filtros' + (dentro ? ` <span class="num">${dentro}</span>` : '');
-    $('#limpiar').hidden = !(dentro || f.asig || f.nivel || f.zona || f.texto);
+    $('#limpiar').hidden = !(f.precio < 30 || f.modo || f.grupos || f.favs || f.asig || f.nivel || f.zona || f.texto);
   }
 
   const mapa = crearMapa($('#mapa'), {
