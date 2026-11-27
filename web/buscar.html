@@ -11,7 +11,15 @@
 <link rel="stylesheet" href="assets/estilo.css">
 <style>
 .filtros{border-bottom:1px solid var(--linea-2);background:var(--papel);padding:18px 0}
-.fila-filtros{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:12px;align-items:end}
+/* Buscador sencillo: una barra, tres desplegables y el resto plegado en «Más filtros» */
+.fila-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:end}
+.btn-mas{height:46px;white-space:nowrap}
+.btn-mas .num{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--butano);color:var(--butano-t);font-size:12px;font-weight:700}
+.btn-mas[aria-expanded="true"]{background:var(--papel-2)}
+.panel-mas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;gap:18px 24px;align-items:end;margin-top:14px;padding:16px 18px;border:1px solid var(--linea);border-radius:16px;background:var(--hoja);animation:sube .3s both}
+.panel-mas .interruptores{display:flex;flex-direction:column;gap:10px}
+.pie-filtros{display:flex;justify-content:flex-end;margin-top:10px}
+.pie-filtros:has(#limpiar[hidden]){display:none}
 .segmentado{display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden;background:var(--hoja)}
 .segmentado button{flex:1;border:0;background:transparent;padding:11px 6px;font-weight:650;font-size:14px}
 .segmentado button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
@@ -35,15 +43,14 @@
 .cabeza-lista{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .vacio{padding:40px;text-align:center}
 .cambiar-vista{display:none;position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:30}
-@media (max-width:1000px){.fila-filtros{grid-template-columns:1fr 1fr}.fila-filtros>:first-child{grid-column:1/-1}}
+@media (max-width:1000px){.fila-filtros{grid-template-columns:1fr 1fr 1fr}.fila-filtros .btn-mas{grid-column:1/-1}.panel-mas{grid-template-columns:1fr 1fr}.panel-mas .interruptores{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:18px}}
+@media (max-width:600px){.fila-filtros{grid-template-columns:1fr 1fr}.fila-filtros>label:nth-child(3){grid-column:1/-1}.panel-mas{grid-template-columns:1fr}}
 @media (max-width:860px){
   .zona-busqueda{grid-template-columns:1fr}
   .pegado{position:static;display:none}
   body.ver-mapa .pegado{display:block}
   body.ver-mapa .lista{display:none}
   .cambiar-vista{display:inline-flex}
-  #placas{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:-20px;padding-inline:20px}
-  #placas .placa-calle{flex:none}
 }
 </style>
 </head>
@@ -53,34 +60,34 @@
     <div class="envoltura">
       <form class="barra-ia" id="fIA">
         <span class="punto-ia" aria-hidden="true"></span>
-        <input id="textoIA" autocomplete="off" placeholder="Escríbelo con tus palabras: «3º de ESO, mates, Chamberí, martes por la tarde, hasta 20 €»" aria-label="Buscar escribiendo con tus palabras">
-        <button class="boton peq">Aplicar</button>
+        <input id="textoIA" type="search" autocomplete="off" placeholder="¿Qué buscas? Por ejemplo: «mates, 3º ESO, Chamberí»" aria-label="Escribe qué buscas con tus palabras">
+        <button class="boton peq">Buscar</button>
       </form>
       <p class="entendido-ia" id="entendidoIA" hidden></p>
       <div class="fila-filtros">
-        <label class="campo"><span>Buscar</span><input class="entrada" id="texto" type="search" placeholder="Nombre, tema, examen… (p. ej. «PAU»)"></label>
+        <label class="campo"><span>Asignatura</span><select class="entrada" id="asig"><option value="">Todas</option></select></label>
         <label class="campo"><span>Curso</span><select class="entrada" id="nivel"><option value="">Todos</option></select></label>
         <label class="campo"><span>Cerca de</span><select class="entrada" id="zona"><option value="">Toda la ciudad</option></select></label>
+        <button class="boton sec btn-mas" type="button" id="btnMas" aria-expanded="false" aria-controls="panelMas">Más filtros</button>
+      </div>
+      <div class="panel-mas" id="panelMas" hidden>
         <label class="campo"><span>Hasta <b id="precioTxt">30 €</b> la hora</span><input type="range" id="precio" min="10" max="30" value="30"></label>
         <div class="campo"><span style="display:block;margin-bottom:6px;font-weight:650;font-size:14px">Clase</span>
           <div class="segmentado" id="modo"><button type="button" aria-pressed="true" data-m="">Todas</button><button type="button" aria-pressed="false" data-m="presencial">En persona</button><button type="button" aria-pressed="false" data-m="online">Online</button></div>
         </div>
+        <div class="interruptores">
+          <label class="interruptor"><input type="checkbox" id="soloGrupos"> Hace grupos de estudio</label>
+          <label class="interruptor"><input type="checkbox" id="soloFavs"> Solo mis guardados</label>
+        </div>
       </div>
-      <div class="mas-filtros">
-        <div class="placas" id="placas"></div>
-      </div>
-      <div class="mas-filtros">
-        <label class="interruptor"><input type="checkbox" id="soloGrupos"> Hace grupos de estudio</label>
-        <label class="interruptor"><input type="checkbox" id="soloFavs"> Solo mis favoritos</label>
-        <button class="enlace-btn" type="button" id="limpiar">Quitar filtros</button>
-      </div>
+      <div class="pie-filtros"><button class="enlace-btn" type="button" id="limpiar" hidden>Quitar filtros</button></div>
     </div>
   </section>
 
   <section class="envoltura zona-busqueda">
     <div>
       <div class="cabeza-lista" style="margin-bottom:14px">
-        <h1 style="font-size:28px" id="titulo">23 profes</h1>
+        <h1 style="font-size:28px" id="titulo">Buscando profes…</h1>
         <label class="campo" style="display:flex;gap:8px;align-items:center"><span style="margin:0">Ordenar</span>
           <select class="entrada" id="orden" style="width:auto;padding:8px 10px"><option value="cerca">Más cerca</option><option value="nota">Mejor nota</option><option value="precio">Más barato</option><option value="clases">Más clases dadas</option></select></label>
       </div>
@@ -106,10 +113,20 @@ D.listo.then(() => {
   const D = window.D, $ = s => document.querySelector(s);
   const f = { texto: '', nivel: '', zona: U.param('zona') || '', precio: 30, modo: '', asig: U.param('asig') || '', grupos: false, favs: U.param('favs') === '1', orden: 'cerca' };
 
+  D.ASIG.forEach(a => $('#asig').insertAdjacentHTML('beforeend', `<option value="${a.id}">${a.nombre}</option>`));
   D.NIVELES.forEach(n => $('#nivel').insertAdjacentHTML('beforeend', `<option>${n}</option>`));
   [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(z => $('#zona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`));
-  $('#placas').innerHTML = D.ASIG.map(a => U.placa(a, a.id === f.asig)).join('');
-  $('#zona').value = f.zona; $('#soloFavs').checked = f.favs;
+  $('#asig').value = f.asig; $('#zona').value = f.zona; $('#soloFavs').checked = f.favs;
+
+  // «Más filtros»: se abre y se cierra; el botón cuenta los que hay puestos dentro
+  const abrirMas = abierto => { $('#panelMas').hidden = !abierto; $('#btnMas').setAttribute('aria-expanded', abierto); };
+  $('#btnMas').onclick = () => abrirMas($('#panelMas').hidden);
+  if (f.favs) abrirMas(true);
+  function resumenFiltros() {
+    const dentro = (f.precio < 30) + !!f.modo + f.grupos + f.favs;
+    $('#btnMas').innerHTML = 'Más filtros' + (dentro ? ` <span class="num">${dentro}</span>` : '');
+    $('#limpiar').hidden = !(dentro || f.asig || f.nivel || f.zona || f.texto);
+  }
 
   const mapa = crearMapa($('#mapa'), {
     id: 'b', elegirZona: true, botonesZoom: true,
@@ -161,9 +178,12 @@ D.listo.then(() => {
     });
     const qs = new URLSearchParams(); if (f.asig) qs.set('asig', f.asig); if (f.zona) qs.set('zona', f.zona);
     history.replaceState(null, '', 'buscar.html' + (qs.toString() ? '?' + qs : ''));
+    resumenFiltros();
   }
 
-  $('#texto').oninput = e => { f.texto = e.target.value.trim(); pintar(); };
+  $('#asig').onchange = e => { f.asig = e.target.value; pintar(); };
+  // Si se borra la barra de búsqueda, se quita también lo que buscaba por nombre o tema
+  $('#textoIA').oninput = e => { if (!e.target.value.trim() && (f.texto || !$('#entendidoIA').hidden)) { f.texto = ''; $('#entendidoIA').hidden = true; pintar(); } };
   $('#nivel').onchange = e => { f.nivel = e.target.value; pintar(); };
   $('#zona').onchange = e => { f.zona = e.target.value; pintar(true); };
   $('#precio').oninput = e => { f.precio = +e.target.value; $('#precioTxt').textContent = f.precio + ' €'; pintar(); };
@@ -171,18 +191,12 @@ D.listo.then(() => {
   $('#soloGrupos').onchange = e => { f.grupos = e.target.checked; pintar(); };
   $('#soloFavs').onchange = e => { f.favs = e.target.checked; pintar(); };
   $('#modo').onclick = e => { const b = e.target.closest('button'); if (!b) return; f.modo = b.dataset.m; $('#modo').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); pintar(); };
-  $('#placas').onclick = e => {
-    const b = e.target.closest('.placa-calle'); if (!b) return;
-    f.asig = f.asig === b.dataset.asig ? '' : b.dataset.asig;
-    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', x.dataset.asig === f.asig));
-    pintar();
-  };
   $('#limpiar').onclick = () => {
     Object.assign(f, { texto: '', nivel: '', zona: '', precio: 30, modo: '', asig: '', grupos: false, favs: false });
-    $('#texto').value = ''; $('#nivel').value = ''; $('#zona').value = ''; $('#precio').value = 30; $('#precioTxt').textContent = '30 €';
+    $('#textoIA').value = ''; $('#entendidoIA').hidden = true;
+    $('#asig').value = ''; $('#nivel').value = ''; $('#zona').value = ''; $('#precio').value = 30; $('#precioTxt').textContent = '30 €';
     $('#soloGrupos').checked = false; $('#soloFavs').checked = false;
     $('#modo').querySelectorAll('button').forEach((x, i) => x.setAttribute('aria-pressed', i === 0));
-    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', 'false'));
     pintar(true);
   };
   document.addEventListener('click', e => { if (e.target.closest('[data-fav]') && f.favs) setTimeout(pintar, 50); });
@@ -190,15 +204,17 @@ D.listo.then(() => {
   // Búsqueda escrita con tus palabras → filtros
   function aplicarIA(txt) {
     const n = IA.interpretar(txt), puesto = [];
-    if (n.asig.length) { f.asig = n.asig[0]; puesto.push(D.asig(f.asig).nombre); }
+    f.texto = '';
+    if (n.asig.length) { f.asig = n.asig[0]; $('#asig').value = f.asig; puesto.push(D.asig(f.asig).nombre); }
     if (n.nivel) { f.nivel = n.nivel; $('#nivel').value = n.nivel; puesto.push(n.curso || n.nivel); }
     if (n.zona) { f.zona = n.zona; $('#zona').value = n.zona; puesto.push('cerca de ' + D.zona(n.zona).nombre); }
     if (n.precioMax) { f.precio = Math.min(30, n.precioMax); $('#precio').value = f.precio; $('#precioTxt').textContent = f.precio + ' €'; puesto.push('hasta ' + n.precioMax + ' €'); }
     if (n.modo) { f.modo = n.modo; $('#modo').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.m === n.modo)); puesto.push(n.modo === 'online' ? 'online' : 'en persona'); }
     if (n.grupo) { f.grupos = true; $('#soloGrupos').checked = true; puesto.push('en grupo'); }
-    $('#placas').querySelectorAll('.placa-calle').forEach(x => x.setAttribute('aria-pressed', x.dataset.asig === f.asig));
     const e = $('#entendidoIA'); e.hidden = false;
-    e.innerHTML = puesto.length ? 'He puesto: ' + puesto.map(x => `<b>${U.esc(x)}</b>`).join(' · ') + (n.dias.length ? ` · ordenado por quien está libre el ${n.dias.map(d => IA.DIA_TXT[d]).join(' o ')}` : '') : 'No he sacado filtros de eso. Prueba con la asignatura, el curso o el barrio.';
+    if (puesto.length) e.innerHTML = 'He puesto: ' + puesto.map(x => `<b>${U.esc(x)}</b>`).join(' · ') + (n.dias.length ? ` · ordenado por quien está libre el ${n.dias.map(d => IA.DIA_TXT[d]).join(' o ')}` : '');
+    // Si no son filtros (un nombre, un tema, «PAU»…), se busca ese texto en los perfiles
+    else { f.texto = txt; e.innerHTML = `Buscando «<b>${U.esc(txt)}</b>» en nombres, temas y presentaciones.`; }
     if (n.dias.length) { const libres = p => p.libre.filter(h => n.dias.includes(h[0])).length; D.PROFES.sort((a, b) => libres(b) - libres(a)); }
     pintar(true);
   }
