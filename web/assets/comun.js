@@ -18,6 +18,7 @@
   cab.className = 'cab';
   cab.innerHTML = `<div class="envoltura">
     <a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
+    <a class="boton peq atajo-panel" href="panel.html" hidden></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="nav" id="nav">
       ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina || (h === 'grupos.html' && pagina === 'grupo.html') ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
@@ -127,5 +128,28 @@
     requestAnimationFrame(paso);
   };
 
-  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales };
+  // Con la sesión iniciada, «Mi panel» pasa a ser lo principal de la cabecera (con tu inicial) y «Dar clases» se quita
+  function pintarCuenta() {
+    const s = sesion(), b = cab.querySelector('.boton-entrar'), dc = cab.querySelector('.nav a[href="dar-clases.html"]'), atajo = cab.querySelector('.atajo-panel');
+    if (!b) return;
+    if (dc) dc.hidden = !!s;
+    // En el móvil, «Mi panel» sale fuera del menú, siempre a la vista
+    if (atajo) atajo.hidden = !s;
+    if (!s) { b.textContent = 'Entrar'; b.href = 'entrar.html'; b.classList.remove('con-cuenta'); return; }
+    b.href = s.rol === 'profe' ? 'panel.html?rol=profe' : 'panel.html';
+    b.classList.add('con-cuenta');
+    b.innerHTML = `<span class="ava-mini" aria-hidden="true">${esc((s.nombre || '?').trim().charAt(0).toUpperCase() || '?')}</span>Mi panel`;
+    if (atajo) { atajo.href = b.href; atajo.innerHTML = b.innerHTML; atajo.classList.add('con-cuenta'); }
+    franjaPanel(s);
+  }
+  // En la portada, quien ya tiene cuenta ve primero el camino a su panel
+  function franjaPanel(s) {
+    let f = document.querySelector('.franja-panel');
+    if (pagina !== 'index.html' || !s || s.rol === 'profe') { if (f) f.remove(); return; }
+    if (!f) { f = document.createElement('div'); f.className = 'franja-panel'; cab.after(f); }
+    f.innerHTML = `<div class="envoltura"><p><b>Hola, ${esc(s.nombre || '')}.</b> <span>Tus clases, tus profes, los mensajes y tus grupos de estudio están en tu panel.</span></p><a class="boton peq" href="panel.html">Ir a mi panel →</a></div>`;
+  }
+  pintarCuenta();
+
+  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales, pintarCuenta };
 })();
