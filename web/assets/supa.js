@@ -34,6 +34,17 @@ window.SUPA = (() => {
     };
   }
 
+  // Grupo de la base de datos → formato de la web. Los grupos que crea una familia pueden no tener profe todavía.
+  function aGrupo(x) {
+    if (!x || !x.id) return null;
+    const g = { id: x.id, profe: x.profe || null, asig: asigDeNombre(x.asignatura) || 'mat', curso: x.curso, zona: zonaDeNombre(x.zona),
+      dia: x.dia, hora: x.hora, plazas: x.plazas, real: true,
+      // «ocupadas» son las plazas de los demás: si ya estás dentro, tu plaza se pinta aparte («tú»)
+      ocupadas: Math.max(0, (Number(x.ocupadas) || 0) - (x.dentro ? 1 : 0)),
+      privado: !!x.privado, mio: !!x.mio, dentro: !!x.dentro, codigo: x.codigo || null };
+    return g.zona && (!g.profe || D.profe(g.profe)) ? g : null;
+  }
+
   // ---------- Profes aprobados ----------
   const conTiempo = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('Supabase no responde')), ms))]);
   D.listo = (async () => {
@@ -45,8 +56,7 @@ window.SUPA = (() => {
       // Grupos de verdad (si la tabla existe)
       const g = await sb.rpc('grupos_abiertos');
       if (!g.error && D.modo === 'real') {
-        D.GRUPOS.splice(0, D.GRUPOS.length, ...(g.data || []).map(x => ({ id: x.id, profe: x.profe, asig: asigDeNombre(x.asignatura) || 'mat', curso: x.curso, zona: zonaDeNombre(x.zona), dia: x.dia, hora: x.hora, plazas: x.plazas, ocupadas: x.ocupadas, real: true }))
-          .filter(x => D.profe(x.profe) && x.zona));
+        D.GRUPOS.splice(0, D.GRUPOS.length, ...(g.data || []).map(aGrupo).filter(Boolean));
       }
     } catch (e) { D.supaError = e.message || String(e); console.info('Supabase: se usan datos de ejemplo —', D.supaError); }
     document.documentElement.dataset.datos = D.modo;
@@ -163,6 +173,15 @@ window.SUPA = (() => {
   async function unirseGrupo(id, alumno) { const { error } = await sb.from('grupo_miembros').insert({ grupo_id: id, familia_id: usuario.id, alumno }); if (error) throw new Error(errorBonito(error)); }
   async function salirGrupo(id) { await sb.from('grupo_miembros').delete().eq('grupo_id', id).eq('familia_id', usuario.id); }
   async function proponerGrupo(p) { const { error } = await sb.from('grupo_propuestas').insert(p); if (error) throw new Error(errorBonito(error)); }
+  // Crear un grupo como familia (público: sale en el tablón; privado: solo con el enlace de invitación)
+  async function crearGrupo(p) {
+    const { data, error } = await sb.rpc('crear_grupo', { p_asignatura: p.asignatura, p_curso: p.curso, p_zona: p.zona, p_dia: p.dia,
+      p_hora: p.hora, p_plazas: p.plazas, p_privado: !!p.privado, p_alumno: p.alumno || null });
+    if (error) throw new Error(errorBonito(error));
+    return aGrupo(data);
+  }
+  async function grupoPorCodigo(c) { const { data, error } = await sb.rpc('grupo_por_codigo', { c }); return error ? null : aGrupo(data); }
+  async function unirseConCodigo(c, alumno) { const { error } = await sb.rpc('unirse_con_codigo', { c, p_alumno: alumno || null }); if (error) throw new Error(errorBonito(error)); }
 
   // ---------- Chat ----------
   async function conversaciones() {
@@ -187,6 +206,6 @@ window.SUPA = (() => {
   async function soporte(email, message) { const { error } = await sb.from('support_tickets').insert({ email, message, user_id: usuario ? usuario.id : null }); if (error) throw new Error(errorBonito(error)); }
 
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, sincronizarFavs, fav,
-    pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo,
+    pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

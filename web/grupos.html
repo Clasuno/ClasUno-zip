@@ -68,10 +68,28 @@
 .wa-hora{display:block;text-align:right;font-size:11px;color:var(--tinta-2);padding:0 6px}
 .proponer{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.barra-espera{height:14px;border-radius:9px;overflow:hidden;background:var(--papel-2);margin:14px 0}
-.barra-espera i{display:block;height:100%;background:var(--butano);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+/* Crear un grupo */
+.pasos-crear{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:14px;counter-reset:paso}
+.pasos-crear li{display:grid;grid-template-columns:34px 1fr;column-gap:12px;align-items:start;counter-increment:paso}
+.pasos-crear li::before{content:counter(paso);grid-row:span 2;width:34px;height:34px;border-radius:50%;background:var(--butano-claro);color:var(--butano);display:grid;place-items:center;font-weight:700}
+.pasos-crear span{color:var(--tinta-2);font-size:15px}
+.visibilidad{border:0;padding:0;margin:18px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.visibilidad legend{font-size:14px;font-weight:600;margin-bottom:8px;padding:0}
+.vis-opcion{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1.5px solid var(--linea-2);border-radius:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.vis-opcion input{margin-top:3px;accent-color:var(--butano)}
+.vis-opcion b{display:block;font-size:15px}
+.vis-opcion small{display:block;color:var(--tinta-2);font-size:13px;line-height:1.35;margin-top:3px}
+.vis-opcion:has(input:checked){border-color:var(--butano);background:var(--butano-claro)}
+.calc-crear{margin-top:14px;font-size:14.5px;color:var(--tinta-2)}
+.calc-crear b{color:var(--tinta)}
+.etiquetas{display:flex;gap:6px;flex-wrap:wrap;position:absolute;top:18px;right:18px}
+.etiqueta{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--papel-2);border:1px solid var(--linea)}
+.etiqueta.priv{background:var(--butano-claro);border-color:transparent;color:var(--butano)}
+.sin-profe{width:40px;height:40px;border-radius:50%;border:1.5px dashed var(--linea-2);display:grid;place-items:center;color:var(--tinta-2);flex:none}
+.enlace-inv{display:flex;gap:8px;margin-top:14px}
+.enlace-inv input{flex:1;min-width:0;font-size:13.5px}
 @media (max-width:900px){.cab-grupos,.proponer,.invita{grid-template-columns:1fr}.invita{padding:22px;gap:24px}.reglas{grid-template-columns:1fr}}
-@media (max-width:520px){.form-grid{grid-template-columns:1fr}}
+@media (max-width:520px){.form-grid,.visibilidad{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -81,7 +99,7 @@
       <p class="kicker">Grupos de estudio</p>
       <h1 style="font-size:clamp(40px,6vw,80px)">Mismo barrio, mismo curso, un profe para todos.</h1>
     </div>
-    <p class="suave" style="font-size:18px">Entre 2 y 4 alumnos <b>de la misma zona y del mismo curso</b> comparten profe y clase, cerca de casa o del colegio. Cada familia paga hasta la mitad y el profe gana más por hora. Te unes a un grupo que ya existe o propones uno y te avisamos cuando haya más gente de tu zona.</p>
+    <p class="suave" style="font-size:18px">Entre 2 y 4 alumnos <b>de la misma zona y del mismo curso</b> comparten profe y clase, cerca de casa o del colegio. Cada familia paga hasta la mitad y el profe gana más por hora. Te unes a un grupo que ya existe o creas el tuyo, abierto a tu zona o privado para quien tú invites.</p>
   </section>
   <section class="envoltura">
     <div class="reglas">
@@ -123,25 +141,35 @@
     <div class="tablon" id="tablon"></div>
   </section>
 
-  <section class="seccion" id="proponer">
+  <section class="seccion" id="crear">
     <div class="envoltura proponer">
       <div>
         <p class="kicker">¿No hay grupo para ti?</p>
-        <h2>Propón uno y lo llenamos con gente de tu barrio.</h2>
-        <p class="suave" style="margin-top:16px;font-size:18px">Avisamos a las familias de la zona con el mismo curso. En cuanto haya dos, buscamos profe y os proponemos hora.</p>
+        <h2>Crea tu grupo y pagad todos menos.</h2>
+        <p class="suave" style="margin-top:16px;font-size:18px">Elige asignatura, curso y barrio, y decide quién puede entrar: cualquier familia de tu zona o solo quien tú invites, como los compañeros de clase de tu hijo.</p>
+        <ol class="pasos-crear">
+          <li><b>Creas el grupo</b><span>Gratis. No se paga nada hasta la primera clase.</span></li>
+          <li><b>Invitas o esperas</b><span>Te damos un enlace para mandarlo por WhatsApp.</span></li>
+          <li><b>En cuanto seáis dos</b><span>Os proponemos profe de la zona y hora.</span></li>
+        </ol>
       </div>
       <form class="hoja" style="padding:26px" id="formGrupo">
         <div class="form-grid">
           <label class="campo"><span>Asignatura</span><select class="entrada" name="asig" required id="pAsig"></select></label>
-          <label class="campo"><span>Curso</span><input class="entrada" name="curso" required placeholder="p. ej. 2º ESO"></label>
+          <label class="campo"><span>Curso</span><input class="entrada" name="curso" required maxlength="40" placeholder="p. ej. 2º ESO" list="cursos" autocomplete="off"></label>
           <label class="campo"><span>Barrio</span><select class="entrada" name="zona" required id="pZona"></select></label>
-          <label class="campo"><span>Mejor día</span><select class="entrada" name="dia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option></select></label>
+          <label class="campo"><span>Alumnos como mucho</span><select class="entrada" name="plazas"><option value="2">2</option><option value="3">3</option><option value="4" selected>4 (más barato)</option></select></label>
+          <label class="campo"><span>Día</span><select class="entrada" name="dia"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Por decidir</option></select></label>
+          <label class="campo"><span>Hora</span><select class="entrada" name="hora"><option>10:00</option><option>11:00</option><option>12:00</option><option>16:00</option><option>17:00</option><option selected>18:00</option><option>19:00</option><option>20:00</option><option>Por decidir</option></select></label>
         </div>
-        <button class="boton" style="margin-top:18px;width:100%">Proponer grupo</button>
-        <div id="espera" hidden>
-          <div class="barra-espera"><i id="barraEspera"></i></div>
-          <p id="esperaTxt"></p>
-        </div>
+        <datalist id="cursos"><option>1º Primaria</option><option>2º Primaria</option><option>3º Primaria</option><option>4º Primaria</option><option>5º Primaria</option><option>6º Primaria</option><option>1º ESO</option><option>2º ESO</option><option>3º ESO</option><option>4º ESO</option><option>1º Bachillerato</option><option>2º Bachillerato</option><option>FP Grado medio</option><option>FP Grado superior</option></datalist>
+        <fieldset class="visibilidad">
+          <legend>¿Quién puede unirse?</legend>
+          <label class="vis-opcion"><input type="radio" name="privado" value="0" checked><span><b>🌍 Público</b><small>Sale en el tablón y se puede unir cualquier familia.</small></span></label>
+          <label class="vis-opcion"><input type="radio" name="privado" value="1"><span><b>🔒 Privado</b><small>No sale en el tablón. Solo entra quien tenga tu enlace de invitación.</small></span></label>
+        </fieldset>
+        <p class="calc-crear" id="calcCrear"></p>
+        <button class="boton" style="margin-top:14px;width:100%" id="btnCrear">Crear grupo</button>
       </form>
     </div>
   </section>
@@ -154,30 +182,55 @@
 <script src="assets/supa.js"></script>
 <script src="assets/comun.js"></script>
 <script>
-D.listo.then(() => {
-  const D = window.D, $ = s => document.querySelector(s);
+D.listo.then(async () => {
+  const D = window.D, $ = s => document.querySelector(s), esc = U.esc;
   const zonas = [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre));
   zonas.forEach(z => { $('#fZona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`); $('#pZona').insertAdjacentHTML('beforeend', `<option value="${z.id}">${z.nombre}</option>`); });
   D.ASIG.forEach(a => { $('#fAsig').insertAdjacentHTML('beforeend', `<option value="${a.id}">${a.nombre}</option>`); $('#pAsig').insertAdjacentHTML('beforeend', `<option value="${a.id}">${a.nombre}</option>`); });
+  const esReal = () => D.modo === 'real' && !!window.SUPA;
+
+  // Grupos en los que estás. Con base de datos lo dice el propio grupo («dentro»); sin ella, este navegador.
   let unidos = []; try { unidos = JSON.parse(localStorage.getItem('grupos') || '[]'); } catch (e) {}
+  const guardarUnidos = () => { try { localStorage.setItem('grupos', JSON.stringify(unidos)); } catch (e) {} };
+  const estoy = g => g.real ? !!g.dentro : unidos.includes(g.id);
+  // Grupos creados en este navegador cuando se usan los datos de ejemplo
+  let locales = []; try { locales = JSON.parse(localStorage.getItem('gruposCreados') || '[]'); } catch (e) {}
+  const guardarLocales = () => { try { localStorage.setItem('gruposCreados', JSON.stringify(locales)); } catch (e) {} };
+  if (!esReal()) [...locales].reverse().forEach(g => { if (!D.GRUPOS.some(x => x.id === g.id)) D.GRUPOS.unshift(g); });
 
   // Precio por alumno con céntimos, igual que lo calcula la base de datos (70 % con 2, 58 % con 3, 50 % con 4)
   const FACTOR = { 1: 1, 2: .7, 3: .58, 4: .5 };
   const precio = (base, n) => Math.round(base * FACTOR[Math.min(4, Math.max(1, n))] * 100) / 100;
   const eur = n => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',')) + ' €';
-  const enlaceGrupo = id => location.origin + location.pathname + '?grupo=' + encodeURIComponent(id);
+  // Si el grupo aún no tiene profe, el precio es orientativo: la mediana de los profes de esa asignatura
+  function precioRef(asig) {
+    const med = l => { l = l.filter(n => n > 0).sort((a, b) => a - b); return l.length ? l[Math.floor(l.length / 2)] : 0; };
+    return med(D.PROFES.filter(p => (p.asig || []).includes(asig)).map(p => p.precio)) || med(D.PROFES.map(p => p.precio)) || 20;
+  }
+  const profeDe = g => (g.profe && D.profe(g.profe)) || null;
+  const base = g => { const p = profeDe(g); return p ? p.precio : precioRef(g.asig); };
+  const cuando = g => (!g.dia || g.dia === 'Por decidir') ? 'Día por decidir' : g.dia + (g.hora && g.hora !== 'Por decidir' ? ' ' + g.hora : ' · hora por decidir');
+  // Los privados se abren con su código de invitación; los públicos, con su id
+  const enlaceGrupo = g => location.origin + location.pathname + (g.privado && g.codigo ? '?invitacion=' + encodeURIComponent(g.codigo) : '?grupo=' + encodeURIComponent(g.id));
   const ICONO_WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>';
 
   // Lo que se manda por WhatsApp: qué grupo es, cuánto se paga ahora y cuánto si entra uno más
   function mensaje(g) {
-    const p = D.profe(g.profe), a = D.asig(g.asig), z = D.zona(g.zona);
-    const yo = unidos.includes(g.id), ocup = g.ocupadas + (yo ? 1 : 0), conTi = Math.min(g.plazas, ocup + 1);
-    return `¡Hola! ${yo ? 'Me he apuntado a' : 'Estoy mirando'} un grupo de estudio de ${a.nombre} de ${g.curso} en ${z.nombre}, los ${g.dia.toLowerCase()} a las ${g.hora}, con ${p.nombre.split(' ')[0]}.\n\n` +
-      (ocup >= 2 ? `Ahora sale a ${eur(precio(p.precio, ocup))} la hora por alumno. Si te apuntas, bajamos todos a ${eur(precio(p.precio, conTi))}.` : `Si te apuntas, el grupo arranca y pagamos ${eur(precio(p.precio, conTi))} la hora cada uno, en vez de ${eur(p.precio)}.`) +
-      `\n\nMíralo aquí: ${enlaceGrupo(g.id)}`;
+    const p = profeDe(g), a = D.asig(g.asig), z = D.zona(g.zona), b = base(g), unos = p ? '' : 'unos ';
+    const yo = estoy(g), ocup = g.ocupadas + (yo ? 1 : 0), conTi = Math.min(g.plazas, ocup + 1);
+    const dia = (!g.dia || g.dia === 'Por decidir') ? '' : `, los ${g.dia.toLowerCase()}${g.hora && g.hora !== 'Por decidir' ? ' a las ' + g.hora : ''}`;
+    return `¡Hola! ${g.mio ? 'He creado' : yo ? 'Me he apuntado a' : 'Estoy mirando'} un grupo de estudio${g.privado ? ' privado' : ''} de ${a.nombre} de ${g.curso} en ${z.nombre}${dia}${p ? ', con ' + p.nombre.split(' ')[0] : ''}.\n\n` +
+      (ocup >= 2 ? `Ahora sale a ${unos}${eur(precio(b, ocup))} la hora por alumno. Si te apuntas, bajamos todos a ${unos}${eur(precio(b, conTi))}.`
+        : `Si te apuntas, el grupo arranca y pagamos ${unos}${eur(precio(b, conTi))} la hora cada uno, en vez de ${eur(b)}.`) +
+      (p ? '' : ' En cuanto seamos dos, ClasUno nos propone un profe de la zona.') +
+      `\n\n${g.privado ? 'Entra con este enlace' : 'Míralo aquí'}: ${enlaceGrupo(g)}`;
   }
   const abrirTexto = t => window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank', 'noopener');
   const abrirWhatsApp = g => abrirTexto(mensaje(g));
+  async function copiarEnlace(g) {
+    try { await navigator.clipboard.writeText(enlaceGrupo(g)); U.tostada('Enlace copiado: pégalo donde quieras'); }
+    catch (e) { prompt('Copia este enlace:', enlaceGrupo(g)); }
+  }
 
   // Bloque «Invita a otra familia»: si ya estás en un grupo con plazas, el mensaje es el de ese grupo;
   // si no, una invitación general a los grupos de estudio
@@ -186,18 +239,16 @@ D.listo.then(() => {
       'Cada alumno que entra baja el precio para todas las familias: con 2 pagamos un 30 % menos y con 4, la mitad. ¿Nos apuntamos juntos?\n\n' +
       'Míralo aquí: ' + location.origin + location.pathname;
   }
-  function grupoParaInvitar() {
-    return D.GRUPOS.find(g => unidos.includes(g.id) && g.ocupadas + 1 < g.plazas);
-  }
+  const grupoParaInvitar = () => D.GRUPOS.find(g => estoy(g) && g.ocupadas + 1 < g.plazas && (!g.privado || g.codigo));
   const textoInvitacion = () => { const g = grupoParaInvitar(); return g ? mensaje(g) : mensajeGeneral(); };
   function pintarInvita() {
     const g = grupoParaInvitar(), t = textoInvitacion();
     // El enlace del final se pinta en azul, como en WhatsApp
-    $('#invitaTexto').innerHTML = U.esc(t).replace(/(https?:\/\/\S+)$/, '<span class="wa-enlace">$1</span>');
+    $('#invitaTexto').innerHTML = esc(t).replace(/(https?:\/\/\S+)$/, '<span class="wa-enlace">$1</span>');
     $('#invitaWa').innerHTML = ICONO_WA + (g ? ' Invitar a mi grupo' : ' Invitar por WhatsApp');
     $('#invitaNota').textContent = g
-      ? `Es el mensaje de tu grupo de ${D.asig(g.asig).nombre} de ${g.curso}, con su precio y el enlace directo al grupo.`
-      : 'Cuando te unas a un grupo, el mensaje llevará su precio y el enlace directo a ese grupo.';
+      ? `Es el mensaje de tu grupo${g.privado ? ' privado' : ''} de ${D.asig(g.asig).nombre} de ${g.curso}, con su precio y el enlace directo al grupo.`
+      : 'Cuando estés en un grupo (o crees uno), el mensaje llevará su precio y el enlace directo a ese grupo.';
   }
   $('#invitaWa').onclick = () => abrirTexto(textoInvitacion());
   $('#invitaVista').onclick = e => { e.preventDefault(); abrirTexto(textoInvitacion()); };
@@ -206,88 +257,169 @@ D.listo.then(() => {
     try { await navigator.clipboard.writeText(t); U.tostada('Mensaje copiado: pégalo donde quieras'); }
     catch (e) { prompt('Copia este mensaje:', t); }
   };
-  async function copiarEnlace(g) {
-    try { await navigator.clipboard.writeText(enlaceGrupo(g.id)); U.tostada('Enlace copiado: pégalo donde quieras'); }
-    catch (e) { prompt('Copia este enlace:', enlaceGrupo(g.id)); }
+
+  // Si se llega con una invitación (grupos.html?grupo=… o, para los privados, ?invitacion=…), se enseña y se resalta ese grupo
+  let invitado = U.param('grupo');
+  const codigoInv = U.param('invitacion');
+  if (codigoInv) {
+    let g = D.GRUPOS.find(x => x.codigo === codigoInv);
+    if (!g && esReal()) {
+      g = await SUPA.grupoPorCodigo(codigoInv);
+      if (g && !D.GRUPOS.some(x => x.id === g.id)) D.GRUPOS.unshift(g);
+      g = g && D.GRUPOS.find(x => x.id === g.id);
+    }
+    invitado = g ? g.id : null;
+    if (!g) U.tostada('Este enlace de invitación no es válido o el grupo ya no existe');
   }
 
   function pintar() {
     pintarInvita();
     const fz = $('#fZona').value, fa = $('#fAsig').value;
-    const gs = D.GRUPOS.filter(g => g.id === invitado || ((!fz || g.zona === fz) && (!fa || g.asig === fa)));
+    // Primero el grupo de la invitación y luego los tuyos
+    const orden = g => (g.id === invitado ? 2 : 0) + (estoy(g) ? 1 : 0);
+    const gs = D.GRUPOS.filter(g => g.id === invitado || ((!fz || g.zona === fz) && (!fa || g.asig === fa))).sort((x, y) => orden(y) - orden(x));
     $('#tablon').innerHTML = gs.length ? gs.map(g => {
-      const p = D.profe(g.profe), a = D.asig(g.asig), z = D.zona(g.zona);
-      const yo = unidos.includes(g.id), ocup = g.ocupadas + (yo ? 1 : 0), completo = ocup >= g.plazas;
-      const ahora = precio(p.precio, Math.max(2, ocup)), siguiente = precio(p.precio, Math.min(g.plazas, Math.max(2, ocup + 1)));
+      const p = profeDe(g), a = D.asig(g.asig), z = D.zona(g.zona), b = base(g), apr = p ? '' : '≈ ';
+      const yo = estoy(g), ocup = g.ocupadas + (yo ? 1 : 0), completo = ocup >= g.plazas;
+      const ahora = precio(b, Math.max(2, ocup)), siguiente = precio(b, Math.min(g.plazas, Math.max(2, ocup + 1)));
       // Frase clave: cuánto pagas y cuánto pagarías si entra uno más
-      const baja = completo ? `Grupo completo: cada familia paga <b>${eur(ahora)}</b>, el precio más bajo.`
-        : ocup <= 1 ? `Con <b>1 alumno más</b> el grupo arranca y cada uno paga <b>${eur(siguiente)}</b> en vez de ${eur(p.precio)}.`
-        : `${yo ? 'Estás pagando' : 'Ahora se paga'} <b style="color:inherit">${eur(ahora)}</b>. Si se apunta <b>1 más</b>, ${yo ? 'pagas' : 'pagáis'} <b>${eur(siguiente)}</b>.`;
+      const baja = (completo ? `Grupo completo: cada familia paga <b>${apr}${eur(ahora)}</b>, el precio más bajo.`
+        : ocup <= 1 ? `Con <b>1 alumno más</b> el grupo arranca y cada uno paga <b>${apr}${eur(siguiente)}</b> en vez de ${eur(b)}.`
+        : `${yo ? 'Estás pagando' : 'Ahora se paga'} <b style="color:inherit">${apr}${eur(ahora)}</b>. Si se apunta <b>1 más</b>, ${yo ? 'pagas' : 'pagáis'} <b>${apr}${eur(siguiente)}</b>.`)
+        + (p ? '' : '<br><span class="suave" style="font-size:13px">Precio orientativo: depende del profe que elijáis.</span>');
       // Escalones: la altura es el precio; el azul es donde está el grupo ahora
-      const escalera = [1, 2, 3, 4].map(n => {
-        return `<div class="escalon ${n === Math.max(1, ocup) ? 'actual' : ''} ${n > g.plazas ? 'fuera' : ''}" style="height:${FACTOR[n] * 100}%" title="${n} alumno${n > 1 ? 's' : ''}: ${eur(precio(p.precio, n))} cada uno"><b>${eur(precio(p.precio, n))}</b>${n} alum.</div>`;
-      }).join('');
-      return `<article class="hoja grupo ${g.id === invitado ? 'invitado' : ''}" id="g-${g.id}">
+      const escalera = [1, 2, 3, 4].map(n => `<div class="escalon ${n === Math.max(1, ocup) ? 'actual' : ''} ${n > g.plazas ? 'fuera' : ''}" style="height:${FACTOR[n] * 100}%" title="${n} alumno${n > 1 ? 's' : ''}: ${eur(precio(b, n))} cada uno"><b>${eur(precio(b, n))}</b>${n} alum.</div>`).join('');
+      const etiquetas = (g.privado ? '<span class="etiqueta priv">🔒 Privado</span>' : '') + (g.mio ? '<span class="etiqueta">Creado por ti</span>' : '');
+      const quien = p
+        ? `<p style="display:flex;gap:10px;align-items:center">${U.cara(p, 'p')}<span><a href="profe.html?id=${p.id}"><b>${p.nombre}</b></a><br><span class="suave" style="font-size:13px">${p.nota ? '★ ' + U.coma(p.nota) + ' · ' : ''}${p.clases ? p.clases + ' clases' : 'Nuevo'}</span></span></p>`
+        : `<p style="display:flex;gap:10px;align-items:center"><span class="sin-profe" aria-hidden="true">?</span><span><b>Profe por asignar</b><br><span class="suave" style="font-size:13px">Os proponemos uno de la zona cuando seáis dos</span></span></p>`;
+      const puedeInvitar = !completo && (!g.privado || g.codigo);
+      return `<article class="hoja grupo ${g.id === invitado ? 'invitado' : ''}" id="g-${esc(g.id)}">
+        ${etiquetas ? `<div class="etiquetas">${etiquetas}</div>` : ''}
         <p style="color:${a.c};font-weight:600;font-size:14px">${a.nombre}</p>
-        <h3 style="margin-top:6px">${g.curso}</h3>
-        <p class="suave">📍 ${z.nombre} · ${g.dia} ${g.hora}</p>
+        <h3 style="margin-top:6px">${esc(g.curso)}</h3>
+        <p class="suave">📍 ${z.nombre} · ${esc(cuando(g))}</p>
         <div class="asientos">${Array.from({ length: g.plazas }, (_, i) => i < g.ocupadas ? '<span class="asiento ocupado">●</span>' : i === g.ocupadas && yo ? '<span class="asiento tuyo">tú</span>' : '<span class="asiento libre">+</span>').join('')}</div>
-        <p style="display:flex;gap:10px;align-items:center">${U.cara(p, 'p')}<span><a href="profe.html?id=${p.id}"><b>${p.nombre}</b></a><br><span class="suave" style="font-size:13px">${p.nota ? '★ ' + U.coma(p.nota) + ' · ' : ''}${p.clases ? p.clases + ' clases' : 'Nuevo'}</span></span></p>
+        ${quien}
         <div class="escalera" aria-label="Precio por alumno según cuántos seáis">${escalera}</div>
         <p class="baja">${baja}</p>
-        <button class="boton ${yo ? 'sec' : ''}" style="width:100%;margin-top:14px" data-g="${g.id}" ${completo && !yo ? 'disabled' : ''}>${yo ? 'Salir del grupo' : completo ? 'Completo' : `Unirme · ${eur(precio(p.precio, Math.max(2, ocup + 1)))}/h`}</button>
-        ${completo ? '' : `<div class="invitar"><button class="boton peq wa" type="button" data-wa="${g.id}">${ICONO_WA} Invitar por WhatsApp</button><button class="boton sec peq" type="button" data-copiar="${g.id}" title="Copiar enlace del grupo">🔗</button></div>`}
+        <button class="boton ${yo ? 'sec' : ''}" style="width:100%;margin-top:14px" data-g="${esc(g.id)}" ${completo && !yo ? 'disabled' : ''}>${yo ? 'Salir del grupo' : completo ? 'Completo' : `Unirme · ${apr}${eur(precio(b, Math.max(2, ocup + 1)))}/h`}</button>
+        ${puedeInvitar ? `<div class="invitar"><button class="boton peq wa" type="button" data-wa="${esc(g.id)}">${ICONO_WA} Invitar por WhatsApp</button><button class="boton sec peq" type="button" data-copiar="${esc(g.id)}" title="Copiar enlace de invitación">🔗</button></div>` : ''}
       </article>`;
-    }).join('') : '<p class="suave">No hay grupos abiertos con esos filtros. <a href="#proponer">Propón uno</a>.</p>';
+    }).join('') : '<p class="suave">No hay grupos abiertos con esos filtros. <a href="#crear">Crea uno</a>.</p>';
   }
 
-  // Si se llega desde una invitación (grupos.html?grupo=…), se enseña y se resalta ese grupo
-  const invitado = U.param('grupo');
   const gInv = invitado && D.GRUPOS.find(x => x.id === invitado);
   if (gInv) {
-    const p = D.profe(gInv.profe);
     $('#avisoInvitado').hidden = false;
-    $('#avisoInvitado').innerHTML = `<span style="font-size:22px">👋</span><span>Te han invitado al grupo de <b>${D.asig(gInv.asig).nombre} de ${U.esc(gInv.curso)}</b> en ${D.zona(gInv.zona).nombre}. Si te unes, ${eur(precio(p.precio, Math.min(gInv.plazas, gInv.ocupadas + 1)))} la hora y el precio baja también para ellos.</span>`;
+    $('#avisoInvitado').innerHTML = estoy(gInv)
+      ? `<span style="font-size:22px">👋</span><span>Ya estás en este grupo${gInv.privado ? ' privado' : ''} de <b>${D.asig(gInv.asig).nombre} de ${esc(gInv.curso)}</b>.</span>`
+      : `<span style="font-size:22px">👋</span><span>Te han invitado al grupo${gInv.privado ? ' privado' : ''} de <b>${D.asig(gInv.asig).nombre} de ${esc(gInv.curso)}</b> en ${D.zona(gInv.zona).nombre}. Si te unes, ${profeDe(gInv) ? '' : 'unos '}${eur(precio(base(gInv), Math.min(gInv.plazas, gInv.ocupadas + 1)))} la hora y el precio baja también para ellos.</span>`;
   }
   $('#fZona').onchange = pintar; $('#fAsig').onchange = pintar;
   $('#tablon').onclick = async e => {
     const wa = e.target.closest('[data-wa]'); if (wa) return abrirWhatsApp(D.GRUPOS.find(x => x.id === wa.dataset.wa));
     const cp = e.target.closest('[data-copiar]'); if (cp) return copiarEnlace(D.GRUPOS.find(x => x.id === cp.dataset.copiar));
-    const b = e.target.closest('[data-g]'); if (!b) return;
-    const id = b.dataset.g, i = unidos.indexOf(id);
-    const gr = D.GRUPOS.find(x => x.id === id);
-    if (gr && gr.real && window.SUPA) {
-      if (!SUPA.usuario()) { location.href = 'entrar.html?alta=familia'; return; }
-      try { const ses = U.sesion() || {}; if (i >= 0) await SUPA.salirGrupo(id); else await SUPA.unirseGrupo(id, (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null); }
-      catch (x) { return U.tostada(x.message); }
+    const btn = e.target.closest('[data-g]'); if (!btn) return;
+    const g = D.GRUPOS.find(x => x.id === btn.dataset.g); if (!g) return;
+    const salir = estoy(g);
+    if (g.real && window.SUPA) {
+      if (!SUPA.usuario()) { location.href = 'entrar.html?volver=' + encodeURIComponent('grupos.html' + (g.privado && g.codigo ? '?invitacion=' + g.codigo : '?grupo=' + g.id)); return; }
+      const ses = U.sesion() || {}, alumno = (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null;
+      btn.disabled = true;
+      try {
+        if (salir) await SUPA.salirGrupo(g.id);
+        else if (g.privado) await SUPA.unirseConCodigo(g.codigo, alumno);
+        else await SUPA.unirseGrupo(g.id, alumno);
+      } catch (x) { btn.disabled = false; return U.tostada(x.message); }
+      g.dentro = !salir;
     }
-    if (i >= 0) { unidos.splice(i, 1); U.tostada('Has dejado el grupo'); }
+    if (salir) { unidos = unidos.filter(id => id !== g.id); U.tostada('Has dejado el grupo'); }
     else {
-      unidos.push(id);
-      const g = D.GRUPOS.find(x => x.id === id), p = D.profe(g.profe);
+      unidos.push(g.id);
+      const p = profeDe(g), b = base(g), unos = p ? '' : 'unos ';
       const ocup = g.ocupadas + 1, hayHueco = ocup < g.plazas;
-      $('#dlgCuerpo').innerHTML = `<p class="kicker">Plaza reservada</p><h2 style="font-size:30px">Ya estás en el grupo de ${g.curso}.</h2>
-        <p style="margin-top:12px">${D.asig(g.asig).nombre} con ${p.nombre} · ${g.dia} a las ${g.hora} · ${D.zona(g.zona).nombre}.</p>
-        <p class="suave" style="margin-top:10px">No se cobra hasta la primera clase. Si entra alguien más, el precio baja para todos y te avisamos.</p>
-        ${hayHueco ? `<p class="baja" style="margin-top:16px">${ocup >= 2 ? `Estás pagando <b style="color:inherit">${eur(precio(p.precio, ocup))}</b>. Si se apunta <b>1 más</b>, pagas <b>${eur(precio(p.precio, ocup + 1))}</b>.` : `Con <b>1 alumno más</b> el grupo arranca y pagas <b>${eur(precio(p.precio, 2))}</b>.`} ¿Conoces a alguien de tu zona y del mismo curso?</p>
+      $('#dlgCuerpo').innerHTML = `<p class="kicker">Plaza reservada</p><h2 style="font-size:30px">Ya estás en el grupo de ${esc(g.curso)}.</h2>
+        <p style="margin-top:12px">${D.asig(g.asig).nombre}${p ? ' con ' + p.nombre : ''} · ${esc(cuando(g))} · ${D.zona(g.zona).nombre}.</p>
+        <p class="suave" style="margin-top:10px">No se cobra hasta la primera clase. Si entra alguien más, el precio baja para todos y te avisamos.${p ? '' : ' En cuanto seáis dos, os proponemos profe.'}</p>
+        ${hayHueco && (!g.privado || g.codigo) ? `<p class="baja" style="margin-top:16px">${ocup >= 2 ? `Estás pagando <b style="color:inherit">${unos}${eur(precio(b, ocup))}</b>. Si se apunta <b>1 más</b>, pagas <b>${unos}${eur(precio(b, ocup + 1))}</b>.` : `Con <b>1 alumno más</b> el grupo arranca y pagas <b>${unos}${eur(precio(b, 2))}</b>.`} ¿Conoces a alguien de tu zona y del mismo curso?</p>
         <div class="invitar"><button class="boton wa" type="button" id="dlgWa">${ICONO_WA} Invitar por WhatsApp</button></div>` : ''}
         <p style="margin-top:16px"><a class="boton ${hayHueco ? 'sec' : ''}" href="panel.html">Ver en mi panel</a></p>`;
       $('#dlg').showModal();
-      if (hayHueco) $('#dlgWa').onclick = () => abrirWhatsApp(g);
+      const dw = $('#dlgWa'); if (dw) dw.onclick = () => abrirWhatsApp(g);
     }
-    try { localStorage.setItem('grupos', JSON.stringify(unidos)); } catch (e) {}
+    guardarUnidos();
     pintar();
   };
-  $('#formGrupo').onsubmit = async e => {
+
+  // ---------- Crear un grupo (público o privado) ----------
+  const fG = $('#formGrupo');
+  function calcCrear() {
+    const n = Number(fG.plazas.value), b = precioRef(fG.asig.value), priv = fG.privado.value === '1';
+    $('#calcCrear').innerHTML = `Con ${n} alumnos, cada familia pagaría unos <b>${eur(precio(b, n))}</b> la hora en vez de ${eur(b)}.`;
+    $('#btnCrear').textContent = priv ? 'Crear grupo privado' : 'Crear grupo público';
+  }
+  fG.onchange = calcCrear;
+  // Si alguien empezó a crear un grupo sin haber entrado en su cuenta, se le deja el formulario como lo tenía
+  try {
+    const pend = JSON.parse(sessionStorage.getItem('grupoPendiente') || 'null');
+    if (pend) {
+      sessionStorage.removeItem('grupoPendiente');
+      ['asig', 'curso', 'zona', 'dia', 'hora', 'plazas'].forEach(k => { if (pend[k] != null) fG[k].value = pend[k]; });
+      fG.querySelector(`input[name="privado"][value="${pend.privado ? 1 : 0}"]`).checked = true;
+      setTimeout(() => { $('#crear').scrollIntoView({ behavior: 'smooth' }); U.tostada('Revisa los datos y pulsa «Crear grupo»'); }, 400);
+    }
+  } catch (e) {}
+  calcCrear();
+
+  function dlgCreado(g) {
+    const a = D.asig(g.asig), z = D.zona(g.zona), enlace = enlaceGrupo(g);
+    $('#dlgCuerpo').innerHTML = `<p class="kicker">${g.privado ? '🔒 Grupo privado creado' : '🌍 Grupo público creado'}</p>
+      <h2 style="font-size:30px">Tu grupo de ${a.nombre} de ${esc(g.curso)} ya está listo.</h2>
+      <p style="margin-top:12px">${z.nombre} · ${esc(cuando(g))} · hasta ${g.plazas} alumnos. Ya estás dentro.</p>
+      <p class="suave" style="margin-top:10px">${g.privado ? 'No sale en el tablón: solo podrán entrar las familias a las que mandes este enlace.' : 'Ya sale en el tablón para las familias de la zona. Si conoces a alguien, mándale el enlace.'} En cuanto seáis dos, os proponemos profe y hora.</p>
+      <div class="enlace-inv"><input class="entrada" readonly value="${esc(enlace)}" aria-label="Enlace de invitación" onclick="this.select()"><button class="boton sec peq" type="button" id="dlgCopiar">Copiar</button></div>
+      <div class="invitar" style="margin-top:10px"><button class="boton wa" type="button" id="dlgWa">${ICONO_WA} Invitar por WhatsApp</button></div>`;
+    $('#dlg').showModal();
+    $('#dlgWa').onclick = () => abrirWhatsApp(g);
+    $('#dlgCopiar').onclick = () => copiarEnlace(g);
+  }
+
+  fG.onsubmit = async e => {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    const z = D.zona(fd.get('zona')), a = D.asig(fd.get('asig'));
-    if (window.SUPA && SUPA.usuario()) { try { await SUPA.proponerGrupo({ asignatura: a.nombre, curso: fd.get('curso'), zona: SUPA.nombreZonaBD(z.id), dia: fd.get('dia') }); } catch (x) { return U.tostada(x.message); } }
-    const vecinos = 1 + (fd.get('curso').length + z.nombre.length) % 3;
-    $('#espera').hidden = false;
-    $('#esperaTxt').innerHTML = `Hemos avisado a las familias de <b>${z.nombre}</b> con ${a.nombre} de <b>${U.esc(fd.get('curso'))}</b>. Ya hay <b>${vecinos} interesada${vecinos > 1 ? 's' : ''}</b> además de ti. Te escribimos en cuanto el grupo esté listo.`;
-    requestAnimationFrame(() => $('#barraEspera').style.width = Math.min(100, (vecinos + 1) / 3 * 100) + '%');
+    const fd = new FormData(fG), z = D.zona(fd.get('zona')), a = D.asig(fd.get('asig'));
+    const datos = { asig: a.id, curso: String(fd.get('curso') || '').trim(), zona: z.id, dia: fd.get('dia'), hora: fd.get('hora'), plazas: Number(fd.get('plazas')), privado: fd.get('privado') === '1' };
+    if (!datos.curso) return U.tostada('Escribe el curso');
+    const btn = $('#btnCrear');
+    let g;
+    if (esReal()) {
+      if (!SUPA.usuario()) {
+        try { sessionStorage.setItem('grupoPendiente', JSON.stringify(datos)); } catch (x) {}
+        location.href = 'entrar.html?volver=' + encodeURIComponent('grupos.html#crear');
+        return;
+      }
+      const ses = U.sesion() || {};
+      btn.disabled = true;
+      try {
+        g = await SUPA.crearGrupo({ asignatura: a.nombre, curso: datos.curso, zona: SUPA.nombreZonaBD(z.id), dia: datos.dia, hora: datos.hora,
+          plazas: datos.plazas, privado: datos.privado, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null });
+        if (!g) throw new Error('No se ha podido crear el grupo. Vuelve a intentarlo.');
+      } catch (x) { btn.disabled = false; return U.tostada(x.message); }
+      btn.disabled = false;
+    } else {
+      const codigo = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()).replace(/-/g, '');
+      g = { id: 'mio-' + Date.now().toString(36), profe: null, asig: a.id, curso: datos.curso, zona: z.id, dia: datos.dia, hora: datos.hora,
+        plazas: datos.plazas, ocupadas: 0, privado: datos.privado, mio: true, codigo };
+      locales.unshift(g); guardarLocales();
+      unidos.push(g.id); guardarUnidos();
+    }
+    D.GRUPOS.unshift(g);
+    fG.reset(); calcCrear();
+    $('#fZona').value = ''; $('#fAsig').value = '';
+    pintar();
+    dlgCreado(g);
   };
+
   pintar();
   if (gInv) setTimeout(() => $('#avisoInvitado').scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
 });
