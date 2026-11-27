@@ -32,7 +32,7 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 | `buscar.html` | Filtros + lista + plano sincronizados, orden por cercanía, favoritos |
 | `profe.html?id=…` | Ficha del profe, zona aproximada, reseñas y reserva (prueba, suelta, bono, grupo) con horario |
 | `guardados.html` | Profes guardados (pestaña «♥ Guardados» de la cabecera, con contador). Cada tarjeta de profe se puede pulsar entera para ir a su ficha y lleva «Ver perfil», «Escribir a…» (abre el chat del panel) y «♡ Guardar» |
-| `grupos.html` | Tablón de grupos abiertos, unirse, proponer grupo |
+| `grupos.html` | Tablón de grupos abiertos, unirse, proponer grupo. Cada grupo enseña la escalera de precios (1–4 alumnos) y «Estás pagando X €. Si se apunta 1 más, pagas Y €», con botón **Invitar por WhatsApp** (mensaje con el precio y enlace `grupos.html?grupo=…`, que abre la página con ese grupo resaltado). Tarjeta para la vista previa del enlace: `assets/marca/compartir-grupos.jpg` (falta poner la dirección completa en `og:image` cuando haya dominio) |
 | `como-se-paga.html` | Recibo interactivo, comparativa, cancelaciones |
 | `dar-clases.html` | Calculadora de ingresos del profe a 6 meses, requisitos |
 | `alta-profe.html` | Alta en 7 pasos con vista previa en vivo, foto, titulación, barrio en el plano, horario, certificado y videollamada |
