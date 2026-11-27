@@ -10,7 +10,7 @@
 
   const NAV = [
     ['buscar.html', 'Buscar en el mapa'], ['grupos.html', 'Grupos de estudio'], ['como-se-paga.html', 'Cómo se paga'],
-    ['ayuda.html', 'Ayuda'], ['guardados.html', 'Guardados']
+    ['ayuda.html', 'Ayuda']
   ];
   // «Dar clases» va aparte, justo a la izquierda del botón «Entrar»
   const darClases = `<a class="boton sec peq" href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
@@ -21,7 +21,7 @@
     <a class="boton peq atajo-panel" href="panel.html" hidden></a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="nav" id="nav">
-      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina || (h === 'grupos.html' && pagina === 'grupo.html') ? ' aria-current="page"' : ''}>${h === 'guardados.html' ? '♥ ' : ''}${t}${h === 'guardados.html' ? '<span class="cuenta-favs" hidden></span>' : ''}</a>`).join('')}
+      ${NAV.map(([h, t]) => `<a href="${h}"${h === pagina || (h === 'grupos.html' && pagina === 'grupo.html') ? ' aria-current="page"' : ''}>${t}</a>`).join('')}
       <button class="tema-btn" type="button" aria-label="Cambiar entre tema claro y oscuro">◐</button>
       ${darClases}
       <a class="boton peq boton-entrar" href="${sesion() ? 'panel.html' : 'entrar.html'}">${sesion() ? 'Mi panel' : 'Entrar'}</a>
@@ -42,7 +42,7 @@
     <div class="cols">
       <div class="pila"><a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
         <p class="suave">Clases particulares en tu barrio. Profes comprobados en persona, sin cuotas y con la primera clase a prueba.</p></div>
-      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="deberes.html">Corregir deberes</a></li><li><a href="guardados.html">Profes guardados</a></li><li><a href="grupos.html">Grupos de estudio</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
+      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="deberes.html">Corregir deberes</a></li><li><a href="panel.html#profes">Mi panel</a></li><li><a href="grupos.html">Grupos de estudio</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
       <div><h4>Profes</h4><ul><li><a href="dar-clases.html">Dar clases</a></li><li><a href="alta-profe.html">Crear perfil</a></li><li><a href="panel.html?rol=profe">Panel de profe</a></li></ul></div>
       <div><h4>Ayuda</h4><ul><li><a href="ayuda.html">Preguntas frecuentes</a></li><li><a href="ayuda.html#seguridad">Seguridad</a></li><li><a href="legal.html">Aviso legal y privacidad</a></li><li><a href="legal.html#cookies">Cookies</a></li></ul></div>
     </div>
@@ -59,10 +59,8 @@
 
   const favs = () => { try { return JSON.parse(localStorage.getItem('favs') || '[]'); } catch (e) { return []; } };
   const alternarFav = id => { const f = favs(); const i = f.indexOf(id); i < 0 ? f.push(id) : f.splice(i, 1); try { localStorage.setItem('favs', JSON.stringify(f)); } catch (e) {} if (window.SUPA) SUPA.fav(id, i < 0).catch(() => {}); contarFavs(); return i < 0; };
-  // Número de guardados en la pestaña «Guardados» de la cabecera
-  const contarFavs = () => { const n = favs().length; document.querySelectorAll('.cuenta-favs').forEach(c => { c.hidden = !n; c.textContent = n; }); };
-  contarFavs(); if (D && D.listo) D.listo.then(() => setTimeout(contarFavs, 1500));
-  window.addEventListener('storage', e => { if (e.key === 'favs') contarFavs(); });
+  // Los profes guardados se ven en Mi panel → Mis profes (ya no hay pestaña «Guardados» en la cabecera)
+  const contarFavs = () => {};
 
   let tTost;
   const tostada = txt => {
@@ -114,7 +112,7 @@
       x.textContent = x.hasAttribute('data-fav-txt') ? (on ? '♥ Guardado' : '♡ Guardar') : (on ? '♥' : '♡');
     });
     b.animate([{ transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 350, easing: 'cubic-bezier(.3,1.6,.5,1)' });
-    tostada(on ? 'Guardado en «Guardados»' : 'Quitado de «Guardados»');
+    tostada(on ? 'Guardado en Mi panel › Mis profes' : 'Quitado de tus profes guardados');
   });
 
   const param = k => new URLSearchParams(location.search).get(k);
