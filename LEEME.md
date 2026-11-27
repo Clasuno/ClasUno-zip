@@ -41,6 +41,8 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 | `panel.html` | **Mi panel**, lo principal para familias y alumnos (con sesión, la cabecera enseña «Mi panel» con tu inicial, también fuera del menú en el móvil, y la portada lleva una franja «Ir a mi panel»). Familia: **Inicio** (próxima clase, accesos, los próximos 7 días, tus profes, tus grupos, último informe), **Calendario** (clases con cada profe + clases de tus grupos, con canceladas y extra), **Mis profes** (con los que tienes clases, grupos, informes o chat, y los guardados), **Mis grupos**, mensajes, informes, asistente, pagos y ajustes. Con profes de verdad en la web, hay que entrar para verlo. Profe (`?rol=profe`: solicitudes, informe, alumnos y tramo de comisión, ingresos) |
 | `ayuda.html`, `legal.html` | Preguntas con buscador, seguridad, contacto, borrador legal |
 
+**Desplegables:** todos los `<select>` de la web se convierten solos (en `assets/comun.js`) en una casilla en la que se puede escribir: «cham» deja solo Chamartín y Chamberí, sin importar acentos ni mayúsculas, y «2 bach» encuentra «2º Bachillerato». El `<select>` de verdad sigue dentro, oculto, así que el resto del código no cambia. Para dejar uno normal, ponle `data-nativo`.
+
 Todo funciona con **datos de ejemplo** (`assets/datos.js`) y `localStorage`. Falta conectarlo a Supabase (las tablas ya existen) y a un sistema de pagos (Stripe Connect encaja con la comisión variable).
 
 ## Ver en local
