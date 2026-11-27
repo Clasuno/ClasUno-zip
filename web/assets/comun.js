@@ -41,7 +41,7 @@
     <div class="cols">
       <div class="pila"><a class="logo" href="index.html" aria-label="Clasuno, inicio">${LOGO}</a>
         <p class="suave">Clases particulares en tu barrio. Profes comprobados en persona, sin cuotas y con la primera clase a prueba.</p></div>
-      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="guardados.html">Profes guardados</a></li><li><a href="grupos.html">Grupos de estudio</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
+      <div><h4>Familias</h4><ul><li><a href="buscar.html">Buscar profe</a></li><li><a href="deberes.html">Corregir deberes</a></li><li><a href="guardados.html">Profes guardados</a></li><li><a href="grupos.html">Grupos de estudio</a></li><li><a href="como-se-paga.html">Cómo se paga</a></li><li><a href="entrar.html?alta=familia">Crear cuenta</a></li></ul></div>
       <div><h4>Profes</h4><ul><li><a href="dar-clases.html">Dar clases</a></li><li><a href="alta-profe.html">Crear perfil</a></li><li><a href="panel.html?rol=profe">Panel de profe</a></li></ul></div>
       <div><h4>Ayuda</h4><ul><li><a href="ayuda.html">Preguntas frecuentes</a></li><li><a href="ayuda.html#seguridad">Seguridad</a></li><li><a href="legal.html">Aviso legal y privacidad</a></li><li><a href="legal.html#cookies">Cookies</a></li></ul></div>
     </div>

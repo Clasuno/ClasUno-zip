@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corregir deberes</title>
+<meta name="description" content="Haz una foto a los deberes o al examen: te dice qué está bien, en qué paso falla cada ejercicio y te lo explica paso a paso, con ejercicios para practicar.">
+<meta property="og:title" content="Corrige los deberes con una foto · ClasUno">
+<meta property="og:description" content="Qué está bien, en qué paso falla y la explicación paso a paso. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/marca/icono.svg" type="image/svg+xml"><link rel="icon" href="assets/marca/icono-32.png" sizes="32x32"><link rel="apple-touch-icon" href="assets/marca/icono-apple.png"><meta name="theme-color" content="#0B0C0E">
+<link rel="stylesheet" href="assets/estilo.css">
+<style>
+.cab-deb{padding:52px 0 30px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:end}
+.cab-deb h1{font-size:clamp(38px,5.6vw,72px)}
+.pagina-deb{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:26px;align-items:start;padding-bottom:70px}
+.lado{position:sticky;top:84px}
+.subida{padding:22px}
+.zona-foto{border:2px dashed var(--linea-2);border-radius:18px;padding:26px 18px;text-align:center;transition:border-color .2s,background .2s}
+.zona-foto.encima{border-color:var(--butano);background:var(--butano-claro)}
+.zona-foto p{color:var(--tinta-2);font-size:15px}
+.zona-foto .botones{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.miniaturas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.miniaturas:empty{display:none}
+.mini{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;background:var(--papel-2)}
+.mini img{width:100%;height:100%;object-fit:cover}
+.mini button{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px;line-height:1}
+.opciones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.segmentado{display:flex;border:1px solid var(--linea-2);border-radius:12px;overflow:hidden;background:var(--hoja);margin-top:6px}
+.segmentado button{flex:1;border:0;background:transparent;padding:10px 8px;font-weight:600;font-size:14px;line-height:1.25}
+.segmentado button small{display:block;font-weight:400;font-size:12px;color:var(--tinta-2)}
+.segmentado button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.segmentado button[aria-pressed="true"] small{color:inherit;opacity:.75}
+.escrito{margin-top:14px}
+.escrito summary{cursor:pointer;font-weight:600;font-size:14.5px;color:var(--butano)}
+.btn-corregir{width:100%;margin-top:18px;padding:15px;font-size:17px}
+.estado-corr{margin-top:12px;font-size:15px;min-height:22px}
+.visor .pestanas{display:flex;gap:6px;margin-bottom:10px}
+.visor .pestanas button{border:1px solid var(--linea-2);background:var(--hoja);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600}
+.visor .pestanas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.visor-pie{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.como{padding:26px}
+.como ol{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:16px}
+.como li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+.como li span{width:40px;height:40px;border-radius:12px;background:var(--butano-claro);display:grid;place-items:center;font-size:20px}
+.como li b{display:block}
+.como li p{color:var(--tinta-2);font-size:15px}
+@media (max-width:980px){.cab-deb,.pagina-deb{grid-template-columns:1fr}.lado{position:static}}
+@media (max-width:520px){.opciones{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <section class="envoltura cab-deb">
+    <div>
+      <p class="kicker">Corrector de deberes</p>
+      <h1>Haz una foto a los deberes. Te dice qué está bien, dónde falla y te lo explica.</h1>
+    </div>
+    <p class="suave" style="font-size:18px">Resuelve cada ejercicio desde cero, encuentra el paso exacto donde está el fallo y te lo explica con palabras sencillas. Primero una pista; si hace falta, la explicación entera. Y si te queda una duda, pregúntale.</p>
+  </section>
+
+  <section class="envoltura pagina-deb">
+    <!-- Izquierda: subir fotos y, después, la foto corregida -->
+    <div class="lado">
+      <form class="hoja subida" id="fSubida">
+        <div class="zona-foto" id="zonaFoto">
+          <p style="font-size:30px;line-height:1">📄</p>
+          <p style="margin-top:8px"><b style="color:var(--tinta)">Una foto por hoja, de frente y con buena luz.</b><br>Hasta 3 fotos. También vale un examen corregido.</p>
+          <div class="botones">
+            <label class="boton" style="cursor:pointer">📷 Hacer foto<input type="file" accept="image/*" capture="environment" id="camara" class="oculto"></label>
+            <label class="boton sec" style="cursor:pointer">Elegir fotos<input type="file" accept="image/*" multiple id="archivos" class="oculto"></label>
+          </div>
+          <div class="miniaturas" id="miniaturas"></div>
+        </div>
+        <details class="escrito"><summary>¿Sin foto? Escribe el ejercicio y tu respuesta</summary>
+          <textarea class="entrada" id="texto" style="margin-top:10px" maxlength="4000" placeholder="Ej.: Resuelve 3x − 7 = 2x + 5. Mi respuesta: 3x − 2x = 5 − 7, x = −2"></textarea></details>
+        <div class="opciones">
+          <label class="campo"><span>Curso</span><select class="entrada" id="curso"><option value="">Lo deduce de la hoja</option></select></label>
+          <label class="campo"><span>Asignatura</span><select class="entrada" id="asig"><option value="">Lo deduce de la hoja</option></select></label>
+        </div>
+        <div class="campo" style="margin-top:14px"><span style="font-weight:600;font-size:14px">¿Qué necesitas?</span>
+          <div class="segmentado" id="enfoque">
+            <button type="button" data-e="corregir" aria-pressed="true">Corregir y explicar<small>Ya los he terminado</small></button>
+            <button type="button" data-e="pistas" aria-pressed="false">Solo pistas<small>Los estoy haciendo</small></button>
+          </div>
+        </div>
+        <button class="boton btn-corregir" id="btnCorregir">Corregir</button>
+        <p class="estado-corr" id="estado" role="status"></p>
+        <p class="suave" style="font-size:13px;margin-top:6px">Las fotos no se guardan: se corrigen y se borran. <button type="button" class="enlace-btn" id="verEjemplo">Probar con una hoja de ejemplo</button></p>
+      </form>
+
+      <div class="visor" id="visor" hidden>
+        <div class="pestanas" id="pestanas"></div>
+        <div class="corr-foto" id="fotoCorr"><img id="imgCorr" alt="Tus deberes con los ejercicios marcados"><div class="corr-barrido" id="barrido"></div></div>
+        <div class="visor-pie"><span class="suave" style="font-size:13px">Pulsa un recuadro para ir a ese ejercicio.</span><button type="button" class="boton sec peq" id="otra">Corregir otra hoja</button></div>
+      </div>
+    </div>
+
+    <!-- Derecha: cómo funciona y, después, la corrección -->
+    <div id="derecha">
+      <div class="hoja como" id="como">
+        <h3>Qué te devuelve</h3>
+        <ol>
+          <li><span>✓</span><div><b>Cada ejercicio, bien o mal</b><p>Resuelve todo desde cero y no se fía de las cuentas: comprueba cada resultado.</p></div></li>
+          <li><span>🎯</span><div><b>El paso exacto donde falla</b><p>Lo marca en tu respuesta y te dice por qué, en una frase.</p></div></li>
+          <li><span>💡</span><div><b>Primero una pista, luego la explicación</b><p>Para que lo intentes tú antes de ver la solución paso a paso.</p></div></li>
+          <li><span>💬</span><div><b>Pregunta tus dudas</b><p>«¿Por qué cambia el signo?» Te responde sobre ese ejercicio.</p></div></li>
+          <li><span>🔁</span><div><b>Qué repasar y ejercicios para practicar</b><p>Agrupa los fallos que se repiten y te propone ejercicios parecidos.</p></div></li>
+        </ol>
+      </div>
+      <div id="correccion"></div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/datos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="assets/supa.js"></script>
+<script src="assets/comun.js"></script>
+<script src="assets/deberes.js"></script>
+<script>
+(() => {
+  const D = window.D, $ = s => document.querySelector(s);
+  let fotos = [], enfoque = 'corregir', ultimo = null, imagenes = [], vista = 0, marcas = {};
+
+  // Cursos y asignaturas
+  const CURSOS = ['1º Primaria', '2º Primaria', '3º Primaria', '4º Primaria', '5º Primaria', '6º Primaria', '1º ESO', '2º ESO', '3º ESO', '4º ESO', '1º Bachillerato', '2º Bachillerato', 'FP', 'Universidad'];
+  CURSOS.forEach(c => $('#curso').insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+  D.ASIG.forEach(a => $('#asig').insertAdjacentHTML('beforeend', `<option value="${a.nombre}">${a.nombre}</option>`));
+  try { const s = U.sesion(); const h = s && s.hijos && s.hijos[0]; if (h && CURSOS.includes(h.curso)) $('#curso').value = h.curso; } catch (e) {}
+
+  // Fotos: cámara, galería o arrastrar
+  async function anadir(lista) {
+    for (const f of [...lista]) {
+      if (fotos.length >= 3) { U.tostada('Como mucho 3 fotos por corrección'); break; }
+      try { fotos.push(await Deberes.prepararFoto(f)); } catch (e) { U.tostada(e.message); }
+    }
+    pintarMinis();
+  }
+  function pintarMinis() {
+    $('#miniaturas').innerHTML = fotos.map((f, i) => `<div class="mini"><img src="${f.url}" alt="Foto ${i + 1}"><button type="button" data-quitar="${i}" aria-label="Quitar la foto ${i + 1}">×</button></div>`).join('');
+    $('#btnCorregir').textContent = fotos.length ? `Corregir ${fotos.length > 1 ? 'las ' + fotos.length + ' fotos' : 'la foto'}` : 'Corregir';
+  }
+  $('#camara').onchange = e => { anadir(e.target.files); e.target.value = ''; };
+  $('#archivos').onchange = e => { anadir(e.target.files); e.target.value = ''; };
+  $('#miniaturas').onclick = e => { const b = e.target.closest('[data-quitar]'); if (b) { fotos.splice(+b.dataset.quitar, 1); pintarMinis(); } };
+  const zona = $('#zonaFoto');
+  ['dragenter', 'dragover'].forEach(t => zona.addEventListener(t, e => { e.preventDefault(); zona.classList.add('encima'); }));
+  ['dragleave', 'drop'].forEach(t => zona.addEventListener(t, e => { e.preventDefault(); zona.classList.remove('encima'); }));
+  zona.addEventListener('drop', e => anadir(e.dataTransfer.files));
+  document.addEventListener('paste', e => { const fs = [...(e.clipboardData?.files || [])].filter(f => /^image\//.test(f.type)); if (fs.length && !$('#fSubida').hidden) anadir(fs); });
+  $('#enfoque').onclick = e => { const b = e.target.closest('[data-e]'); if (!b) return; enfoque = b.dataset.e; $('#enfoque').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
+
+  // Corregir
+  $('#fSubida').onsubmit = async e => {
+    e.preventDefault();
+    const texto = $('#texto').value.trim();
+    if (!fotos.length && !texto) { U.tostada('Haz una foto o escribe el ejercicio'); return; }
+    const btn = $('#btnCorregir'); btn.disabled = true;
+    const parar = Deberes.progreso($('#estado'));
+    const res = await Deberes.corregir({ imagenes: fotos, texto, curso: $('#curso').value, asignatura: $('#asig').value, enfoque });
+    parar(); btn.disabled = false; $('#estado').textContent = '';
+    if (!res.ok) { $('#estado').innerHTML = `<span style="color:#C8353A">${Deberes.esc(res.error)}</span>`; return; }
+    mostrar(res, res.ia ? fotos.map(f => f.url) : res.imagenesEjemplo);
+  };
+  $('#verEjemplo').onclick = async () => {
+    const parar = Deberes.progreso($('#estado')); await new Promise(r => setTimeout(r, 1400)); parar(); $('#estado').textContent = '';
+    mostrar(Deberes.ejemplo(), [Deberes.IMG_EJEMPLO]);
+  };
+  $('#otra').onclick = () => {
+    fotos = []; pintarMinis(); $('#texto').value = '';
+    $('#visor').hidden = true; $('#fSubida').hidden = false; $('#correccion').innerHTML = ''; $('#como').hidden = false;
+    try { sessionStorage.removeItem('correccion'); } catch (e) {}
+    scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Enseñar la corrección: foto con recuadros a la izquierda, explicación a la derecha
+  async function mostrar(res, urls) {
+    ultimo = res; imagenes = urls.filter(Boolean); vista = 0;
+    $('#fSubida').hidden = true; $('#como').hidden = true;
+    $('#visor').hidden = !imagenes.length;
+    $('#pestanas').innerHTML = imagenes.length > 1 ? imagenes.map((_, i) => `<button type="button" data-v="${i}" aria-pressed="${i === 0}">Foto ${i + 1}</button>`).join('') : '';
+    Deberes.pintarCorreccion($('#correccion'), res, { enfoque, alElegir: enfocar });
+    if (innerWidth < 980) $('#visor').scrollIntoView({ behavior: 'smooth', block: 'start' }); else scrollTo({ top: $('.pagina-deb').offsetTop - 90, behavior: 'smooth' });
+    await verFoto(0, true);
+  }
+  async function verFoto(i, animar) {
+    vista = i; $('#pestanas').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.v === i));
+    const img = $('#imgCorr'); img.src = imagenes[i];
+    await new Promise(r => { if (img.complete && img.naturalWidth) r(); else { img.onload = r; img.onerror = r; } });
+    const b = $('#barrido'); if (animar) { b.classList.add('on'); await new Promise(r => setTimeout(r, 900)); b.classList.remove('on'); }
+    marcas = await Deberes.pintarMarcas($('#fotoCorr'), ultimo.resultado, i, { animar, alPulsar: n => { enfocar(n); const a = document.getElementById('ej-' + n); if (a) a.scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
+  }
+  $('#pestanas').onclick = e => { const b = e.target.closest('[data-v]'); if (b) verFoto(+b.dataset.v, false); };
+  // Resalta el ejercicio en la foto y en la lista
+  function enfocar(n) {
+    document.querySelectorAll('.corr-ej.foco, .corr-marca.foco').forEach(x => x.classList.remove('foco'));
+    const e = ultimo.resultado.ejercicios.find(x => x.numero === n);
+    if (e && (e.imagen | 0) !== vista && imagenes[e.imagen | 0]) verFoto(e.imagen | 0, false).then(() => marcas[n] && marcas[n].classList.add('foco'));
+    else if (marcas[n]) marcas[n].classList.add('foco');
+    const a = document.getElementById('ej-' + n); if (a) a.classList.add('foco');
+  }
+
+  // Si se llega desde la portada con una corrección ya hecha
+  try {
+    const g = JSON.parse(sessionStorage.getItem('correccion') || 'null');
+    if (g && g.res) mostrar(g.res, g.urls || []);
+    else if (U.param('ejemplo') === '1') $('#verEjemplo').click();
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

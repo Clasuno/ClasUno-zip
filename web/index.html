@@ -71,19 +71,8 @@
 .numero-f{font-size:14px;font-weight:600;color:var(--butano);margin-bottom:8px}
 @media (max-width:960px){.funcion{grid-template-columns:1fr}}
 
-/* 2. Examen */
-.foto-examen{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;background:var(--papel-2)}
-.foto-examen img{width:100%;height:100%;object-fit:cover}
-.marca-err{position:absolute;border:2px solid #E5484D;border-radius:8px;background:rgba(229,72,77,.08);opacity:0;transform:scale(1.15);transition:all .4s cubic-bezier(.2,1.2,.4,1)}
-.marca-err.ver{opacity:1;transform:none}
-.marca-err span{position:absolute;left:-2px;top:-26px;background:#E5484D;color:#fff;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
-.analiza{position:absolute;left:0;right:0;height:2px;background:var(--butano);top:0;opacity:0}
-.analiza.on{opacity:1;animation:barrido 1.6s ease-in-out}
-@keyframes barrido{from{top:0}to{top:100%}}
+/* 2. Corrector de deberes (estilos comunes en estilo.css, «corr-») */
 .subir{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-.tipo-err{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;margin-top:14px}
-.tipo-err i{grid-column:1/-1;height:8px;border-radius:9px;background:var(--papel-2);overflow:hidden;display:block}
-.tipo-err i span{display:block;height:100%;width:0;background:#E5484D;border-radius:9px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
 
 /* 3. Plan */
 .controles-plan{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
@@ -216,25 +205,25 @@
   <!-- 2. Foto del examen -->
   <section class="seccion">
     <div class="envoltura">
-      <p class="etq-ia"><i></i>Diagnóstico con una foto</p>
-      <h2>Haz una foto al examen corregido y sabrás por dónde empezar.</h2>
-      <p class="entradilla">El asistente lee los fallos, los agrupa por tipo y te dice qué trabajar primero y qué profe lo domina.</p>
+      <p class="etq-ia"><i></i>Corrector de deberes</p>
+      <h2>Haz una foto a los deberes y te dice qué está bien, dónde falla y por qué.</h2>
+      <p class="entradilla">Resuelve cada ejercicio desde cero, marca el paso exacto del fallo y lo explica paso a paso. Primero una pista, luego la solución, y puedes preguntarle tus dudas.</p>
       <div class="funcion">
         <div class="hoja panel-f">
-          <div class="foto-examen" id="fotoExamen">
-            <img id="imgExamen" src="https://images.unsplash.com/photo-1621356986575-05811227a42e?auto=format&fit=crop&w=1100&q=70" alt="Una hoja de ejercicios a mano">
-            <div class="analiza" id="barrido"></div>
+          <div class="corr-foto" id="fotoExamen">
+            <img id="imgExamen" src="assets/ejemplos/deberes-ejemplo.jpg" alt="Hoja de deberes de ecuaciones de 3º de ESO, escrita a mano">
+            <div class="corr-barrido" id="barrido"></div>
           </div>
           <div class="subir">
-            <button class="boton" type="button" id="analizar">Analizar este ejemplo</button>
+            <button class="boton" type="button" id="analizar">Corregir este ejemplo</button>
             <label class="boton sec" style="cursor:pointer">Subir mi foto<input type="file" accept="image/*" id="subirExamen" class="oculto"></label>
           </div>
-          <p class="suave" style="font-size:13px;margin-top:10px">La foto no se guarda: se analiza y se borra.</p>
+          <p class="suave" style="font-size:13px;margin-top:10px">La foto no se guarda: se corrige y se borra. <a href="deberes.html">Más opciones: varias fotos, solo pistas, escribirlo a mano</a></p>
         </div>
         <div class="hoja panel-f" id="diag">
-          <p class="numero-f">Resultado</p>
-          <h3 id="diagTitulo" style="font-size:24px">Pulsa «Analizar» para ver un ejemplo</h3>
-          <div id="diagCuerpo" class="suave" style="margin-top:10px">Matemáticas · 3º ESO · Ecuaciones</div>
+          <p class="numero-f">Corrección</p>
+          <h3 id="diagTitulo" style="font-size:24px">Pulsa «Corregir este ejemplo»</h3>
+          <div id="diagCuerpo" class="suave" style="margin-top:10px">7 ejercicios de ecuaciones de 3º de ESO. O sube una foto de tus deberes.</div>
         </div>
       </div>
     </div>
@@ -364,6 +353,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="assets/mapa.js"></script>
 <script src="assets/ia.js"></script>
+<script src="assets/deberes.js"></script>
 <script>
 D.listo.then(() => {
   const D = window.D, $ = s => document.querySelector(s), { espera } = IA;
@@ -450,37 +440,39 @@ D.listo.then(() => {
   };
   $('#corregir').onclick = () => { ta.focus(); ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
 
-  /* ---------- 2. Examen ---------- */
-  const ERRORES = [
-    { x: 14, y: 22, w: 30, h: 12, t: 'Signo al despejar' }, { x: 52, y: 38, w: 26, h: 11, t: 'Signo al despejar' },
-    { x: 20, y: 58, w: 34, h: 12, t: 'Fórmula general' }, { x: 60, y: 70, w: 24, h: 11, t: 'Signo al despejar' }, { x: 30, y: 80, w: 22, h: 10, t: 'Sin simplificar' }
-  ];
+  /* ---------- 2. Corrector de deberes (assets/deberes.js) ---------- */
   let analizando = false;
-  async function analizar(propia) {
+  async function analizar(archivo) {
     if (analizando) return; analizando = true;
-    const caja = $('#fotoExamen');
-    caja.querySelectorAll('.marca-err').forEach(m => m.remove());
-    $('#diagTitulo').textContent = 'Leyendo el examen…'; $('#diagCuerpo').innerHTML = '';
-    const b = $('#barrido'); b.classList.remove('on'); void b.offsetWidth; b.classList.add('on');
-    await espera(1600);
-    for (const e of ERRORES) {
-      const m = document.createElement('div'); m.className = 'marca-err';
-      m.style.cssText = `left:${e.x}%;top:${e.y}%;width:${e.w}%;height:${e.h}%`; m.innerHTML = `<span>${e.t}</span>`;
-      caja.appendChild(m); await espera(30); m.classList.add('ver'); await espera(220);
-    }
-    const tipos = {}; ERRORES.forEach(e => tipos[e.t] = (tipos[e.t] || 0) + 1);
-    $('#diagTitulo').textContent = '5 fallos: 3 son del mismo tipo';
-    $('#diagCuerpo').innerHTML = `${propia ? '<p style="margin-bottom:10px;color:var(--aviso)">Esto es una demostración: con tu foto sale el resultado de ejemplo.</p>' : ''}
-      <p>Matemáticas · 3º ESO · Ecuaciones de segundo grado</p>
-      ${Object.entries(tipos).sort((a, b) => b[1] - a[1]).map(([t, n]) => `<div class="tipo-err"><b style="color:var(--tinta)">${t}</b><span>${n} ${n === 1 ? 'fallo' : 'fallos'}</span><i><span data-w="${n / 5 * 100}"></span></i></div>`).join('')}
-      <div style="margin-top:20px;padding:16px;border-radius:14px;background:var(--butano-claro);color:var(--tinta)"><b>Por dónde empezar:</b> cambiar de lado los términos con su signo. Sabe la fórmula; lo que falla es el paso anterior. Con 2 clases suele bastar.</div>
-      <p style="margin-top:16px"><a class="boton peq" href="buscar.html?asig=mat">Profes que lo trabajan</a></p>`;
-    await espera(60);
-    document.querySelectorAll('#diag [data-w]').forEach(s => s.style.width = s.dataset.w + '%');
+    const caja = $('#fotoExamen'), b = $('#barrido');
+    caja.querySelectorAll('.corr-marca').forEach(m => m.remove());
+    $('#diagTitulo').textContent = 'Corrigiendo…'; $('#diagCuerpo').innerHTML = '<p id="progresoDeb"></p>';
+    const parar = Deberes.progreso($('#progresoDeb'));
+    b.classList.add('on');
+    let res, urls;
+    try {
+      if (archivo) {
+        const foto = await Deberes.prepararFoto(archivo);
+        $('#imgExamen').src = foto.url;
+        res = await Deberes.corregir({ imagenes: [foto] });
+        urls = res.ia ? [foto.url] : res.imagenesEjemplo;
+      } else { await espera(1800); res = Deberes.ejemplo(); urls = [Deberes.IMG_EJEMPLO]; }
+    } catch (e) { res = { ok: false, error: e.message }; }
+    parar(); b.classList.remove('on');
+    if (!res.ok) { $('#diagTitulo').textContent = 'No se ha podido corregir'; $('#diagCuerpo').innerHTML = `<p>${Deberes.esc(res.error)}</p>`; analizando = false; return; }
+    if (urls[0] && $('#imgExamen').getAttribute('src') !== urls[0]) { $('#imgExamen').src = urls[0]; await new Promise(r => $('#imgExamen').onload = r); }
+    const r = res.resultado, { n, b: bien } = Deberes.cuenta(r);
+    // La corrección completa se abre en deberes.html con lo mismo (sin volver a gastar IA)
+    try { sessionStorage.setItem('correccion', JSON.stringify({ res, urls })); } catch (e) {}
+    $('#diagTitulo').textContent = r.es_tarea ? (bien === n ? '¡Todo bien!' : `${n - bien} ejercicio${n - bien > 1 ? 's' : ''} para revisar`) : 'Eso no parecen deberes';
+    $('#diagCuerpo').innerHTML = (res.aviso ? `<p class="corr-aviso" style="margin-top:4px">${Deberes.esc(res.aviso)}</p>` : '') +
+      (r.es_tarea ? Deberes.htmlResumen(r, { enlace: 'deberes.html' }) : `<p>${Deberes.esc(r.mensaje)}</p>`);
+    await Deberes.pintarMarcas(caja, r, 0, { alPulsar: () => location.href = 'deberes.html' });
+    requestAnimationFrame(() => document.querySelectorAll('#diag [data-w]').forEach(s => s.style.width = s.dataset.w + '%'));
     analizando = false;
   }
-  $('#analizar').onclick = () => analizar(false);
-  $('#subirExamen').onchange = e => { const f = e.target.files[0]; if (!f) return; $('#imgExamen').src = URL.createObjectURL(f); analizar(true); };
+  $('#analizar').onclick = () => analizar(null);
+  $('#subirExamen').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) analizar(f); };
 
   /* ---------- 3. Plan ---------- */
   const TEMAS = { mat: ['Ecuaciones', 'Funciones', 'Geometría', 'Probabilidad'], ing: ['Gramática', 'Listening', 'Writing', 'Speaking'], fyq: ['Formulación', 'Estequiometría', 'Cinemática', 'Energía'],

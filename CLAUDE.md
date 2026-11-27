@@ -12,7 +12,8 @@ Plataforma de clases particulares (profes y familias, Madrid). Web estática en 
 ## Estructura
 - `web/` — la web (HTML + `assets/` con CSS y JS). Es lo que se publica.
 - `soon/` — página «próximamente».
-- `supabase/` — SQL de la base de datos (`0-base-clasuno.sql`, `1-conectar-web.sql`). Cualquier cambio que se haga en Supabase se anota aquí también.
+- `supabase/` — SQL de la base de datos (`0-base-clasuno.sql`, `1-conectar-web.sql`…). Cualquier cambio que se haga en Supabase se anota aquí también.
+- `supabase/functions/` — funciones de Supabase (Deno). `corregir-deberes` llama a Claude para el corrector de deberes; la clave `ANTHROPIC_API_KEY` va solo en los *Secrets* de Supabase, nunca en el código.
 - `marca/` — iconos del logo.
 
 ## Ver en local

@@ -29,6 +29,7 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 | Página | Qué hace |
 |---|---|
 | `index.html` | Portada con plano interactivo, sellos, ruta, calculadora de grupos y de comisión, carrusel |
+| `deberes.html` | **Corrector de deberes con IA** (Claude). Fotos (cámara, galería, arrastrar o pegar; hasta 3) o el ejercicio escrito, curso y modo «solo pistas». Devuelve cada ejercicio bien/mal con el paso exacto del fallo subrayado, por qué, una pista, la explicación paso a paso, chat de dudas por ejercicio, fallos agrupados por tipo, por dónde empezar, ejercicios de práctica y resumen para la familia; recuadros sobre la foto. La portada tiene una versión corta que enlaza aquí. Código común: `assets/deberes.js`. La IA vive en la función de Supabase `corregir-deberes` (ver `supabase/functions/corregir-deberes/LEEME.md`); sin ella, la web enseña la hoja de ejemplo `assets/ejemplos/deberes-ejemplo.jpg` ya corregida y lo avisa |
 | `buscar.html` | Filtros + lista + plano sincronizados, orden por cercanía, favoritos |
 | `profe.html?id=…` | Ficha del profe, zona aproximada, reseñas y reserva (prueba, suelta, bono, grupo) con horario |
 | `guardados.html` | Profes guardados (pestaña «♥ Guardados» de la cabecera, con contador). Cada tarjeta de profe se puede pulsar entera para ir a su ficha y lleva «Ver perfil», «Escribir a…» (abre el chat del panel) y «♡ Guardar» |
@@ -58,4 +59,4 @@ Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La web usa la clave pú
 4. ✅ Hecho el 26-nov-2026. SQL Editor → pegar `supabase/2-prueba-60-minutos.sql` → Run. Hace que la primera clase a prueba solo pueda ser de 60 minutos también en la base de datos (la web ya no deja elegir otra duración).
 5. Para que un profe salga en la web: aprobarlo con `select set_teacher_status('<uuid>', '<estado aprobado>');` siendo admin, y marcar `certificado = true` cuando se haya visto el certificado.
 
-**Falta:** pasarela de pago (Stripe Connect para la comisión variable), reseñas, y conectar el asistente a la API de Claude (hoy son reglas en el navegador).
+**Falta:** pasarela de pago (Stripe Connect para la comisión variable), reseñas, y conectar el resto del asistente a la API de Claude (hoy son reglas en el navegador). El **corrector de deberes** ya está hecho para Claude: solo falta activarlo en Supabase (clave en *Secrets* + desplegar `corregir-deberes`, unos 10 minutos: `supabase/functions/corregir-deberes/LEEME.md`).
