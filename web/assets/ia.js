@@ -77,7 +77,7 @@ window.IA = (() => {
         const libres = p.libre.filter(h => n.dias.includes(h[0]));
         if (libres.length) { s += 12; const d = [...new Set(libres.map(h => h[0]))].slice(0, 2); por.push(`Libre ${d.map(x => DIA_TXT[x]).join(' y ')} por la tarde`); } else s -= 10;
       }
-      if (n.grupo && p.grupos) { s += 8; por.push('Hace grupos de portal'); }
+      if (n.grupo && p.grupos) { s += 8; por.push('Hace grupos de estudio'); }
       if (n.objetivo === 'Preparar la PAU' && /PAU/.test(p.bio)) { s += 8; por.push('Prepara la PAU'); }
       if (n.objetivo === 'Organizarse y estudiar mejor' && /estudio|organiz/i.test(p.bio)) { s += 8; por.push('Trabaja técnicas de estudio'); }
       s += (p.nota || 4.5) * 3 + Math.min(p.clases, 300) / 60;

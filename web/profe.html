@@ -87,7 +87,7 @@ D.listo.then(() => {
             <span class="etiqueta ok">✓ Comprobado en persona</span>
             <span class="etiqueta ok">✓ Certificado para menores</span>
             <span class="etiqueta">Responde en ${p.responde}</span>
-            ${p.grupos ? '<span class="etiqueta naranja">Grupos de portal</span>' : ''}
+            ${p.grupos ? '<span class="etiqueta naranja">Grupos de estudio</span>' : ''}
           </p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -132,7 +132,7 @@ D.listo.then(() => {
         <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>60 min · si no encaja, no pagas</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="suelta"><b>Clase suelta</b><small>${p.precio} € la hora</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="bono"><b>Bono de 10</b><small>5 % menos</small></button>
-        ${p.grupos ? `<button class="tipo" type="button" aria-pressed="false" data-t="grupo"><b>Grupo de portal</b><small>${D.precioGrupo(p.precio, 3)} € por alumno</small></button>` : `<button class="tipo" type="button" disabled style="opacity:.4"><b>Grupo de portal</b><small>No hace grupos</small></button>`}
+        ${p.grupos ? `<button class="tipo" type="button" aria-pressed="false" data-t="grupo"><b>Grupo de estudio</b><small>${D.precioGrupo(p.precio, 3)} € por alumno</small></button>` : `<button class="tipo" type="button" disabled style="opacity:.4"><b>Grupo de estudio</b><small>No hace grupos</small></button>`}
       </div>
       <label class="campo"><span>Duración</span>
         <div class="segmentado" id="durSel" style="display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden">
@@ -208,7 +208,7 @@ D.listo.then(() => {
     $('#dlgCuerpo').innerHTML = `
       <p class="kicker">Solicitud enviada</p>
       <h2 style="font-size:32px">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
-      <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de portal' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min.</p>
+      <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de estudio' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min.</p>
       <ol style="margin:18px 0 0;padding-left:20px;line-height:1.8">
         <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora (suele tardar ${p.responde}).</li>
         <li>Pagas entonces; el dinero queda guardado hasta después de la clase.</li>

@@ -129,9 +129,9 @@ D.listo.then(async () => {
 
   // ---------- Datos simulados ----------
   let PROXIMAS = [
-    { profe: 'laura', quien: hijo.nombre, d: dia(2), hora: '18:00', tipo: 'Grupo de portal · 4º ESO', lugar: 'Chamberí' },
+    { profe: 'laura', quien: hijo.nombre, d: dia(2), hora: '18:00', tipo: 'Grupo de estudio · 4º ESO', lugar: 'Chamberí' },
     { profe: 'daniel', quien: hijo.nombre, d: dia(3), hora: '17:00', tipo: 'Clase suelta · 60 min', lugar: 'Online' },
-    { profe: 'laura', quien: hijo.nombre, d: dia(9), hora: '18:00', tipo: 'Grupo de portal · 4º ESO', lugar: 'Chamberí' }
+    { profe: 'laura', quien: hijo.nombre, d: dia(9), hora: '18:00', tipo: 'Grupo de estudio · 4º ESO', lugar: 'Chamberí' }
   ];
   let INFORMES = [
     { profe: 'laura', d: dia(-5), tema: 'Ecuaciones de segundo grado', bien: 'Ya aplica la fórmula sin mirar los apuntes.', cuesta: 'Se lía con los signos al despejar.', luego: 'Problemas con enunciado y repaso de signos.', nivel: [2, 2, 3, 3, 4] },
@@ -147,17 +147,17 @@ D.listo.then(async () => {
   let SOLICITUDES = [
     { familia: 'Rosa T.', alumno: 'Iker · 2º ESO', tipo: 'Primera a prueba', cuando: 'Lunes 18:00', zona: 'Chamberí' },
     { familia: 'Andrés M.', alumno: 'Nora · 1º Bachillerato', tipo: 'Bono de 10', cuando: 'Miércoles 19:00', zona: 'Centro' },
-    { familia: 'Lucía R.', alumno: 'Plaza en grupo 4º ESO', tipo: 'Grupo de portal', cuando: 'Martes 18:00', zona: 'Chamberí' }
+    { familia: 'Lucía R.', alumno: 'Plaza en grupo 4º ESO', tipo: 'Grupo de estudio', cuando: 'Martes 18:00', zona: 'Chamberí' }
   ];
   let ALUMNOS = [['Familia García · Lucas', 14], ['Familia Pérez · Nora', 4], ['Familia Ruiz · Pablo', 27], ['Familia Soto · Alba', 8]];
-  let PAGOS = [[-5, 'Grupo de portal · Laura', 11.6], [-4, 'Clase suelta · Daniel', 15], [-30, 'Bono 10 clases · Laura', 171], [-34, 'Primera a prueba · Daniel', 15]];
-  let GASTOS = [['Grupo de portal · Laura', 11.6], ['Clase suelta · Daniel', 15]];
+  let PAGOS = [[-5, 'Grupo de estudio · Laura', 11.6], [-4, 'Clase suelta · Daniel', 15], [-30, 'Bono 10 clases · Laura', 171], [-34, 'Primera a prueba · Daniel', 15]];
+  let GASTOS = [['Grupo de estudio · Laura', 11.6], ['Clase suelta · Daniel', 15]];
   const STATS = { mes: '1.184 €', semana: 9, nota: '★ 4,9', ingresos: [612, 780, 905, 1010, 1102, 1184], proximoPago: '184,30 € a tu cuenta ···· 0817' };
 
   // ---------- Datos de verdad, si has entrado con una cuenta ----------
   let REAL = false, CLASES = [], yo = null, quitarEscucha = null;
   const CONV = {};
-  const TIPO_TXT = { prueba: 'Primera a prueba', suelta: 'Clase suelta', bono: 'Bono de 10', grupo: 'Grupo de portal' };
+  const TIPO_TXT = { prueba: 'Primera a prueba', suelta: 'Clase suelta', bono: 'Bono de 10', grupo: 'Grupo de estudio' };
   const persona = id => D.profe(id) || { id, nombre: 'Familia', asig: ['mat'], libre: [], responde: '—', precio: 0 };
   const hora = d => d.toTimeString().slice(0, 5);
   if (window.SUPA && (await SUPA.sesionLista) && SUPA.usuario()) {
@@ -262,7 +262,7 @@ D.listo.then(async () => {
       ajustes: () => `<h1>Ajustes</h1><div class="hoja" style="padding:26px"><h3>Hijos en la cuenta</h3>
         ${(s.hijos || []).map(h => `<p style="margin-top:10px">👤 <b>${U.esc(h.nombre)}</b> <span class="suave">· ${U.esc(h.curso)}</span></p>`).join('') || '<p class="suave">Cuenta de alumno adulto.</p>'}
         <hr class="regla" style="margin:20px 0"><h3>Avisos</h3>
-        ${['Informe después de cada clase', 'Recordatorio el día antes', 'Nuevos grupos de portal en mi barrio'].map(t => `<label style="display:flex;gap:10px;margin-top:12px"><input type="checkbox" checked> ${t}</label>`).join('')}
+        ${['Informe después de cada clase', 'Recordatorio el día antes', 'Nuevos grupos de estudio en mi zona'].map(t => `<label style="display:flex;gap:10px;margin-top:12px"><input type="checkbox" checked> ${t}</label>`).join('')}
         <hr class="regla" style="margin:20px 0"><button class="boton sec" type="button" id="salir">Cerrar sesión</button></div>`
     },
     profe: {
@@ -472,7 +472,7 @@ D.listo.then(async () => {
       const fila = sg.closest('.fila-clase'); const r = SOLICITUDES[+sg.dataset.sug];
       if (fila.nextElementSibling && fila.nextElementSibling.classList.contains('sugerida')) return fila.nextElementSibling.remove();
       const nombre = r.alumno.split(' · ')[0], fam = r.familia.split(' ')[0], cuando = r.cuando.toLowerCase().replace(/ (\d)/, ' a las $1');
-      const txt = r.tipo === 'Grupo de portal' ? `Hola, ${fam}. ¡Bienvenidos al grupo de 4º ESO! Nos vemos los ${cuando.replace('martes', 'martes')} en Chamberí. La primera clase hago un repaso de ecuaciones para ver el nivel de todos.`
+      const txt = r.tipo === 'Grupo de estudio' ? `Hola, ${fam}. ¡Bienvenidos al grupo de 4º ESO! Nos vemos los ${cuando.replace('martes', 'martes')} en Chamberí. La primera clase hago un repaso de ecuaciones para ver el nivel de todos.`
         : r.tipo === 'Bono de 10' ? `Hola, ${fam}. Encantada de dar clase a ${nombre}. El ${cuando} me va bien. En la primera vemos qué temas lleva peor y organizo el bono a partir de ahí.`
         : `Hola, ${fam}. Me viene bien el ${cuando}. En esta primera clase a prueba veo cómo va ${nombre} y os cuento qué plan le propongo. Si no os convence, no la pagáis.`;
       fila.insertAdjacentHTML('afterend', `<div class="sugerida"><p></p><button class="boton peq" type="button" onclick="this.closest('.sugerida').remove();U.tostada('Respuesta enviada y clase aceptada')">Enviar y aceptar</button> <button class="boton sec peq" type="button" onclick="U.tostada('Copiada para editarla en el chat')">Editar</button></div>`);

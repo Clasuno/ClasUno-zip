@@ -19,7 +19,7 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 ## Modelo de negocio
 1. **Sin cuotas** para nadie: buscar, escribir y tener perfil es gratis.
 2. **Comisión que baja** por cada pareja profe–familia: 15 % (clases 1–5), 10 % (6–20), 5 % (21+). Quedarse dentro sale más barato que irse por fuera.
-3. **Grupos de portal**: 2–4 alumnos del mismo barrio y curso. Precio por alumno: 70 % (2), 58 % (3), 50 % (4) del individual → la familia paga menos y el profe gana más por hora.
+3. **Grupos de estudio**: 2–4 alumnos del mismo barrio y curso. Precio por alumno: 70 % (2), 58 % (3), 50 % (4) del individual → la familia paga menos y el profe gana más por hora.
 4. **Primera clase a prueba**: si no encaja (aviso en 24 h) se devuelve el dinero; el profe cobra el 50 %, que pone la plataforma.
 5. Bonos de 10 clases con un 5 % menos. Cancelación gratis hasta 24 h antes.
 6. Confianza: videollamada con cada profe + certificado negativo de delitos sexuales (obligatorio con menores). No se guarda DNI ni copias.
@@ -48,7 +48,7 @@ Desde Claude: servidor `clasuno-web` (puerto 8130) en `.claude/launch.json` de e
 ## Supabase (conectado el 26-nov-2026)
 Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La web usa la clave pública (publishable) en `web/assets/supa.js`; la seguridad la ponen las reglas RLS.
 
-**Qué hay conectado:** registro y entrada de familias (`entrar.html`), alta de profes con foto al bucket `avatars` (`alta-profe.html`), profes aprobados en portada, buscador y fichas, favoritos, petición de clases con precio y comisión calculados en la base de datos, grupos de portal (unirse y proponer), soporte, y en el panel: clases, solicitudes (aceptar/rechazar), informes, ingresos y chat en tiempo real.
+**Qué hay conectado:** registro y entrada de familias (`entrar.html`), alta de profes con foto al bucket `avatars` (`alta-profe.html`), profes aprobados en portada, buscador y fichas, favoritos, petición de clases con precio y comisión calculados en la base de datos, grupos de estudio (unirse y proponer), soporte, y en el panel: clases, solicitudes (aceptar/rechazar), informes, ingresos y chat en tiempo real.
 **Sin datos o sin conexión** la web sigue con los datos de ejemplo (el pie dice «Datos de ejemplo» o «Datos en directo»).
 
 **Pasos pendientes en Supabase (los hace el dueño, en el panel web):**
