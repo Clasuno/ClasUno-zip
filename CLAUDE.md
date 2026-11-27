@@ -18,6 +18,10 @@ Plataforma de clases particulares (profes y familias, Madrid). Web estática en 
 ## Ver en local
 Servidor `clasuno-web` (puerto 8130) en `.claude/launch.json`. Usa `.claude/servidor-local.ps1` (PowerShell, no hace falta Node ni Python).
 
+## Subida automática a GitHub
+`.claude/subir-cambios.ps1` sube a `main` lo que haya cambiado (trae antes lo del compañero con `pull --rebase`; si choca, no fuerza nada y avisa). Nunca sube `.env` ni los ajustes personales.
+Se activa por ordenador con un hook «Stop» en `.claude/settings.local.json` (no va a GitHub), y entonces se ejecuta solo al terminar cada turno de Claude. Para activarlo en otro ordenador Windows, pedir a Claude: «activa la subida automática a GitHub».
+
 ## Supabase
 Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La seguridad la ponen las reglas RLS.
 - **Pendiente antes de abrir al público:** volver a activar «Confirm email» (Authentication → Sign In / Providers → Email) con un SMTP propio.
