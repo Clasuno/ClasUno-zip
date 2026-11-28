@@ -123,7 +123,7 @@
           <button class="boton sec peq" type="button" data-fav="${p.id}" data-fav-txt aria-pressed="${fav}">${fav ? '♥ Guardado' : '♡ Guardar'}</button>
         </p>
       </div>
-      <div class="precio">${p.precio} €<small>la hora</small><div style="font-size:14px;margin-top:10px;font-stretch:100%;font-weight:650">${p.clases && p.nota ? `<span class="estrellas">★</span> ${coma(p.nota)} <span class="suave mono">(${p.clases})</span>` : '<span class="etiqueta naranja">Nuevo</span>'}</div></div>
+      <div class="precio">${p.precio} €<small>la hora</small><div style="font-size:14px;margin-top:10px;font-stretch:100%;font-weight:650">${p.nota && p.nResenas ? `<span class="estrellas">★</span> ${coma(p.nota)} <span class="suave mono" title="${p.nResenas} ${p.nResenas === 1 ? 'reseña' : 'reseñas'}">(${p.nResenas})</span>` : '<span class="etiqueta naranja">Nuevo</span>'}</div></div>
     </article>`;
   };
   // Delegación: botones de favorito en cualquier página

@@ -26,10 +26,12 @@ window.SUPA = (() => {
       id: t.id, real: true, nombre: t.nombre || 'Profe', avatar: t.avatar || null,
       estudios: [t.degree, t.center].filter(Boolean).join(' · ') || 'Estudios comprobados',
       asig, niveles: lista(t.levels), modo: MODO[norm(t.modality)] || 'ambas', zona: t.zone ? zonaDeNombre(t.zone) : null,
-      precio, precioGrupo: Math.round(precio * 0.6), nota: 0, clases: Number(t.classes) || 0,
+      precio, precioGrupo: Math.round(precio * 0.6), nota: Number(t.nota) || 0, nResenas: Number(t.n_resenas) || 0,
+      reparto: Array.isArray(t.reparto) ? t.reparto.map(Number) : null, clases: Number(t.classes) || 0,
       verificado: !!t.verified, certificado: !!t.certificado, grupos: !!t.grupos, responde: 'pocas horas',
       idiomas: lista(t.languages).length ? lista(t.languages) : ['Español'],
-      corta: t.headline || '', bio: t.description || '', resenas: [],
+      corta: t.headline || '', bio: t.description || '',
+      resenas: (Array.isArray(t.resenas) ? t.resenas : []).map(r => ({ autor: r.autor || 'Familia', estrellas: Number(r.estrellas) || 0, texto: r.texto || '', creada: r.creada })),
       libre: lista(t.availability).filter(x => /^[LMXJVS]\d{2}$/.test(x))
     };
   }
@@ -224,6 +226,22 @@ window.SUPA = (() => {
   async function grupoPorCodigo(c) { const { data, error } = await sb.rpc('grupo_por_codigo', { c }); return error ? null : aGrupo(data); }
   async function unirseConCodigo(c, alumno) { const { error } = await sb.rpc('unirse_con_codigo', { c, p_alumno: alumno || null }); if (error) throw new Error(errorBonito(error)); }
 
+  // ---------- Reseñas (supabase/7-resenas.sql) ----------
+  // Las tuyas, para saber a qué profes ya has valorado: { idProfe: { estrellas, texto } }
+  async function misResenas() {
+    const { data, error } = await sb.from('resenas').select('teacher_id, estrellas, texto').eq('familia_id', usuario.id);
+    if (error) return {};
+    return Object.fromEntries(data.map(r => [r.teacher_id, { estrellas: r.estrellas, texto: r.texto || '' }]));
+  }
+  // Crea o cambia tu reseña de un profe (una por familia y profe)
+  async function resenar(teacherId, estrellas, texto) {
+    const { error } = await sb.from('resenas').upsert({ teacher_id: teacherId, familia_id: usuario.id, estrellas, texto: texto || null }, { onConflict: 'teacher_id,familia_id' });
+    if (error) {
+      if (/42P01|PGRST205|does not exist|could not find the table/i.test((error.message || '') + ' ' + (error.code || ''))) throw new Error('Falta ejecutar «7-resenas.sql» en Supabase.');
+      throw new Error(errorBonito(error));
+    }
+  }
+
   // ---------- Panel de un grupo (grupo.html) ----------
   // Devuelve null si el grupo no existe o no estás dentro
   async function grupoDetalle(id) {
@@ -319,6 +337,6 @@ window.SUPA = (() => {
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, miPerfilProfe, cambiarNombre, estadoPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
-    perfilAlumno, abrirChatFamilia, guardarAjustes, datosCuenta, correo, cambiarCorreo, cambiarClave, salirDeTodo, misDatos,
+    perfilAlumno, abrirChatFamilia, misResenas, resenar, guardarAjustes, datosCuenta, correo, cambiarCorreo, cambiarClave, salirDeTodo, misDatos,
     conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

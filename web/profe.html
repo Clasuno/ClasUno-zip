@@ -68,10 +68,13 @@ D.listo.then(() => {
   const z = p.zona && D.zona(p.zona);
   const fav = U.favs().includes(p.id);
   const dist = [5, 4, 3, 2, 1].map(n => p.resenas.filter(r => r.estrellas === n).length);
-  const totalRes = Math.max(1, Math.round(p.clases / 6));
-  // Reparto aproximado para la maqueta
-  const reparto = [Math.round(totalRes * (p.nota - 4) ), 0, 0, 0, 0];
-  reparto[2] = p.nota >= 5 ? 0 : Math.round(totalRes * .04); reparto[1] = Math.max(0, totalRes - reparto[0] - reparto[2]);
+  const totalRes = Math.max(1, p.nResenas || 0);
+  let reparto;
+  if (p.real) reparto = p.reparto || dist; // de la base de datos
+  else { // Reparto aproximado para la maqueta
+    reparto = [Math.round(totalRes * (p.nota - 4)), 0, 0, 0, 0];
+    reparto[2] = p.nota >= 5 ? 0 : Math.round(totalRes * .04); reparto[1] = Math.max(0, totalRes - reparto[0] - reparto[2]);
+  }
 
   $('#ficha').innerHTML = `
   <section class="ficha-cab">
@@ -97,7 +100,7 @@ D.listo.then(() => {
         </div>
       </div>
       <div class="datos-rapidos">
-        <div><b>${p.nota ? '★ ' + U.coma(p.nota) : 'Nuevo'}</b><span>${p.nota ? totalRes + ' reseñas' : 'sin reseñas aún'}</span></div>
+        <div><b>${p.nota ? '★ ' + U.coma(p.nota) : 'Nuevo'}</b><span>${p.nota ? totalRes + (totalRes === 1 ? ' reseña' : ' reseñas') : 'sin reseñas aún'}</span></div>
         <div><b>${p.clases}</b><span>clases en la web</span></div>
         <div><b>${p.precio} €</b><span>la hora</span></div>
         <div><b>${z ? z.nombre : 'Online'}</b><span>${U.modoTxt(p.modo)}</span></div>
@@ -123,7 +126,7 @@ D.listo.then(() => {
           <div id="barrasNota">${[5, 4, 3, 2, 1].map((n, i) => `<div class="barra-nota"><span>${n}★</span><i><span data-w="${Math.round(Math.max(0, reparto[i]) / totalRes * 100)}"></span></i><span class="mono">${Math.max(0, reparto[i])}</span></div>`).join('')}</div>
         </div>
         <p class="suave" style="font-size:13px;margin-bottom:6px">Solo pueden opinar familias que han tenido clase pagada en la web.</p>
-        ${p.resenas.map(r => `<div class="resena"><p><b>${r.autor}</b> <span class="estrellas">${U.estrellas(r.estrellas)}</span></p><p style="margin-top:4px">${r.texto}</p></div>`).join('')}
+        ${p.resenas.map(r => `<div class="resena"><p><b>${U.esc(r.autor)}</b> <span class="estrellas" aria-label="${r.estrellas} de 5 estrellas">${U.estrellas(r.estrellas)}</span>${r.creada ? ` <span class="suave" style="font-size:13px">· ${new Date(r.creada).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</span>` : ''}</p>${r.texto ? `<p style="margin-top:4px">${U.esc(r.texto)}</p>` : ''}</div>`).join('')}
       </div>
     </div>
 

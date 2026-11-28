@@ -143,6 +143,8 @@ window.D = (() => {
     p.libre = [];
     DIAS.forEach(d => HORAS.forEach(h => { s = (s * 1103515245 + 12345) >>> 0; if (s % 100 < 38) p.libre.push(d + h); }));
     p.resenas = (p.resenas || []).map(([autor, estrellas, texto]) => ({ autor, estrellas, texto }));
+    // Maqueta: unas reseñas por cada seis clases (solo se enseñan las últimas)
+    p.nResenas = p.nota ? Math.max(p.resenas.length, Math.round(p.clases / 6)) : 0;
     p.precioGrupo = Math.round(p.precio * 0.6);
   });
   const profe = id => PROFES.find(p => p.id === id);

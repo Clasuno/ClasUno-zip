@@ -87,6 +87,69 @@
 button.hoy-c{cursor:pointer;transition:transform .15s,background .15s}
 button.hoy-c:hover{background:color-mix(in srgb,var(--tinta) 7%,var(--papel-2))}
 button.hoy-c.blanca:hover{background:var(--hoja);transform:translateY(-1px)}
+/* Reseñas: puntuar al profe con un toque */
+.valora{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px 18px;padding:20px 24px;border-radius:18px;transition:opacity .25s,transform .25s}
+.hoy-lista .valora{grid-column:1/-1}
+.valora.se-va{opacity:0;transform:scale(.98)}
+.valora.dentro{grid-template-columns:minmax(0,1fr) auto;padding:16px 0 0;margin-top:16px;border-top:1px dashed var(--linea);border-radius:0}
+.valora-txt{display:grid;gap:3px;min-width:0}
+.valora-txt b{font-size:17px;font-weight:600}
+.valora-txt small{color:var(--tinta-2);font-size:14px}
+.estr-v{display:flex;gap:2px}
+.estr-v button{width:46px;height:46px;border:0;background:none;padding:0;font-size:34px;line-height:1;color:var(--linea-2);cursor:pointer;border-radius:12px;transition:transform .15s,color .12s}
+.estr-v button[aria-pressed="true"]{color:#E0A400}
+@media (hover:hover){.estr-v:hover button{color:#E0A400}.estr-v button:hover~button{color:var(--linea-2)}.estr-v button:hover{transform:scale(1.14)}}
+.estr-v button:active{transform:scale(.9)}
+.estr-v button:focus-visible{outline:2px solid var(--butano);outline-offset:1px}
+.valora .luego{grid-column:1/-1;justify-self:start;font-size:14px}
+.valora-mas{grid-column:1/-1;display:grid;gap:10px}
+.valora-mas textarea{resize:vertical;min-height:80px}
+.valora-mas p{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:640px){
+  .valora{grid-template-columns:auto minmax(0,1fr);padding:18px}
+  .valora .estr-v{grid-column:1/-1;justify-content:space-between;max-width:300px}
+  .valora.dentro{grid-template-columns:minmax(0,1fr)}
+  .valora.dentro .estr-v{grid-column:auto}
+}
+/* Progreso por asignatura */
+.prog-nota{color:var(--tinta-2);font-size:15px;margin:-6px 0 14px;max-width:640px}
+.prog-h2{font-size:var(--t-seccion);letter-spacing:-.03em;margin:8px 0 12px}
+.progreso{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin-bottom:36px}
+.prog-c{padding:20px 22px 18px;display:grid;gap:10px;--c-l:var(--c)}
+.prog-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.prog-asig{font-weight:600;font-size:17px;display:flex;align-items:center;gap:8px}
+.prog-asig i{width:10px;height:10px;border-radius:50%;background:var(--c-l);flex:none}
+.prog-quien{color:var(--tinta-2);font-size:14px;margin-top:2px}
+.prog-nivel{font-size:32px;font-weight:650;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.prog-nivel small{font-size:15px;color:var(--tinta-2);font-weight:450;letter-spacing:0}
+.prog-graf{position:relative}
+.prog-graf svg{display:block;width:100%;height:auto;overflow:visible}
+.prog-graf .rej line{stroke:var(--linea);stroke-width:1}
+.prog-graf .ejes text{fill:var(--tinta-2);font-size:11px;font-family:var(--f)}
+.prog-graf .linea{fill:none;stroke:var(--c-l);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.prog-graf .dot{fill:var(--c-l);stroke:var(--hoja);stroke-width:2;transition:r .15s}
+.prog-graf .hit{fill:transparent}
+.prog-graf .pt{cursor:default;outline:none}
+.prog-graf .pt:hover .dot,.prog-graf .pt:focus-visible .dot{r:7}
+.prog-graf .pt:focus-visible .hit{stroke:var(--butano);stroke-width:2}
+.prog-tip{position:absolute;transform:translate(-50%,calc(-100% - 14px));background:var(--tinta);color:var(--papel);border-radius:10px;padding:7px 10px;font-size:13px;line-height:1.35;pointer-events:none;white-space:nowrap;max-width:240px;z-index:2;box-shadow:var(--sombra)}
+.prog-tip.izq{transform:translate(calc(-100% + 16px),calc(-100% - 14px))}
+.prog-tip.der{transform:translate(-16px,calc(-100% - 14px))}
+.prog-tip b{display:block;font-weight:600}
+.prog-tip span{display:block;white-space:normal;opacity:.8}
+.prog-tend{font-size:14px;color:var(--tinta-2)}
+.prog-tend .sube{color:var(--ok);font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .prog-c{--c-l:color-mix(in srgb,var(--c) 62%,#fff)}}
+:root[data-theme="dark"] .prog-c{--c-l:color-mix(in srgb,var(--c) 62%,#fff)}
+/* Aviso del chat: teléfonos y correos antes de la primera clase */
+.dlg-contacto .dlg-cuerpo{padding:30px 28px 26px}
+.dlg-contacto .ico-contacto{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:var(--butano-claro);font-size:26px;margin-bottom:16px}
+.dlg-contacto h2{font-size:24px;letter-spacing:-.03em;line-height:1.15;margin-bottom:10px}
+.dlg-contacto .por-que{margin:16px 0 22px;padding:0;list-style:none;display:grid;gap:10px;font-size:15px;color:var(--tinta-2)}
+.dlg-contacto .por-que li{padding-left:22px;position:relative}
+.dlg-contacto .por-que li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:700}
+.dlg-contacto .por-que b{color:var(--tinta);font-weight:600}
+.dlg-contacto .dlg-botones{display:flex;gap:8px;flex-wrap:wrap}
 @media (max-width:1080px){
   html[data-cuenta="familia"] .lateral,html[data-cuenta="profe"] .lateral,html[data-cuenta="familia"] .pie,html[data-cuenta="profe"] .pie{display:none}
   html[data-cuenta="familia"] .panel,html[data-cuenta="profe"] .panel{grid-template-columns:minmax(0,1fr);padding-top:22px}
@@ -497,6 +560,68 @@ D.listo.then(async () => {
 
   // ---------- Tus grupos de estudio ----------
   const leerLS = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } };
+  const ponerLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  // ---------- Ya ha habido clase (para las reseñas y el aviso del chat) ----------
+  const finClase = c => new Date(c.empieza).getTime() + (c.minutos || 60) * 6e4;
+  const terminada = c => ['aceptada', 'hecha'].includes(c.estado) && finClase(c) < Date.now();
+  // ¿Has tenido ya al menos una clase (terminada) con esta persona? Sirve igual para la familia y para el profe
+  const yaHuboClase = otro => REAL
+    ? CLASES.some(c => terminada(c) && ((c.familia_id === yo && c.teacher_id === otro) || (c.teacher_id === yo && c.familia_id === otro)))
+    : INFORMES.some(i => i.profe === otro);
+
+  // ---------- Reseñas: la familia puntúa al profe después de clase ----------
+  let MIS_RESENAS = {};
+  if (rol === 'familia') MIS_RESENAS = REAL ? await SUPA.misResenas().catch(() => ({})) : leerLS('resenas', {});
+  // Profes con clase ya terminada a los que aún no has puntuado (el más reciente primero), sin los que dejaste para luego
+  function porValorar() {
+    if (rol !== 'familia') return [];
+    const luego = leerLS('resenaLuego', []);
+    const ids = REAL
+      ? CLASES.filter(c => c.familia_id === yo && terminada(c)).sort((a, b) => finClase(b) - finClase(a)).map(c => c.teacher_id)
+      : INFORMES.slice().sort((a, b) => b.d - a.d).map(i => i.profe);
+    return [...new Set(ids)].filter(id => D.profe(id) && !MIS_RESENAS[id] && !luego.includes(id));
+  }
+  const ESTR_TXT = ['', 'Mal', 'Regular', 'Bien', 'Muy bien', '¡Genial!'];
+  function tarjetaValora(id, dentro = false) {
+    const p = D.profe(id), r = MIS_RESENAS[id], n = r ? r.estrellas : 0, nom = U.esc(p.nombre.split(' ')[0]);
+    return `<div class="valora ${dentro ? 'dentro' : 'hoja'}" data-valora="${id}">
+      ${dentro ? '' : U.cara(p, 'p')}
+      <div class="valora-txt"><b>${r ? `Tu valoración de ${nom}` : `¿Qué tal las clases con ${nom}?`}</b><small>${r ? 'Puedes cambiarla cuando quieras.' : 'Tócalo y listo: tu opinión ayuda a otras familias.'}</small></div>
+      <div class="estr-v" role="group" aria-label="Puntuación de 1 a 5">${[1, 2, 3, 4, 5].map(k => `<button type="button" data-estrellas="${k}" aria-pressed="${k <= n}" aria-label="${k} de 5 · ${ESTR_TXT[k]}">★</button>`).join('')}</div>
+      ${r || dentro ? '' : '<button type="button" class="enlace-sec luego" data-valora-luego>Ahora no</button>'}</div>`;
+  }
+  const pintarEstrellas = (c, n) => c.querySelectorAll('[data-estrellas]').forEach(x => x.setAttribute('aria-pressed', +x.dataset.estrellas <= n));
+  async function puntuar(b) {
+    const c = b.closest('[data-valora]'), id = c.dataset.valora, n = +b.dataset.estrellas, antes = MIS_RESENAS[id];
+    pintarEstrellas(c, n);
+    try { await guardarResena(id, n, antes ? antes.texto : ''); }
+    catch (x) { pintarEstrellas(c, antes ? antes.estrellas : 0); return U.tostada(x.message); }
+    const nom = U.esc(D.profe(id).nombre.split(' ')[0]);
+    c.querySelector('.valora-txt').innerHTML = `<b>¡Gracias! ${ESTR_TXT[n]}</b><small>Has puesto ${n} ${n === 1 ? 'estrella' : 'estrellas'} a ${nom}. Ya sale en su ficha.</small>`;
+    c.querySelector('.luego')?.remove();
+    if (!c.querySelector('.valora-mas')) {
+      c.insertAdjacentHTML('beforeend', `<div class="valora-mas"><label class="campo"><span>¿Quieres contar algo más? Es opcional.</span>
+        <textarea class="entrada" maxlength="600" rows="3" placeholder="Por ejemplo: cómo explica, si es puntual, qué ha mejorado…">${U.esc(antes ? antes.texto : '')}</textarea></label>
+        <p><button class="boton peq" type="button" data-valora-publicar>Publicar comentario</button><button class="boton sec peq" type="button" data-valora-listo>${antes && antes.texto ? 'Dejarlo así' : 'No, gracias'}</button></p></div>`);
+      c.querySelector('textarea').focus({ preventScroll: true });
+    }
+  }
+  async function publicarComentario(c) {
+    const id = c.dataset.valora, texto = c.querySelector('textarea').value.trim();
+    try { await guardarResena(id, MIS_RESENAS[id].estrellas, texto); } catch (x) { return U.tostada(x.message); }
+    U.tostada(texto ? 'Comentario publicado. ¡Gracias!' : 'Guardado');
+    cerrarValora(c);
+  }
+  function cerrarValora(c) {
+    if (c.classList.contains('dentro')) return ir('profes', true);
+    c.classList.add('se-va'); setTimeout(() => c.remove(), 260);
+  }
+  async function guardarResena(id, estrellas, texto) {
+    if (REAL) await SUPA.resenar(id, estrellas, texto);
+    MIS_RESENAS[id] = { estrellas, texto: texto || '' };
+    if (!REAL) ponerLS('resenas', MIS_RESENAS);
+  }
   let MIS_GRUPOS = [];
   if (REAL) {
     // Con su calendario (clases canceladas y extra) para pintarlo todo junto
@@ -778,10 +903,10 @@ D.listo.then(async () => {
       grupos: vistaMisGrupos,
       mensajes: vistaChat,
       informes: () => `<h1>Informes de clase</h1>
-        <div class="hoja resumen-mes" ${REAL && INFORMES.length < 2 ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Resumen del mes</p>
-          <p id="resMes" style="font-size:18px;margin-top:8px;letter-spacing:-.01em;min-height:54px"></p>
-          <div class="tendencias"><div><span class="suave">Matemáticas</span><b>2 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Inglés</span><b>3 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Clases este mes</span><b>7</b><span class="suave" style="font-size:13px">sin faltar a ninguna</span></div></div></div>
-        ${INFORMES.length ? INFORMES.map(tarjetaInforme).join('') : '<p class="suave">Todavía no hay informes. El profe lo escribe al acabar cada clase.</p>'}`,
+        <div class="hoja resumen-mes" ${REAL ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Resumen del mes</p>
+          <p id="resMes" style="font-size:18px;margin-top:8px;letter-spacing:-.01em;min-height:54px"></p></div>
+        ${INFORMES.length ? `<h2 class="prog-h2">${titProgreso()}</h2>${notaProgreso()}${bloqueProgreso()}<h2 class="prog-h2">Todos los informes</h2>` : ''}
+        ${INFORMES.length ? INFORMES.map(tarjetaInforme).join('') : '<p class="suave">Todavía no hay informes. El profe lo escribe al acabar cada clase. Con ellos verás aquí cómo avanza en cada asignatura.</p>'}`,
       // Asistente IA: el corrector de deberes (assets/corrector.js), con el curso del hijo ya elegido
       corrector: () => `<h1>Asistente IA</h1><p class="suave" style="margin:-10px 0 22px;font-size:18px;max-width:680px">Haz una foto a los deberes o escribe el ejercicio: te dice qué está bien, en qué paso falla cada uno y te da la solución explicada. Si te queda una duda, pregúntale.</p>
         <div id="corrPanel" aria-label="Corrector de deberes"></div>`,
@@ -863,8 +988,69 @@ D.listo.then(async () => {
       : `<div class="hoy-c">${icoHoy('<path d="M3 15c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2M3 19c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/><circle cx="12" cy="8" r="3"/>')}<span><b>No tienes clases hoy</b></span></div>`;
     const quien = s.hijos && s.hijos.length ? `los deberes de ${U.esc(hijo.nombre)}` : 'tus deberes';
     return `<h2 class="hoy-tit">Hoy</h2><div class="hoy-lista">${clases}
-      <button type="button" class="hoy-c blanca" data-ir="corrector">${icoHoy('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>')}<span><b>Corrige ${quien} con el asistente</b><small>Haz una foto y te dice qué está bien y dónde falla</small></span></button></div>`;
+      <button type="button" class="hoy-c blanca" data-ir="corrector">${icoHoy('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>')}<span><b>Corrige ${quien} con el asistente</b><small>Haz una foto y te dice qué está bien y dónde falla</small></span></button>
+      ${porValorar()[0] ? tarjetaValora(porValorar()[0]) : ''}</div>`;
   }
+
+  // ---------- Progreso por asignatura ----------
+  // Cada informe trae la «seguridad en el tema» (de 1 a 5) que pone el profe: una línea por alumno y profe, de la más antigua a la más nueva
+  function seriesProgreso() {
+    const g = {};
+    INFORMES.slice().sort((a, b) => a.d - b.d).forEach(r => {
+      const p = D.profe(r.profe); if (!p || !r.nivel || !r.nivel.length) return;
+      const k = (r.alumno || '') + '|' + r.profe;
+      const s = g[k] = g[k] || { profe: p, alumno: r.alumno || '', asig: D.asig(p.asig[0]), pts: [] };
+      s.pts.push({ d: r.d, v: r.nivel[r.nivel.length - 1], tema: r.tema }); s.ult = r;
+    });
+    // Maqueta: el último informe trae la evolución de las clases anteriores (una por semana)
+    Object.values(g).forEach(s => { const nv = s.ult.nivel; if (nv.length > s.pts.length) s.pts = nv.map((v, i) => ({ d: new Date(s.ult.d.getTime() - (nv.length - 1 - i) * 7 * 864e5), v, tema: i === nv.length - 1 ? s.ult.tema : '' })); });
+    return Object.values(g).sort((a, b) => b.ult.d - a.ult.d);
+  }
+  function graficaProgreso(s) {
+    const W = 300, H = 118, IZ = 16, DE = 8, AR = 8, AB = 24, n = s.pts.length;
+    const t0 = +s.pts[0].d, t1 = +s.pts[n - 1].d;
+    const x = t => n === 1 ? (IZ + W - DE) / 2 : IZ + (W - IZ - DE) * (t - t0) / (t1 - t0 || 1);
+    const y = v => AR + (H - AR - AB) * (5 - v) / 4;
+    const fd = d => fmt(d, { day: 'numeric', month: 'short' }).replace('.', '');
+    const rej = [1, 2, 3, 4, 5].map(v => `<line x1="${IZ}" x2="${W - DE}" y1="${y(v)}" y2="${y(v)}"/>`).join('');
+    const ejes = `<text x="0" y="${y(5) + 4}">5</text><text x="0" y="${y(1) + 4}">1</text>`
+      + (n > 1 ? `<text x="${IZ}" y="${H - 4}">${fd(s.pts[0].d)}</text><text x="${W - DE}" y="${H - 4}" text-anchor="end">${fd(s.pts[n - 1].d)}</text>`
+        : `<text x="${x(t0)}" y="${H - 4}" text-anchor="middle">${fd(s.pts[0].d)}</text>`);
+    const linea = n > 1 ? `<polyline class="linea" points="${s.pts.map(p => `${x(+p.d).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ')}"/>` : '';
+    const puntos = s.pts.map((p, i) => `<g class="pt" tabindex="0" role="img" aria-label="${fd(p.d)}: ${p.v} de 5${p.tema ? ', ' + U.esc(p.tema) : ''}" data-f="${fd(p.d)}" data-v="${p.v}" data-t="${U.esc(p.tema || '')}" data-x="${(x(+p.d) / W * 100).toFixed(1)}" data-y="${(y(p.v) / H * 100).toFixed(1)}">
+      <circle class="hit" cx="${x(+p.d).toFixed(1)}" cy="${y(p.v)}" r="14"/><circle class="dot${i === n - 1 ? ' ult' : ''}" cx="${x(+p.d).toFixed(1)}" cy="${y(p.v)}" r="${i === n - 1 ? 5.5 : 4.5}"/></g>`).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="false" role="group" aria-label="Evolución en ${U.esc(s.asig.nombre)}"><g class="rej">${rej}</g><g class="ejes">${ejes}</g>${linea}${puntos}</svg>`;
+  }
+  function bloqueProgreso() {
+    const series = seriesProgreso(); if (!series.length) return '';
+    const varios = new Set(series.map(s => s.alumno)).size > 1;
+    return `<div class="progreso">${series.map(s => {
+      const n = s.pts.length, a = s.pts[0].v, b = s.pts[n - 1].v;
+      const sem = Math.max(1, Math.round((s.pts[n - 1].d - s.pts[0].d) / (7 * 864e5)));
+      const tend = n === 1 ? 'Primer informe: con las próximas clases verás cómo avanza.'
+        : b > a ? `<b class="sube">↑ Ha subido de ${a} a ${b}</b> en ${sem} ${sem === 1 ? 'semana' : 'semanas'}`
+        : b < a ? `Ha bajado de ${a} a ${b} desde el primer informe` : `Se mantiene en ${b} de 5`;
+      return `<article class="hoja prog-c" style="--c:${s.asig.c}">
+        <div class="prog-cab"><div style="min-width:0"><p class="prog-asig"><i></i>${s.asig.nombre}</p><p class="prog-quien">${varios && s.alumno ? U.esc(s.alumno) + ' · ' : ''}con ${U.esc(s.profe.nombre.split(' ')[0])} · ${n} ${n === 1 ? 'informe' : 'informes'}</p></div>
+          <p class="prog-nivel">${b}<small> de 5</small></p></div>
+        <div class="prog-graf">${graficaProgreso(s)}<div class="prog-tip" hidden></div></div>
+        <p class="prog-tend">${tend}</p></article>`;
+    }).join('')}</div>`;
+  }
+  const titProgreso = () => !(s.hijos && s.hijos.length) ? 'Cómo vas' : s.hijos.length > 1 ? 'Cómo van tus hijos' : 'Cómo va ' + U.esc(hijo.nombre);
+  const notaProgreso = () => `<p class="prog-nota">La seguridad en cada tema, de 1 a 5, que apunta ${s.hijos && s.hijos.length ? 'su' : 'tu'} profe en el informe de cada clase.</p>`;
+  // Globo con la fecha, el nivel y el tema al pasar el dedo o el ratón por un punto
+  const verPunto = g => {
+    const caja = g.closest('.prog-graf'), tip = caja && caja.querySelector('.prog-tip'); if (!tip) return;
+    tip.innerHTML = `<b>${U.esc(g.dataset.f)} · ${g.dataset.v} de 5</b>${g.dataset.t ? `<span>${U.esc(g.dataset.t)}</span>` : ''}`;
+    tip.style.left = g.dataset.x + '%'; tip.style.top = g.dataset.y + '%'; tip.hidden = false;
+    tip.classList.toggle('izq', +g.dataset.x > 70); tip.classList.toggle('der', +g.dataset.x < 30);
+  };
+  const quitarPunto = g => { const t = g.closest('.prog-graf')?.querySelector('.prog-tip'); if (t) t.hidden = true; };
+  document.addEventListener('pointerover', e => { const g = e.target.closest?.('.prog-c .pt'); if (g) verPunto(g); });
+  document.addEventListener('pointerout', e => { const g = e.target.closest?.('.prog-c .pt'); if (g && !g.contains(e.relatedTarget)) quitarPunto(g); });
+  document.addEventListener('focusin', e => { const g = e.target.closest?.('.prog-c .pt'); if (g) verPunto(g); });
+  document.addEventListener('focusout', e => { const g = e.target.closest?.('.prog-c .pt'); if (g) quitarPunto(g); });
 
   function vistaInicioFamilia() {
     const prox = proximosEv(1)[0];
@@ -900,6 +1086,7 @@ D.listo.then(async () => {
       ${cabSeccion('Los próximos 7 días', 'calendario', 'Ver calendario')}${semana}
       ${cabSeccion('Tus profes', 'profes', 'Ver todos')}${profes}
       ${cabSeccion('Tus grupos de estudio', MIS_GRUPOS.length ? 'grupos' : '', 'Ver todos')}${grupos}
+      ${INFORMES.length ? cabSeccion(titProgreso(), 'informes', 'Ver informes') + notaProgreso() + bloqueProgreso() : ''}
       ${cabSeccion('Último informe', INFORMES.length ? 'informes' : '', 'Ver todos')}${INFORMES[0] ? tarjetaInforme(INFORMES[0]) : '<div class="hoja" style="padding:20px"><p class="suave">Después de cada clase, aquí verás el resumen del profe: qué ha ido bien, qué cuesta y qué toca después.</p></div>'}`;
   }
 
@@ -928,8 +1115,8 @@ D.listo.then(async () => {
     const tarjeta = id => {
       const p = D.profe(id), sig = futuras.find(e => e.profe === id), nInf = INFORMES.filter(i => i.profe === id).length, gr = MIS_GRUPOS.filter(g => g.profe === id);
       return `<article class="hoja mi-profe"><div style="display:flex;gap:12px;align-items:center">${U.cara(p, 'p')}<div style="min-width:0"><b style="font-size:18px">${U.esc(p.nombre)}</b><p class="suave" style="font-size:14px">${p.asig.map(x => D.asig(x).nombre).join(', ')}</p></div></div>
-        <ul class="datos-profe"><li>${sig ? `Próxima clase: <b>${fmt(sig.d, { weekday: 'long', day: 'numeric', month: 'long' })}</b> · ${U.esc(cuandoEv(sig))}` : 'Sin clases reservadas'}</li>${gr.length ? `<li>Profe de tu grupo de ${gr.map(g => U.esc(g.curso)).join(', ')}</li>` : ''}${nInf ? `<li>${nInf} ${nInf === 1 ? 'informe' : 'informes'} de clase</li>` : ''}</ul>
-        <p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="boton peq" type="button" data-chat="${id}">Escribir</button><a class="boton sec peq" href="profe.html?id=${id}">Pedir clase</a>${nInf ? '<button class="boton sec peq" type="button" data-ir="informes">Informes</button>' : ''}</p></article>`;
+        <ul class="datos-profe"><li>${sig ? `Próxima clase: <b>${fmt(sig.d, { weekday: 'long', day: 'numeric', month: 'long' })}</b> · ${U.esc(cuandoEv(sig))}` : 'Sin clases reservadas'}</li>${gr.length ? `<li>Profe de tu grupo de ${gr.map(g => U.esc(g.curso)).join(', ')}</li>` : ''}${nInf ? `<li>${nInf} ${nInf === 1 ? 'informe' : 'informes'} de clase</li>` : ''}${MIS_RESENAS[id] ? `<li>Tu valoración: <span class="estrellas" aria-label="${MIS_RESENAS[id].estrellas} de 5 estrellas">${U.estrellas(MIS_RESENAS[id].estrellas)}</span></li>` : ''}</ul>
+        <p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="boton peq" type="button" data-chat="${id}">Escribir</button><a class="boton sec peq" href="profe.html?id=${id}">Pedir clase</a>${nInf ? '<button class="boton sec peq" type="button" data-ir="informes">Informes</button>' : ''}${yaHuboClase(id) ? `<button class="boton sec peq" type="button" data-valorar="${id}">${MIS_RESENAS[id] ? 'Cambiar valoración' : '★ Valorar'}</button>` : ''}</p></article>`;
     };
     return `<h1>Mis profes</h1><p class="suave" style="margin:-10px 0 22px">Los profes con los que tienes clases, grupos o conversación.</p>
       ${MIS_PROFES.length ? `<div class="profes-p">${MIS_PROFES.map(tarjeta).join('')}</div>` : `<div class="hoja" style="padding:32px;text-align:center"><h3>Todavía no tienes profes</h3><p class="suave" style="margin:10px 0 18px">Escribe a un profe o reserva una primera clase a prueba y saldrá aquí.</p><a class="boton" href="buscar.html">Buscar profe</a></div>`}
@@ -1258,6 +1445,41 @@ D.listo.then(async () => {
       <div class="convs">${ids.map(id => { const p = persona(id), u = CHATS[id][CHATS[id].length - 1]; return `<button type="button" data-conv="${id}" aria-current="${id === abierto}">${U.cara(p, 'p')}<span><b>${rol === 'profe' ? U.esc(nombreFam(id)) : p.nombre}</b><small>${u ? U.esc(u[1]) : 'Nueva conversación'}</small></span></button>`; }).join('')}</div>
       <div class="hilo" data-abierto="${abierto}"></div></div>`;
   }
+  // ---------- Teléfonos y correos en el chat antes de la primera clase ----------
+  const RE_TEL = /(?:(?:\+|00)\s*34[\s.-]*|\b34[\s.-]?|(?<!\d))[6789](?:[\s.-]?\d){8}(?!\d)/g;
+  const RE_MAIL = /[\w.+-]+\s*(?:@|\(?\barroba\b\)?)\s*[\w-]+(?:\s*(?:\.|\bpunto\b)\s*[a-z]{2,})+/gi;
+  // { txt: «un teléfono», boton: «el teléfono» } o null si no hay nada
+  const datoContacto = t => {
+    const mail = t.search(RE_MAIL) >= 0, tel = t.search(RE_TEL) >= 0;
+    return mail && tel ? { txt: 'un teléfono y un correo', boton: 'esos datos' } : mail ? { txt: 'un correo', boton: 'el correo' } : tel ? { txt: 'un teléfono', boton: 'el teléfono' } : null;
+  };
+  const ocultarContacto = t => t.replace(RE_MAIL, '[correo oculto]').replace(RE_TEL, '[teléfono oculto]');
+  let dlgContacto = null;
+  function avisoContacto(dato, con) {
+    if (!dlgContacto) {
+      dlgContacto = document.createElement('dialog');
+      dlgContacto.className = 'dlg-contacto';
+      document.body.append(dlgContacto);
+      dlgContacto.addEventListener('click', e => {
+        const b = e.target.closest('[data-r]'); if (b) return dlgContacto.close(b.dataset.r);
+        if (e.target === dlgContacto) dlgContacto.close('cambiar');
+      });
+    }
+    dlgContacto.innerHTML = `<div class="dlg-cuerpo">
+      <span class="ico-contacto" aria-hidden="true">💬</span>
+      <h2>Mejor seguid por aquí hasta la primera clase</h2>
+      <p>Tu mensaje lleva ${dato.txt}. Hasta que ${U.esc(con)} y tú hayáis tenido la primera clase, os pedimos hablar por el chat de ClasUno.</p>
+      <ul class="por-que">${rol === 'profe'
+        ? '<li><b>La clase se cobra por la web:</b> si la familia no se presenta, la cobras igual.</li>'
+        : '<li><b>La clase queda pagada con garantía:</b> si la primera no encaja, te devolvemos el dinero.</li>'}
+        <li><b>Si hay cualquier problema, podemos ayudaros</b> porque vemos la conversación.</li>
+        <li><b>Después de la primera clase</b> podréis compartir lo que queráis.</li></ul>
+      <p class="dlg-botones"><button class="boton" type="button" data-r="cambiar">Cambiar el mensaje</button><button class="boton sec" type="button" data-r="ocultar">Enviar sin ${dato.boton}</button></p></div>`;
+    dlgContacto.returnValue = '';
+    dlgContacto.showModal();
+    dlgContacto.querySelector('[data-r="cambiar"]').focus();
+    return new Promise(res => dlgContacto.addEventListener('close', () => res(dlgContacto.returnValue || 'cambiar'), { once: true }));
+  }
   function pintarHilo(id) {
     const p = persona(id), h = document.querySelector('.hilo'); if (!h) return;
     if (REAL && CONV[id] && h.dataset.escucha !== CONV[id]) {
@@ -1269,7 +1491,7 @@ D.listo.then(async () => {
     document.querySelectorAll('.convs button').forEach(b => b.setAttribute('aria-current', b.dataset.conv === id));
     h.innerHTML = `<div class="hilo-cab">${U.cara(p, 'p')}<div><b>${rol === 'profe' ? U.esc(nombreFam(id)) : p.nombre}</b><p class="suave" style="font-size:13px">${rol === 'profe' ? U.esc(hijosFam(id)) : 'Suele responder en ' + p.responde}</p></div>${rol === 'profe' && (FAMILIAS[id] || !REAL) ? `<button class="boton sec peq" style="margin-left:auto" type="button" data-perfil-fam="${id}">Ver perfil</button>` : ''}
       ${rol === 'familia' ? `<a class="boton peq" style="margin-left:auto" href="profe.html?id=${p.id}">Pedir clase</a>` : ''}</div>
-      <p class="aviso-chat">🔒 Por seguridad, no compartas teléfonos ni direcciones hasta tener una reserva.</p>
+      ${yaHuboClase(id) ? '' : '<p class="aviso-chat">🔒 Hasta la primera clase, hablad por aquí: no compartáis teléfonos ni correos.</p>'}
       <div class="mensajes" id="msjs">${CHATS[id].map(([q, t]) => `<div class="msj ${q === 'yo' ? 'mio' : ''}">${U.esc(t)}</div>`).join('') || `<p class="suave" style="text-align:center;margin:auto">${rol === 'profe' ? 'Empieza la conversación: preséntate y confirma el día, la hora y si la clase es online o en persona.' : 'Empieza la conversación. Cuéntale qué necesitas y para qué curso.'}</p>`}</div>
       <div class="escribiendo" id="escribiendo"></div>
       <form class="escribe" id="fMsj"><button class="boton sec peq" type="button" id="sugerir" title="Sugerir respuesta" aria-label="Sugerir respuesta"><span class="punto-ia" style="margin:0"></span></button><input class="entrada" placeholder="Escribe un mensaje…" aria-label="Mensaje" autocomplete="off"><button class="boton">Enviar</button></form>`;
@@ -1287,17 +1509,21 @@ D.listo.then(async () => {
     };
     $('#fMsj').onsubmit = async e => {
       e.preventDefault(); const inp = e.target.querySelector('input'); const t = inp.value.trim(); if (!t) return;
-      // Aviso si se comparte un teléfono
-      const reTel = /(\+?34)?\s?[6789]\d{2}\s?\d{3}\s?\d{3}/g, tel = reTel.test(t);
-      const texto = tel ? t.replace(reTel, m => (/^\s/.test(m) ? ' ' : '') + '[teléfono oculto]') : t;
+      // Antes de la primera clase: aviso amable si el mensaje lleva un teléfono o un correo
+      let texto = t;
+      const dato = yaHuboClase(id) ? null : datoContacto(t);
+      if (dato) {
+        const r = await avisoContacto(dato, rol === 'profe' ? nombreFam(id) : p.nombre.split(' ')[0]);
+        if (r !== 'ocultar') { inp.focus(); return; }
+        texto = ocultarContacto(t);
+      }
       if (REAL) {
         try { if (!CONV[id]) CONV[id] = await SUPA.abrirConversacion(id); await SUPA.enviar(CONV[id], texto); }
         catch (x) { return U.tostada(x.message); }
-        CHATS[id].push(['yo', texto]); inp.value = ''; pintarHilo(id); if (tel) U.tostada('Hemos ocultado el teléfono: compártelo cuando haya reserva'); return;
+        CHATS[id].push(['yo', texto]); inp.value = ''; pintarHilo(id); return;
       }
       CHATS[id].push(['yo', texto]); guardarChats(); inp.value = '';
       pintarHilo(id);
-      if (tel) U.tostada('Hemos ocultado el teléfono: compártelo cuando haya reserva');
       setTimeout(() => { const e2 = $('#escribiendo'); if (e2) e2.textContent = `${rol === 'profe' ? 'La familia' : p.nombre.split(' ')[0]} está escribiendo…`; }, 600);
       setTimeout(() => {
         CHATS[id].push(['ella', rol === 'profe' ? '¡Perfecto, muchas gracias!' : `¡Hola! Encantada. Si te parece, empezamos con una primera clase a prueba y vemos el nivel. Tengo hueco ${p.libre[0] ? 'el ' + ({ L: 'lunes', M: 'martes', X: 'miércoles', J: 'jueves', V: 'viernes', S: 'sábado' })[p.libre[0][0]] + ' a las ' + p.libre[0].slice(1) : 'esta semana'}.`]);
@@ -1551,6 +1777,14 @@ D.listo.then(async () => {
     const cm = e.target.closest('[data-cmes]'); if (cm) { calMes.setMonth(calMes.getMonth() + Number(cm.dataset.cmes)); return ir('calendario', true); }
     const cd = e.target.closest('[data-cdia]'); if (cd) { calDia = cd.dataset.cdia; return ir('calendario', true); }
     const ed = e.target.closest('[data-ev-dia]'); if (ed) { calDia = ed.dataset.evDia; calMes = deIso(calDia); calMes.setDate(1); return ir('calendario'); }
+    // Reseñas: puntuar con un toque y, si quieres, un comentario
+    const vr = e.target.closest('[data-valorar]');
+    if (vr) { const art = vr.closest('.mi-profe'); if (!art.querySelector('.valora')) art.insertAdjacentHTML('beforeend', tarjetaValora(vr.dataset.valorar, true)); vr.remove(); return; }
+    const es = e.target.closest('[data-estrellas]'); if (es) return puntuar(es);
+    const vl = e.target.closest('[data-valora-luego]');
+    if (vl) { const c = vl.closest('[data-valora]'); ponerLS('resenaLuego', [...leerLS('resenaLuego', []), c.dataset.valora]); c.remove(); return U.tostada('Vale. Puedes valorarlo cuando quieras desde «Mis profes».'); }
+    const vp = e.target.closest('[data-valora-publicar]'); if (vp) return publicarComentario(vp.closest('[data-valora]'));
+    const vf = e.target.closest('[data-valora-listo]'); if (vf) return cerrarValora(vf.closest('[data-valora]'));
     const v = e.target.closest('[data-ir]'); if (v) return ir(v.dataset.ir);
     const pq = e.target.closest('[data-pregunta]'); if (pq) { preguntaPendiente = pq.dataset.pregunta; return ir('asistente'); }
     const sg = e.target.closest('[data-sug]');
