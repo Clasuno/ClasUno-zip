@@ -128,6 +128,20 @@
 .puntos-c i.sinAceptar,.leyenda-c i.sinAceptar{background:transparent;border:1.5px solid var(--butano)}
 .puntos-c i.hecha,.leyenda-c i.hecha{background:var(--tinta-2);opacity:.6}
 .estado-ev.sinAceptar{color:var(--butano)}
+/* Inicio del profe: clases de hoy */
+.hoy-p{padding:20px 22px;margin-bottom:18px;border-color:var(--butano)}
+.hoy-p.vacio{border-color:var(--linea-2)}
+.cab-hoy{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.cab-hoy h2{font-size:24px}
+.clase-hoy{display:grid;grid-template-columns:80px minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;border-top:1px dashed var(--linea)}
+.cab-hoy+.clase-hoy{margin-top:10px}
+.clase-hoy.pasada{opacity:.55}
+.clase-hoy.en-curso .hora-hoy{background:var(--butano);color:var(--butano-t)}
+.hora-hoy{border-radius:12px;background:var(--butano-claro);color:var(--butano);text-align:center;padding:8px 4px}
+.hora-hoy b{display:block;font-size:20px}
+.hora-hoy span{font-size:12px}
+.ahora-hoy{color:var(--butano);font-weight:700}
+@media (max-width:600px){.clase-hoy{grid-template-columns:70px minmax(0,1fr)}.clase-hoy>:last-child{grid-column:1/-1}}
 .leyenda-c{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--tinta-2)}
 .leyenda-c i{margin-right:6px;vertical-align:middle}
 .tit-lista{padding:16px 20px 0;font-size:18px}
@@ -428,6 +442,24 @@ D.listo.then(async () => {
       const d = conHora(dia(n), h); return { d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', lugar: l, estado: e };
     });
   }
+  // Inicio del profe: lo que tiene hoy (y, si no hay nada, cuándo es la próxima)
+  function clasesDeHoy() {
+    const hoy0 = new Date(hoy); hoy0.setHours(0, 0, 0, 0);
+    const deHoy = eventos(hoy0, hoy0).filter(e => e.estado !== 'cancelada');
+    const ahora = Date.now(), fecha = may(fmt(hoy, { weekday: 'long', day: 'numeric', month: 'long' }));
+    const fila = e => {
+      const pasada = e.d.getTime() + 60 * 60e3 < ahora, enCurso = !pasada && e.d.getTime() <= ahora;
+      return `<div class="clase-hoy ${pasada ? 'pasada' : ''} ${enCurso ? 'en-curso' : ''}">
+        <div class="hora-hoy"><b>${U.esc(cuandoEv(e))}</b><span>${U.esc(e.tipoTxt || '')}</span></div>
+        <div style="min-width:0"><b>${U.esc(e.titulo)}</b><p class="suave" style="font-size:14px">${e.lugar ? (e.lugar === 'Online' ? '💻 Online' : '📍 ' + U.esc(e.lugar)) : ''}${enCurso ? ' · <span class="ahora-hoy">Ahora</span>' : pasada ? ' · ya ha pasado' : ''}${ESTADO_EV[e.estado] ? ` <span class="estado-ev ${e.estado}">${ESTADO_EV[e.estado]}</span>` : ''}</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${accionEv(e)}</div></div>`;
+    };
+    if (deHoy.length) return `<div class="hoja hoy-p"><div class="cab-hoy"><h2>Hoy tienes ${deHoy.length} ${deHoy.length === 1 ? 'clase' : 'clases'}</h2><span class="suave">${fecha}</span></div>${deHoy.map(fila).join('')}</div>`;
+    const sig = proximosEv(1)[0];
+    return `<div class="hoja hoy-p vacio"><div class="cab-hoy"><h2>Hoy no tienes clases</h2><span class="suave">${fecha}</span></div>
+      <p class="suave" style="margin-top:6px">${sig ? `La próxima es el <b>${fmt(sig.d, { weekday: 'long', day: 'numeric', month: 'long' })}</b> a las ${U.esc(cuandoEv(sig))}: ${U.esc(sig.titulo)}.` : 'Cuando aceptes una solicitud, tus clases de cada día saldrán aquí.'}</p>
+      <p style="margin-top:12px"><button class="boton sec peq" type="button" data-ir="calendario">Ver calendario</button></p></div>`;
+  }
   function eventos(desde, hasta) {
     const fin = new Date(hasta); fin.setHours(23, 59, 59, 999);
     if (rol === 'profe') return clasesDelProfe().filter(e => e.d >= desde && e.d <= fin).sort((a, b) => a.d - b.d);
@@ -533,6 +565,7 @@ D.listo.then(async () => {
     },
     profe: {
       inicio: () => `<h1>Hola, ${U.esc(REAL ? s.nombre : 'Laura')}.</h1>
+        ${clasesDeHoy()}
         ${MI_PERFIL ? `<div class="hoja aviso-perfil"><div style="display:flex;gap:14px;align-items:center;min-width:0">${U.cara(MI_PERFIL, 'p')}<div style="min-width:0"><b>Tu perfil</b> ${etiquetaEstado(MI_PERFIL.estado)}<p class="suave" style="font-size:14px">${ESTADO_PERFIL[MI_PERFIL.estado] ? ESTADO_PERFIL[MI_PERFIL.estado].txt : ''}</p></div></div><button class="boton peq" type="button" data-ir="perfil">Ver y editar mi perfil</button></div>` : ''}
         <div class="tarjetas"><div class="hoja dato"><span class="suave">Este mes te llegan</span><b>${STATS.mes}</b></div><div class="hoja dato"><span class="suave">Clases esta semana</span><b>${STATS.semana}</b></div><div class="hoja dato"><span class="suave">Nota media</span><b>${STATS.nota}</b></div></div>
         <div class="hoja" style="padding:22px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;border-color:var(--butano)" ${REAL ? 'hidden' : ''}><div><b>Tienes un informe sin rellenar</b><p class="suave">Clase de ayer con Lucas (4º ESO). Son dos minutos.</p></div><button class="boton peq" type="button" data-ir="informe">Rellenar ahora</button></div>
