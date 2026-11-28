@@ -134,7 +134,54 @@
 .ini-cab>p:first-child{font-size:14px;color:var(--tinta-2)}
 .ini-cab h1{font-size:clamp(30px,3.6vw,42px);font-weight:600;letter-spacing:-.02em;margin:4px 0 0}
 .ini-frase{font-size:18px;color:var(--tinta-2);margin-top:8px;max-width:620px;line-height:1.45}
-.ini-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:48px;padding-top:26px}
+.ini-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:48px;padding-top:22px}
+/* Tira de la semana */
+.semana-ini{display:flex;align-items:center;gap:6px;padding:18px 0 6px;border-bottom:1px solid var(--linea-2)}
+.sem-dias{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.sem-flecha{width:34px;height:34px;border-radius:50%;border:1px solid var(--linea-2);background:transparent;color:var(--tinta);font-size:18px;flex:none;cursor:pointer;transition:background .15s}
+.sem-flecha:hover{background:var(--papel-2)}
+.dia-chip{border:0;background:transparent;border-radius:14px;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--tinta);transition:background .15s,transform .15s}
+.dia-chip:hover{background:var(--papel-2)}
+.dia-chip:active{transform:scale(.96)}
+.dia-chip span{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2)}
+.dia-chip b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;width:34px;height:34px;display:grid;place-items:center;border-radius:50%}
+.dia-chip.hoy b{color:var(--butano)}
+.dia-chip.pasado{opacity:.55}
+.dia-chip.sel{background:var(--tinta);color:var(--papel)}
+.dia-chip.sel span{color:color-mix(in srgb,var(--papel) 70%,transparent)}
+.dia-chip.sel.hoy b{color:var(--papel)}
+.dia-chip i{display:flex;gap:3px;height:6px}
+.dia-chip em{width:5px;height:5px;border-radius:50%;background:var(--butano)}
+.dia-chip.sel em{background:var(--papel)}
+/* Clases desplegables */
+.ag-fila{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;margin:-8px -10px;border-radius:12px;cursor:pointer;transition:background .15s}
+.ag-fila:hover{background:var(--papel-2)}
+.ag-fila:focus-visible{outline:2px solid var(--butano);outline-offset:2px}
+.ag-fila small{display:block;font-size:14px;color:var(--tinta-2);margin-top:2px}
+.agenda .ag-item{grid-template-columns:minmax(0,1fr);padding-right:0}
+.ag-fila>span{flex:1;min-width:0}
+.ag-flecha{width:8px;height:8px;border-right:2px solid var(--tinta-2);border-bottom:2px solid var(--tinta-2);transform:rotate(45deg);transition:transform .2s;flex:none;margin-right:4px}
+.ag-item.abierta .ag-flecha{transform:rotate(225deg)}
+.ag-det{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.ag-det>div{overflow:hidden}
+.ag-item.abierta .ag-det{grid-template-rows:1fr}
+.ag-datos{margin:14px 0 0;display:grid;gap:6px}
+.ag-datos div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;font-size:14.5px}
+.ag-datos dt{color:var(--tinta-2)}
+.ag-datos dd{margin:0}
+.ag-botones{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+.ag-item.por-confirmar::before{background:transparent;border:1.5px solid var(--aviso);left:-5px}
+.ag-nota.hecha{color:var(--tinta-2)}
+/* Solicitudes en el inicio */
+.ini-lista.sol li{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ini-lista.sol small{display:block;font-size:13.5px;color:var(--tinta-2)}
+.sol-botones{display:flex;gap:6px;flex:none}
+.sol-si,.sol-no{border:1px solid var(--linea-2);background:transparent;color:var(--tinta);border-radius:99px;font-weight:600;font-size:13px;cursor:pointer;transition:background .15s,border-color .15s}
+.sol-si{padding:5px 12px}
+.sol-si:hover{background:var(--ok);border-color:var(--ok);color:#fff}
+.sol-no{width:30px;height:30px;padding:0}
+.sol-no:hover{border-color:var(--aviso);color:var(--aviso)}
+@media (max-width:560px){.semana-ini{gap:2px}.sem-flecha{width:28px;height:28px}.dia-chip b{font-size:17px;width:28px;height:28px}.dia-chip span{font-size:10.5px}.ag-datos div{grid-template-columns:1fr}}
 .ini-tit{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
 .ini-tit h2{font-size:15px;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--tinta-2)}
 .ag-accion{border:0;background:none;padding:0;color:var(--butano);font-weight:600;font-size:14px;cursor:pointer}
@@ -457,76 +504,152 @@ D.listo.then(async () => {
   function clasesDelProfe() {
     if (REAL) return CLASES.filter(c => c.teacher_id === yo && ['pedida', 'aceptada', 'hecha'].includes(c.estado)).map(c => {
       const d = new Date(c.empieza);
-      return { d, f: isoD(d), hora: hora(d), tipo: 'clase', vistaProfe: true, fam: c.familia_id, titulo: `${c.alumno || 'Alumno'} · ${TIPO_TXT[c.tipo]}`, tipoTxt: `${c.minutos} min`,
-        alumno: c.alumno || 'Alumno', tipoNombre: TIPO_TXT[c.tipo], minutos: c.minutos || 60,
+      return { id: c.id, d, f: isoD(d), hora: hora(d), tipo: 'clase', vistaProfe: true, fam: c.familia_id, titulo: `${c.alumno || 'Alumno'} · ${TIPO_TXT[c.tipo]}`, tipoTxt: `${c.minutos} min`,
+        alumno: c.alumno || 'Alumno', tipoNombre: TIPO_TXT[c.tipo], minutos: c.minutos || 60, precio: +c.precio || 0,
         lugar: c.modalidad === 'online' ? 'Online' : c.modalidad === 'presencial' ? 'En persona' : '', estado: c.estado === 'pedida' ? 'sinAceptar' : c.estado === 'hecha' ? 'hecha' : 'clase' };
     });
     // Maqueta
     return [[1, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [2, '17:00', 'Iker · Primera a prueba', 'En persona', 'sinAceptar'], [4, '19:00', 'Nora · Bono de 10', 'Online', 'clase'],
-      [8, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [-2, '18:00', 'Pablo · Clase suelta', 'En persona', 'hecha']].map(([n, h, t, l, e]) => {
+      [8, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [-2, '18:00', 'Pablo · Clase suelta', 'En persona', 'hecha']].map(([n, h, t, l, e], i) => {
       const d = conHora(dia(n), h), [alumno, tipoNombre] = t.split(' · ');
-      return { d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', alumno, tipoNombre, minutos: 60, lugar: l, estado: e };
+      return { id: 'demo-' + i, d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', alumno, tipoNombre, minutos: 60, precio: 18, lugar: l, estado: e };
     });
   }
-  // ---------- Inicio del profe: la agenda del día, sin adornos ----------
-  const EN_LETRA = ['ninguna', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
-  const horaFin = e => { const f = new Date(e.d.getTime() + (e.minutos || 60) * 60e3); return hora(f); };
-  function vistaInicioProfe() {
-    const ahora = new Date(), h = ahora.getHours(), hoy0 = new Date(hoy); hoy0.setHours(0, 0, 0, 0);
-    const saludo = h < 14 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches';
-    const nombre = U.esc((REAL ? s.nombre : 'Laura') || '');
-    const deHoy = eventos(hoy0, hoy0).filter(e => e.estado !== 'cancelada');
-    const fin = e => e.d.getTime() + (e.minutos || 60) * 60e3;
-    const enCurso = deHoy.find(e => e.d <= ahora && fin(e) > ahora.getTime());
-    const siguiente = deHoy.find(e => e.d > ahora);
 
-    // Una frase normal que dice cómo va el día
-    let frase;
+  // ---------- Inicio del profe: la agenda, con la semana arriba y cada clase desplegable ----------
+  const EN_LETRA = ['ninguna', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'];
+  const horaFin = e => hora(new Date(e.d.getTime() + (e.minutos || 60) * 60e3));
+  const finEv = e => e.d.getTime() + (e.minutos || 60) * 60e3;
+  const eurTxt = n => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',')) + ' €';
+  let iniDia = null, iniAbierta = null; // día que se está mirando (AAAA-MM-DD) y clase desplegada
+
+  function fraseDelDia(ahora) {
+    const hoyF = isoD(ahora), deHoy = eventos(deIso(hoyF), deIso(hoyF)).filter(e => e.estado !== 'cancelada');
     if (!deHoy.length) {
       const sig = proximosEv(1)[0];
-      frase = sig ? `Hoy no tienes clases. La siguiente es el ${fmt(sig.d, { weekday: 'long', day: 'numeric' })} a las ${cuandoEv(sig)}, con ${U.esc(sig.alumno || 'tu alumno')}.`
+      return sig ? `Hoy no tienes clases. La siguiente es el ${fmt(sig.d, { weekday: 'long', day: 'numeric' })} a las ${cuandoEv(sig)}, con ${U.esc(sig.alumno || 'tu alumno')}.`
         : 'Hoy no tienes clases. Cuando aceptes una solicitud, tu día aparecerá aquí.';
-    } else {
-      const n = deHoy.length, cuantas = `${may(EN_LETRA[n] || String(n))} ${n === 1 ? 'clase' : 'clases'} hoy.`;
-      frase = enCurso ? `${cuantas} Ahora estás con ${U.esc(enCurso.alumno)}, hasta las ${horaFin(enCurso)}.`
-        : siguiente ? `${cuantas} La siguiente, ${U.esc(siguiente.alumno)} a las ${cuandoEv(siguiente)}${siguiente.lugar === 'Online' ? ', online' : ''}.`
-        : `${cuantas} Ya has terminado por hoy.`;
     }
+    const n = deHoy.length, cuantas = `${may(EN_LETRA[n] || String(n))} ${n === 1 ? 'clase' : 'clases'} hoy.`;
+    const enCurso = deHoy.find(e => e.d <= ahora && finEv(e) > ahora.getTime()), sig = deHoy.find(e => e.d > ahora);
+    if (enCurso) {
+      const quedan = Math.round((finEv(enCurso) - ahora) / 60e3);
+      return `${cuantas} Ahora estás con ${U.esc(enCurso.alumno)}; ${quedan <= 1 ? 'termina ya' : `quedan ${quedan} min`}.`;
+    }
+    if (sig) {
+      const min = Math.round((sig.d - ahora) / 60e3);
+      const cuando = min < 1 ? 'empieza ya' : min <= 90 ? `empieza en ${min} min` : `a las ${cuandoEv(sig)}`;
+      return `${cuantas} La siguiente, ${U.esc(sig.alumno)}, ${cuando}${sig.lugar === 'Online' ? ' (online)' : ''}.`;
+    }
+    return `${cuantas} Ya has terminado por hoy.`;
+  }
 
-    // Agenda: una línea por clase y una raya en la hora actual
-    let raya = false;
-    const filas = deHoy.map(e => {
-      let pre = '';
-      if (!raya && e.d > ahora) { raya = true; if (deHoy[0].d < ahora) pre = `<li class="ag-ahora" aria-label="Ahora"><span>${hora(ahora)}</span></li>`; }
-      const pasada = fin(e) <= ahora.getTime(), ya = e === enCurso;
-      const detalle = [e.tipoNombre, `${e.minutos || 60} min`, e.lugar ? e.lugar.toLowerCase() : ''].filter(Boolean).join(' · ');
-      const accion = e.estado === 'sinAceptar' ? '<button type="button" class="ag-accion" data-ir="solicitudes">Responder</button>'
-        : e.fam ? `<button type="button" class="ag-accion" data-escribir-fam="${e.fam}">Escribir</button>` : '<button type="button" class="ag-accion" data-ir="mensajes">Escribir</button>';
-      return `${pre}<li class="ag-item ${pasada ? 'pasada' : ''} ${ya ? 'ya' : ''}">
-        <time>${U.esc(cuandoEv(e))}<small>${horaFin(e)}</small></time>
-        <div><b>${U.esc(e.alumno)}</b>${e.estado === 'sinAceptar' ? ' <span class="ag-nota">por confirmar</span>' : ya ? ' <span class="ag-nota ya">ahora</span>' : ''}<span>${U.esc(detalle)}</span></div>
-        ${pasada ? '' : accion}</li>`;
+  // Lo que se ve al desplegar una clase
+  function detalleClase(e, pasada) {
+    const fam = e.fam && FAMILIAS[e.fam];
+    const hijo = fam && (fam.hijos || []).find(h => h && h.nombre === e.alumno);
+    const inf = e.fam ? INFORMES.filter(i => i.familia === e.fam && (!i.alumno || i.alumno === e.alumno)).sort((a, b) => b.d - a.d)[0] : null;
+    const datos = [
+      hijo && hijo.curso ? ['Curso', U.esc(hijo.curso)] : null,
+      fam ? ['Familia', U.esc(nombreFam(e.fam))] : null,
+      ['Dónde', e.lugar === 'Online' ? 'Online, por videollamada' : e.lugar ? 'En persona' + (fam && fam.zona && D.zona(fam.zona) ? `, por ${D.zona(fam.zona).nombre}` : '') : 'Por concretar'],
+      e.precio ? ['Precio', eurTxt(e.precio)] : null,
+      inf ? ['Último informe', `${U.esc(inf.tema)}: le cuesta ${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}`] : null
+    ].filter(Boolean);
+    const b = (txt, attrs, pri) => `<button type="button" class="boton ${pri ? '' : 'sec'} peq" ${attrs}>${txt}</button>`;
+    const acciones = e.estado === 'sinAceptar'
+      ? b('Aceptar', `data-clase-acepta="${e.id}"`, true) + b('Rechazar', `data-clase-rechaza="${e.id}"`)
+      : pasada ? b('Escribir el informe', 'data-ir="informe"', true) + (e.fam ? b('Escribir a la familia', `data-escribir-fam="${e.fam}"`) : '')
+      : b('Preparar la clase', `data-ini-preparar="${e.id}"`, true) + (e.fam ? b('Escribir a la familia', `data-escribir-fam="${e.fam}"`) : b('Escribir', 'data-ir="mensajes"'));
+    return `<dl class="ag-datos">${datos.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <p class="ag-botones">${acciones}${e.fam ? `<button type="button" class="ag-accion" data-perfil-fam="${e.fam}">Ver perfil del alumno</button>` : ''}</p>`;
+  }
+
+  function vistaInicioProfe() {
+    const ahora = new Date(), hoyF = isoD(ahora); if (!iniDia) iniDia = hoyF;
+    const h = ahora.getHours(), saludo = h < 14 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches';
+    const nombre = U.esc((REAL ? s.nombre : 'Laura') || '');
+    const diaSel = deIso(iniDia), esHoy = iniDia === hoyF;
+    const manana = new Date(ahora); manana.setDate(manana.getDate() + 1);
+
+    // La semana del día que se mira, con un punto por clase
+    const lunes = new Date(diaSel); lunes.setDate(lunes.getDate() - (lunes.getDay() + 6) % 7);
+    const dias = Array.from({ length: 7 }, (_, i) => { const d = new Date(lunes); d.setDate(lunes.getDate() + i); return d; });
+    const evSem = eventos(dias[0], dias[6]).filter(e => e.estado !== 'cancelada');
+    const chips = dias.map(d => {
+      const f = isoD(d), n = evSem.filter(e => e.f === f).length;
+      return `<button type="button" class="dia-chip ${f === iniDia ? 'sel' : ''} ${f === hoyF ? 'hoy' : ''} ${f < hoyF ? 'pasado' : ''}" data-ini-dia="${f}" aria-pressed="${f === iniDia}" aria-label="${fmt(d, { weekday: 'long', day: 'numeric' })}: ${n} ${n === 1 ? 'clase' : 'clases'}">
+        <span>${fmt(d, { weekday: 'short' }).replace('.', '')}</span><b>${d.getDate()}</b><i>${'<em></em>'.repeat(Math.min(n, 4))}</i></button>`;
     }).join('');
+    const mismaSemana = dias.some(d => isoD(d) === hoyF);
 
-    // Lo que tienes pendiente y cómo va el mes, en texto
-    const pend = SOLICITUDES.slice(0, 4).map(r => `<li><span><b>${U.esc(r.alumno.split(' · ')[0])}</b> ${U.esc(r.tipo.toLowerCase())}, ${U.esc(r.cuando)}${r.modalidad ? (r.modalidad === 'online' ? ', online' : ', en persona') : ''}</span></li>`).join('');
+    // Agenda del día elegido
+    const delDia = eventos(diaSel, diaSel).filter(e => e.estado !== 'cancelada');
+    let raya = false;
+    const filas = delDia.map(e => {
+      let pre = '';
+      if (esHoy && !raya && e.d > ahora) { raya = true; if (delDia[0].d < ahora) pre = `<li class="ag-ahora" aria-label="Ahora"><span>${hora(ahora)}</span></li>`; }
+      const pasada = finEv(e) <= ahora.getTime(), ya = esHoy && e.d <= ahora && !pasada, k = String(e.id), abierta = iniAbierta === k;
+      const detalle = [e.tipoNombre, `${e.minutos || 60} min`, e.lugar ? e.lugar.toLowerCase() : ''].filter(Boolean).join(' · ');
+      const nota = e.estado === 'sinAceptar' ? '<span class="ag-nota">por confirmar</span>' : ya ? '<span class="ag-nota ya">ahora</span>' : e.estado === 'hecha' ? '<span class="ag-nota hecha">hecha</span>' : '';
+      return `${pre}<li class="ag-item ${pasada ? 'pasada' : ''} ${ya ? 'ya' : ''} ${e.estado === 'sinAceptar' ? 'por-confirmar' : ''} ${abierta ? 'abierta' : ''}">
+        <time>${U.esc(cuandoEv(e))}<small>${horaFin(e)}</small></time>
+        <button type="button" class="ag-fila" data-ini-clase="${k}" aria-expanded="${abierta}"><span><b>${U.esc(e.alumno)}</b> ${nota}<small>${U.esc(detalle)}</small></span><i class="ag-flecha" aria-hidden="true"></i></button>
+        <div class="ag-det"><div>${detalleClase(e, pasada)}</div></div></li>`;
+    }).join('');
+    const titDia = esHoy ? 'Hoy' : iniDia === isoD(manana) ? 'Mañana' : may(fmt(diaSel, { weekday: 'long', day: 'numeric', month: 'long' }));
+    const vacio = esHoy ? 'Hoy no tienes nada en la agenda.' : iniDia < hoyF ? 'Ese día no tuviste clases.' : 'Ese día no tienes clases.';
+
+    // Por responder: se acepta o se rechaza aquí mismo
+    const pend = SOLICITUDES.slice(0, 4).map((r, i) => `<li><span><b>${U.esc(r.alumno.split(' · ')[0])}</b> ${U.esc(r.tipo.toLowerCase())}<small>${U.esc(r.cuando)}${r.modalidad ? (r.modalidad === 'online' ? ' · online' : ' · en persona') : ''}</small></span>
+      <span class="sol-botones"><button type="button" class="sol-si" data-sol-acepta="${i}" aria-label="Aceptar">Aceptar</button><button type="button" class="sol-no" data-sol-rechaza="${i}" aria-label="Rechazar">✕</button></span></li>`).join('');
     const estadoPerfil = MI_PERFIL ? ({ approved: 'publicada', pending: 'pendiente de revisión', paused: 'en pausa', rejected: 'sin aprobar' })[MI_PERFIL.estado] || MI_PERFIL.estado : null;
+
     return `<div class="ini-profe">
-      <header class="ini-cab"><p>${may(fmt(hoy, { weekday: 'long', day: 'numeric', month: 'long' }))}</p><h1>${saludo}, ${nombre}</h1><p class="ini-frase">${frase}</p></header>
+      <header class="ini-cab"><p>${may(fmt(ahora, { weekday: 'long', day: 'numeric', month: 'long' }))}</p><h1>${saludo}, ${nombre}</h1><p class="ini-frase" id="iniFrase">${fraseDelDia(ahora)}</p></header>
+      <div class="semana-ini">
+        <button type="button" class="sem-flecha" data-ini-sem="-1" aria-label="Semana anterior">‹</button>
+        <div class="sem-dias">${chips}</div>
+        <button type="button" class="sem-flecha" data-ini-sem="1" aria-label="Semana siguiente">›</button>
+      </div>
       <div class="ini-cols">
-        <section class="ini-agenda" aria-label="Clases de hoy">
-          <div class="ini-tit"><h2>Hoy</h2><button type="button" class="ag-accion" data-ir="calendario">Ver la semana</button></div>
-          ${deHoy.length ? `<ol class="agenda">${filas}</ol>` : '<p class="ini-vacio">Nada en la agenda.</p>'}
+        <section class="ini-agenda" aria-label="Clases del día">
+          <div class="ini-tit"><h2>${titDia}</h2>${esHoy ? `<button type="button" class="ag-accion" data-ir="calendario">Ver el mes</button>` : `<button type="button" class="ag-accion" data-ini-dia="${hoyF}">Volver a hoy</button>`}</div>
+          ${delDia.length ? `<ol class="agenda">${filas}</ol>` : `<p class="ini-vacio">${vacio}</p>`}
+          ${!mismaSemana ? '' : ''}
         </section>
         <aside class="ini-lado">
-          <section><div class="ini-tit"><h2>Por responder</h2>${SOLICITUDES.length ? `<button type="button" class="ag-accion" data-ir="solicitudes">${SOLICITUDES.length > 4 ? 'Ver todas' : 'Responder'}</button>` : ''}</div>
-            ${SOLICITUDES.length ? `<ul class="ini-lista">${pend}</ul>` : '<p class="ini-vacio">No tienes solicitudes pendientes.</p>'}
-            ${REAL ? '' : '<p class="ini-vacio" style="margin-top:8px">Falta el informe de la clase de ayer con Lucas. <button type="button" class="ag-accion" data-ir="informe">Escribirlo</button></p>'}</section>
-          <section><div class="ini-tit"><h2>Este mes</h2></div>
+          <section><div class="ini-tit"><h2>Por responder</h2>${SOLICITUDES.length > 4 ? `<button type="button" class="ag-accion" data-ir="solicitudes">Ver todas</button>` : ''}</div>
+            ${SOLICITUDES.length ? `<ul class="ini-lista sol">${pend}</ul>` : '<p class="ini-vacio">Nada pendiente. Las nuevas solicitudes te llegarán aquí.</p>'}
+            ${REAL ? '' : '<p class="ini-vacio" style="margin-top:10px">Falta el informe de la clase de ayer con Lucas. <button type="button" class="ag-accion" data-ir="informe">Escribirlo</button></p>'}</section>
+          <section><div class="ini-tit"><h2>Este mes</h2><button type="button" class="ag-accion" data-ir="ingresos">Ingresos</button></div>
             <dl class="ini-datos"><div><dt>Te llegan</dt><dd>${STATS.mes}</dd></div><div><dt>Clases esta semana</dt><dd>${STATS.semana}</dd></div><div><dt>Alumnos</dt><dd>${ALUMNOS.length}</dd></div><div><dt>Valoración</dt><dd>${STATS.nota === 'Nuevo' ? 'sin reseñas' : STATS.nota}</dd></div></dl></section>
           ${estadoPerfil ? `<p class="ini-perfil">Tu ficha está <b>${estadoPerfil}</b>. <button type="button" class="ag-accion" data-ir="perfil">Editarla</button></p>` : ''}
         </aside>
       </div></div>`;
+  }
+  // Vuelve a pintar el inicio sin la animación de entrada (al cambiar de día, cada minuto…)
+  function repintarInicio() {
+    if (rol !== 'profe' || actual !== 'inicio') return;
+    const v = document.querySelector('#vista .vista'); if (!v) return;
+    v.innerHTML = vistaInicioProfe();
+  }
+  // La hora de «ahora» y la frase del día se actualizan solas
+  setInterval(() => { if (!document.hidden) repintarInicio(); }, 60e3);
+  async function responderSolicitudIni(i, ok) {
+    const r = SOLICITUDES[i]; if (!r) return;
+    if (REAL && r.id) {
+      try { await SUPA.cambiarClase(r.id, ok ? 'aceptada' : 'rechazada'); } catch (x) { return U.tostada(x.message); }
+      const c = CLASES.find(x => x.id === r.id); if (c) c.estado = ok ? 'aceptada' : 'rechazada';
+    }
+    SOLICITUDES.splice(i, 1); menu(); repintarInicio();
+    U.tostada(ok ? `Aceptada: ${r.alumno.split(' · ')[0]}, ${r.cuando}. Ya está en tu agenda.` : 'Solicitud rechazada');
+  }
+  async function cambiarClaseIni(id, ok) {
+    const i = SOLICITUDES.findIndex(r => String(r.id) === String(id));
+    if (i >= 0) return responderSolicitudIni(i, ok);
+    if (REAL) { try { await SUPA.cambiarClase(id, ok ? 'aceptada' : 'rechazada'); } catch (x) { return U.tostada(x.message); } const c = CLASES.find(x => x.id === id); if (c) c.estado = ok ? 'aceptada' : 'rechazada'; }
+    repintarInicio(); U.tostada(ok ? 'Clase aceptada' : 'Clase rechazada');
   }
   function eventos(desde, hasta) {
     const fin = new Date(hasta); fin.setHours(23, 59, 59, 999);
@@ -1333,6 +1456,22 @@ D.listo.then(async () => {
   // Delegación general
   $('#vista').addEventListener('click', e => {
     const c = e.target.closest('[data-chat]'); if (c) { chatPedido = c.dataset.chat; return ir('mensajes'); }
+    // Inicio del profe: semana, día, clases desplegables y solicitudes
+    const idia = e.target.closest('[data-ini-dia]'); if (idia) { iniDia = idia.dataset.iniDia; iniAbierta = null; return repintarInicio(); }
+    const isem = e.target.closest('[data-ini-sem]'); if (isem) { const d = deIso(iniDia || isoD(new Date())); d.setDate(d.getDate() + 7 * Number(isem.dataset.iniSem)); iniDia = isoD(d); iniAbierta = null; return repintarInicio(); }
+    const icl = e.target.closest('[data-ini-clase]');
+    if (icl) {
+      const k = icl.dataset.iniClase, li = icl.closest('.ag-item'), abrir = iniAbierta !== k;
+      document.querySelectorAll('.ag-item.abierta').forEach(x => { x.classList.remove('abierta'); x.querySelector('.ag-fila').setAttribute('aria-expanded', 'false'); });
+      iniAbierta = abrir ? k : null;
+      if (abrir) { li.classList.add('abierta'); icl.setAttribute('aria-expanded', 'true'); }
+      return;
+    }
+    const iprep = e.target.closest('[data-ini-preparar]'); if (iprep) { claseSel = iprep.dataset.iniPreparar; return ir('preparar'); }
+    const sa = e.target.closest('[data-sol-acepta]'); if (sa) return responderSolicitudIni(+sa.dataset.solAcepta, true);
+    const sr = e.target.closest('[data-sol-rechaza]'); if (sr) { if (!confirm('¿Rechazar esta solicitud?')) return; return responderSolicitudIni(+sr.dataset.solRechaza, false); }
+    const ca = e.target.closest('[data-clase-acepta]'); if (ca) return cambiarClaseIni(ca.dataset.claseAcepta, true);
+    const cr = e.target.closest('[data-clase-rechaza]'); if (cr) { if (!confirm('¿Rechazar esta clase?')) return; return cambiarClaseIni(cr.dataset.claseRechaza, false); }
     // Profe: perfil de la familia y empezar el chat
     const pf = e.target.closest('[data-perfil-fam]'); if (pf) return abrirPerfilFamilia(pf.dataset.perfilFam);
     const ef = e.target.closest('[data-escribir-fam]'); if (ef) return escribirFamilia(ef.dataset.escribirFam);
