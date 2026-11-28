@@ -125,6 +125,41 @@
 .leyenda-c{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--tinta-2)}
 .leyenda-c i{margin-right:6px;vertical-align:middle}
 .tit-lista{padding:16px 20px 0;font-size:18px}
+/* ---------- Mi perfil (profe) ---------- */
+.aviso-perfil{padding:18px 20px;margin-bottom:18px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+.estado-perfil{font-size:12.5px;font-weight:650;padding:3px 10px;border-radius:99px;background:var(--papel-2);white-space:nowrap}
+.estado-perfil.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.estado-perfil.aviso{background:color-mix(in srgb,var(--aviso) 15%,transparent);color:var(--aviso)}
+.estado-perfil.gris{color:var(--tinta-2)}
+.perfil-p{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+.perfil-form{display:grid;gap:16px}
+.sec-pf{padding:22px 24px}
+.sec-pf h3{font-size:19px;margin-bottom:14px}
+.campos-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.campos-2 .ancho{grid-column:1/-1}
+.foto-fila{display:flex;gap:18px;align-items:center;margin-bottom:16px}
+.foto-ed{width:96px;height:96px;border-radius:50%;border:3px solid var(--hoja);box-shadow:0 0 0 1px var(--linea-2);display:grid;place-items:center;color:#fff;font-size:28px;font-weight:700;flex:none;cursor:pointer}
+.etq-pf{font-weight:650;font-size:14px;margin:4px 0 10px}
+.etq-pf+.chips-ed,.etq-pf+.casillas-ed{margin-bottom:16px}
+.chips-ed{display:flex;flex-wrap:wrap;gap:8px}
+.chip-ed{border:1.5px solid var(--linea-2);background:transparent;color:var(--tinta);border-radius:99px;padding:7px 14px;font-weight:600;font-size:14px}
+.chip-ed[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent)}
+.casillas-ed{display:flex;flex-wrap:wrap;gap:8px 18px}
+.casilla-ed{display:flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+.casilla-ed input{accent-color:var(--butano);width:17px;height:17px}
+.aviso-pf{margin-top:12px;font-size:13.5px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--aviso) 12%,transparent)}
+.segmentado-pf{display:flex;border:1px solid var(--linea-2);border-radius:12px;overflow:hidden}
+.segmentado-pf button{flex:1;border:0;background:transparent;padding:11px;font-weight:650;color:var(--tinta)}
+.segmentado-pf button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.horario-ed{display:grid;grid-template-columns:44px repeat(6,1fr);gap:5px;max-width:520px}
+.horario-ed .d,.horario-ed .h{font-size:12.5px;font-weight:600;color:var(--tinta-2);display:grid;place-items:center}
+.hueco-ed{height:34px;border-radius:8px;border:1px solid var(--linea-2);background:transparent}
+.hueco-ed[aria-pressed="true"]{background:var(--butano);border-color:var(--butano)}
+.guardar-pf{position:sticky;bottom:12px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-radius:16px;background:var(--hoja);border:1px solid var(--linea-2);box-shadow:var(--sombra)}
+.guardar-pf .hay{color:var(--aviso);font-weight:600}
+.previa-pf{position:sticky;top:86px}
+@media (max-width:1100px){.perfil-p{grid-template-columns:1fr}.previa-pf{position:static;order:-1}}
+@media (max-width:560px){.campos-2{grid-template-columns:1fr}.sec-pf{padding:18px}.guardar-pf{padding:10px 12px;bottom:8px}.guardar-pf #pfCambios{width:100%;font-size:13px}.guardar-pf>div{width:100%}.guardar-pf .boton{flex:1;padding:10px 12px}}
 .chats-grupo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:-8px 0 16px}
 @media (max-width:980px){.inicio-f,.cal-p{grid-template-columns:1fr}}
 @media (max-width:760px){.semana{grid-template-columns:1fr}.dia-sem{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center}.dia-sem p{width:64px;flex:none}.dia-sem .ev{flex:1;min-width:140px}.hero-clase{flex-direction:column;align-items:flex-start}}
@@ -264,6 +299,16 @@ D.listo.then(async () => {
     return;
   }
 
+  // ---------- Mi perfil (profe) ----------
+  let MI_PERFIL = null;
+  if (REAL && rol === 'profe') { try { MI_PERFIL = await SUPA.miPerfilProfe(); } catch (e) { console.warn(e); U.tostada('No se ha podido cargar tu perfil: ' + e.message); } }
+  else if (!REAL) {
+    // Maqueta: el perfil de Laura
+    const p = D.profe('laura') || D.PROFES[0];
+    if (p) MI_PERFIL = Object.assign(JSON.parse(JSON.stringify(p)), { estado: 'approved', nombrePila: p.nombre.split(' ')[0], apellidos: p.nombre.split(' ').slice(1).join(' '),
+      experiencia: 6, titulacion: (p.estudios || '').split(' · ')[0], centro: (p.estudios || '').split(' · ')[1] || '' });
+  }
+
   // ---------- Tus grupos de estudio ----------
   const leerLS = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } };
   let MIS_GRUPOS = [];
@@ -332,7 +377,7 @@ D.listo.then(async () => {
   // ---------- Menús ----------
   const MENUS = {
     familia: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Asistente'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
-    profe: [['inicio', 'Inicio'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos']]
+    profe: [['inicio', 'Inicio'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos']]
   };
   let chatPedido = U.param('chat');
   let actual = location.hash.slice(1) || (chatPedido ? 'mensajes' : 'inicio');
@@ -402,10 +447,12 @@ D.listo.then(async () => {
     },
     profe: {
       inicio: () => `<h1>Hola, ${U.esc(REAL ? s.nombre : 'Laura')}.</h1>
+        ${MI_PERFIL ? `<div class="hoja aviso-perfil"><div style="display:flex;gap:14px;align-items:center;min-width:0">${U.cara(MI_PERFIL, 'p')}<div style="min-width:0"><b>Tu perfil</b> ${etiquetaEstado(MI_PERFIL.estado)}<p class="suave" style="font-size:14px">${ESTADO_PERFIL[MI_PERFIL.estado] ? ESTADO_PERFIL[MI_PERFIL.estado].txt : ''}</p></div></div><button class="boton peq" type="button" data-ir="perfil">Ver y editar mi perfil</button></div>` : ''}
         <div class="tarjetas"><div class="hoja dato"><span class="suave">Este mes te llegan</span><b>${STATS.mes}</b></div><div class="hoja dato"><span class="suave">Clases esta semana</span><b>${STATS.semana}</b></div><div class="hoja dato"><span class="suave">Nota media</span><b>${STATS.nota}</b></div></div>
         <div class="hoja" style="padding:22px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;border-color:var(--butano)" ${REAL ? 'hidden' : ''}><div><b>Tienes un informe sin rellenar</b><p class="suave">Clase de ayer con Lucas (4º ESO). Son dos minutos.</p></div><button class="boton peq" type="button" data-ir="informe">Rellenar ahora</button></div>
         <h2 style="font-size:26px;margin:30px 0 12px">Solicitudes nuevas</h2>${vistaSolicitudes(true)}`,
       solicitudes: () => `<h1>Solicitudes</h1>${vistaSolicitudes()}`,
+      perfil: vistaPerfilProfe,
       preparar: () => `<h1>Preparar la próxima clase</h1>
         ${REAL ? '<div class="hoja" style="padding:24px;margin-bottom:18px"><p>Cuando tus alumnos practiquen con el asistente entre clases, aquí verás en qué se han atascado y una propuesta para la siguiente clase. Mientras, puedes generar ejercicios.</p></div>' : ''}<div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Lucas · 4º ESO · ${fmt(PROXIMAS[0].d, { weekday: 'long', day: 'numeric' })} a las 18:00</p>
           <p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Desde la última clase ha practicado 3 veces con el asistente (34 min). Se ha atascado 4 veces con el mismo paso: <b>cambiar el signo al pasar un término al otro lado</b>. La fórmula de segundo grado ya la domina.</p>
@@ -537,6 +584,131 @@ D.listo.then(async () => {
         <div style="min-width:0">${delDia ? `<div class="hoja" style="margin-bottom:16px"><h3 class="tit-lista">${may(fmt(deIso(calDia), { weekday: 'long', day: 'numeric', month: 'long' }))}</h3>${delDia.length ? delDia.map(filaEvento).join('') : '<p class="suave" style="padding:10px 20px 18px">Este día no tienes clase.</p>'}</div>` : ''}
           <div class="hoja"><h3 class="tit-lista">Próximas clases</h3>${lista.length ? lista.map(filaEvento).join('') : `<p class="suave" style="padding:10px 20px 18px">No tienes clases. <a href="buscar.html">Busca profe</a> o <a href="grupos.html">únete a un grupo</a>.</p>`}</div></div>
       </div>`;
+  }
+
+  // ---------- Mi perfil (profe): verlo como lo ven las familias y cambiarlo todo ----------
+  const ESTADO_PERFIL = {
+    approved: { t: 'Publicado', c: 'ok', txt: 'Sales en el buscador y en el mapa.' },
+    pending: { t: 'Pendiente de revisión', c: 'aviso', txt: 'Lo publicamos después de la videollamada de comprobación.' },
+    paused: { t: 'En pausa', c: 'gris', txt: 'No sales en el buscador hasta que vuelvas a publicarlo.' },
+    rejected: { t: 'No aprobado', c: 'aviso', txt: 'Escríbenos desde Ayuda si crees que es un error.' }
+  };
+  const etiquetaEstado = e => `<span class="estado-perfil ${(ESTADO_PERFIL[e] || {}).c || ''}">${U.esc((ESTADO_PERFIL[e] || { t: e || '' }).t)}</span>`;
+  const IDIOMAS = ['Español', 'Inglés', 'Francés', 'Alemán', 'Italiano', 'Portugués', 'Rumano', 'Chino', 'Árabe'];
+  let PF = null, PF0 = '';   // copia que se edita y cómo estaba al abrirla
+  const clavePF = () => JSON.stringify({ ...PF, foto: !!PF.foto });
+  function nuevoPF() {
+    const m = MI_PERFIL;
+    PF = { nombrePila: m.nombrePila || '', apellidos: m.apellidos || '', foto: null, avatar: m.avatar || null, titulacion: m.titulacion || '', centro: m.centro || '',
+      experiencia: m.experiencia ?? '', asig: [...(m.asig || [])], niveles: [...(m.niveles || [])], corta: m.corta || '', bio: m.bio || '', modo: m.modo || 'ambas',
+      zona: m.zona || '', precio: m.precio || 18, grupos: !!m.grupos, libre: [...(m.libre || [])], idiomas: [...(m.idiomas && m.idiomas.length ? m.idiomas : ['Español'])] };
+    PF0 = clavePF();
+  }
+  const previaPF = () => ({ id: MI_PERFIL.id, nombre: `${PF.nombrePila} ${PF.apellidos}`.trim() || 'Tu nombre', avatar: PF.foto || PF.avatar,
+    estudios: [PF.titulacion, PF.centro].filter(Boolean).join(' · ') || 'Tu titulación', corta: PF.corta || 'Tu frase de presentación', asig: PF.asig.length ? PF.asig : ['mat'],
+    modo: PF.modo, zona: PF.modo === 'online' ? null : PF.zona || null, precio: +PF.precio, nota: MI_PERFIL.nota, clases: MI_PERFIL.clases, grupos: PF.grupos,
+    verificado: MI_PERFIL.verificado, certificado: MI_PERFIL.certificado, idiomas: PF.idiomas, niveles: PF.niveles, libre: PF.libre, real: true });
+  function pintarPrevia() {
+    const el = $('#previaPerfil'); if (!el) return;
+    el.innerHTML = U.tarjetaProfe(previaPF()).replace(/<p class="acciones-tarjeta">[\s\S]*?<\/p>/, '').replace(/<a [^>]*class="enlace-tarjeta"[^>]*>([\s\S]*?)<\/a>/, '<span>$1</span>');
+    const c = $('#pfCambios'); if (c) { const hay = clavePF() !== PF0; c.textContent = hay ? 'Tienes cambios sin guardar' : 'Sin cambios'; c.classList.toggle('hay', hay); }
+  }
+  function validarPF() {
+    if (!PF.nombrePila.trim()) return 'Escribe tu nombre.';
+    if (!PF.titulacion.trim()) return 'Indica tu titulación.';
+    if (!PF.asig.length) return 'Elige al menos una asignatura.';
+    if (!PF.niveles.length) return 'Elige al menos un curso.';
+    if (!PF.corta.trim()) return 'Escribe tu frase de presentación.';
+    if (PF.bio.trim().length < 120) return 'Cuéntales algo más sobre ti (mínimo 120 caracteres).';
+    if (PF.modo !== 'online' && !PF.zona) return 'Elige tu barrio, o marca solo «Online».';
+    if (!PF.libre.length) return 'Marca al menos un hueco libre en el horario.';
+    if (!PF.idiomas.length) return 'Elige al menos un idioma.';
+    return '';
+  }
+  function vistaPerfilProfe() {
+    if (!MI_PERFIL) return `<h1>Mi perfil</h1><div class="hoja" style="padding:32px;text-align:center"><h3>Aún no tienes perfil de profe</h3><p class="suave" style="margin:10px 0 18px">Créalo para salir en el buscador.</p><a class="boton" href="alta-profe.html">Crear mi perfil</a></div>`;
+    if (!PF) nuevoPF();
+    const e = MI_PERFIL.estado, v = x => U.esc(x == null ? '' : x), marca = c => c ? 'checked' : '';
+    const fotoFondo = PF.foto || PF.avatar ? `background:url(${PF.foto || PF.avatar}) center/cover` : `background:${D.asig(PF.asig[0] || 'mat').c}`;
+    const casillas = (lista, elegidos, attr) => lista.map(n => `<label class="casilla-ed"><input type="checkbox" ${attr} value="${v(n)}" ${marca(elegidos.includes(n))}> ${v(n)}</label>`).join('');
+    const zonas = [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).map(z => `<option value="${z.id}" ${PF.zona === z.id ? 'selected' : ''}>${z.nombre}</option>`).join('');
+    const horario = `<div class="horario-ed"><span></span>${D.DIAS.map(d => `<span class="d">${d}</span>`).join('')}${D.HORAS.map(h => `<span class="h">${h}h</span>` + D.DIAS.map(d => `<button type="button" class="hueco-ed" data-pf-hueco="${d + h}" aria-pressed="${PF.libre.includes(d + h)}" aria-label="${d} ${h}h"></button>`).join('')).join('')}</div>`;
+    return `<h1>Mi perfil</h1><p class="suave" style="margin:-10px 0 22px">Cambia lo que quieras: a la derecha ves cómo te verán las familias.</p>
+    <div class="perfil-p">
+      <form id="fPerfil" class="perfil-form" novalidate>
+        <section class="hoja sec-pf"><h3>Foto y nombre</h3>
+          <div class="foto-fila"><button type="button" class="foto-ed" id="pfCambiarFoto" style="${fotoFondo}" aria-label="Cambiar foto">${PF.foto || PF.avatar ? '' : v(U.iniciales(PF.nombrePila + ' ' + PF.apellidos))}</button>
+            <div><button type="button" class="boton sec peq" id="pfCambiarFoto2">Cambiar foto</button><p class="suave" style="font-size:13px;margin-top:6px">JPG, PNG o WebP, hasta 3 MB. Que se te vea bien la cara: las familias confían más.</p></div>
+            <input type="file" accept="image/jpeg,image/png,image/webp" id="pfFoto" hidden></div>
+          <div class="campos-2"><label class="campo"><span>Nombre</span><input class="entrada" name="nombrePila" value="${v(PF.nombrePila)}" maxlength="60" autocomplete="given-name"></label>
+            <label class="campo"><span>Apellidos</span><input class="entrada" name="apellidos" value="${v(PF.apellidos)}" maxlength="80" autocomplete="family-name"></label></div></section>
+
+        <section class="hoja sec-pf"><h3>Estudios y experiencia</h3>
+          <div class="campos-2"><label class="campo ancho"><span>Titulación</span><input class="entrada" name="titulacion" value="${v(PF.titulacion)}" maxlength="160" list="titulaciones" autocomplete="off"></label>
+            <label class="campo"><span>Centro <span class="suave">(opcional)</span></span><input class="entrada" name="centro" value="${v(PF.centro)}" maxlength="160"></label>
+            <label class="campo"><span>Años dando clase</span><input class="entrada" type="number" name="experiencia" min="0" max="60" value="${v(PF.experiencia)}"></label></div>
+          <datalist id="titulaciones">${D.TITULACIONES.map(t => `<option>${v(t)}</option>`).join('')}</datalist>
+          ${e === 'approved' ? '<p class="aviso-pf">Si cambias la titulación o el centro, tu perfil vuelve a revisión hasta que lo comprobemos.</p>' : ''}</section>
+
+        <section class="hoja sec-pf"><h3>Qué enseñas</h3>
+          <p class="etq-pf">Asignaturas</p><div class="chips-ed">${D.ASIG.map(a => `<button type="button" class="chip-ed" data-pf-asig="${a.id}" aria-pressed="${PF.asig.includes(a.id)}" style="--c:${a.c}">${a.nombre}</button>`).join('')}</div>
+          <p class="etq-pf">Cursos</p><div class="casillas-ed">${casillas(D.NIVELES, PF.niveles, 'data-pf-nivel')}</div></section>
+
+        <section class="hoja sec-pf"><h3>Cómo te presentas</h3>
+          <label class="campo"><span>Frase de presentación <span class="suave" id="pfCorta">${PF.corta.length}/120</span></span><input class="entrada" name="corta" value="${v(PF.corta)}" maxlength="120"></label>
+          <label class="campo" style="margin-top:14px"><span>Sobre ti <span class="suave" id="pfBio"></span></span><textarea class="entrada" name="bio" maxlength="3000" style="min-height:150px">${v(PF.bio)}</textarea></label></section>
+
+        <section class="hoja sec-pf"><h3>Dónde das clase</h3>
+          <div class="segmentado-pf">${[['presencial', 'En persona'], ['online', 'Online'], ['ambas', 'Las dos']].map(([k, t]) => `<button type="button" data-pf-modo="${k}" aria-pressed="${PF.modo === k}">${t}</button>`).join('')}</div>
+          <label class="campo" id="pfZonaCampo" style="margin-top:14px" ${PF.modo === 'online' ? 'hidden' : ''}><span>Tu barrio <span class="suave">(las familias solo ven la zona aproximada)</span></span><select class="entrada" name="zona"><option value="">Elige tu barrio…</option>${zonas}</select></label></section>
+
+        <section class="hoja sec-pf"><h3>Precio y grupos</h3>
+          <label class="campo"><span>Precio por hora: <b id="pfPrecio">${PF.precio} €</b></span><input type="range" name="precio" min="10" max="60" value="${v(PF.precio)}"></label>
+          <p class="suave" style="font-size:13px;margin-top:6px" id="pfPrecioAyuda"></p>
+          <label class="casilla-ed" style="margin-top:14px"><input type="checkbox" name="grupos" ${marca(PF.grupos)}> Acepto grupos de estudio (2–4 alumnos de la misma zona y curso)</label></section>
+
+        <section class="hoja sec-pf"><h3>Cuándo estás libre</h3><p class="suave" style="font-size:14px;margin-bottom:12px">Pulsa los huecos en los que sueles poder dar clase.</p>${horario}</section>
+
+        <section class="hoja sec-pf"><h3>Idiomas en los que das clase</h3><div class="casillas-ed">${casillas(IDIOMAS, PF.idiomas, 'data-pf-idioma')}</div></section>
+
+        <div class="guardar-pf"><span id="pfCambios" class="suave">Sin cambios</span><div style="display:flex;gap:8px"><button type="button" class="boton sec" id="pfDeshacer">Deshacer</button><button class="boton" id="pfGuardar">Guardar cambios</button></div></div>
+      </form>
+      <aside class="previa-pf">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><p class="mono suave" style="font-size:12px">Así te ven las familias</p>${etiquetaEstado(e)}</div>
+        <div id="previaPerfil"></div>
+        <p class="suave" style="font-size:13px;margin-top:12px">${(ESTADO_PERFIL[e] || {}).txt || ''}</p>
+        <p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${e === 'approved' ? `<a class="boton sec peq" href="profe.html?id=${encodeURIComponent(MI_PERFIL.id)}">Ver mi ficha pública</a><button type="button" class="boton sec peq" data-pf-estado="paused">Pausar mi perfil</button>`
+          : e === 'paused' ? '<button type="button" class="boton peq" data-pf-estado="approved">Volver a publicar</button>' : ''}</p>
+      </aside>
+    </div>`;
+  }
+  function textosPF() {
+    const n = PF.bio.trim().length, b = $('#pfBio'); if (b) b.textContent = `${n} caracteres${n < 120 ? ' (mínimo 120)' : ' ✓'}`;
+    const c = $('#pfCorta'); if (c) c.textContent = PF.corta.length + '/120';
+    const p = $('#pfPrecio'); if (p) p.textContent = PF.precio + ' €';
+    const a = $('#pfPrecioAyuda'); if (a) a.textContent = `Te llegan ${(PF.precio * .85).toFixed(2).replace('.', ',')} € por hora al principio y ${(PF.precio * .95).toFixed(2).replace('.', ',')} € a partir de la clase 21 con cada familia.${PF.grupos ? ` En un grupo de 3, cada familia paga ${D.precioGrupo(+PF.precio, 3)} € y tú cobras ${D.precioGrupo(+PF.precio, 3) * 3} € por hora.` : ''}`;
+  }
+  async function guardarPF(btn) {
+    const err = validarPF(); if (err) return U.tostada(err);
+    btn.disabled = true; btn.textContent = 'Guardando…';
+    const antes = MI_PERFIL.estado;
+    try {
+      if (REAL) {
+        if (PF.nombrePila.trim() !== MI_PERFIL.nombrePila || PF.apellidos.trim() !== MI_PERFIL.apellidos) await SUPA.cambiarNombre(PF.nombrePila.trim(), PF.apellidos.trim());
+        await SUPA.guardarPerfilProfe({ titulacion: PF.titulacion.trim(), centro: PF.centro.trim(), corta: PF.corta.trim(), bio: PF.bio.trim(), modo: PF.modo, zona: PF.modo === 'online' ? null : PF.zona,
+          precio: +PF.precio, grupos: PF.grupos, libre: PF.libre, asig: PF.asig, niveles: PF.niveles, foto: PF.foto, idiomas: PF.idiomas, experiencia: PF.experiencia });
+        MI_PERFIL = await SUPA.miPerfilProfe();
+      } else {
+        Object.assign(MI_PERFIL, { nombrePila: PF.nombrePila.trim(), apellidos: PF.apellidos.trim(), nombre: `${PF.nombrePila} ${PF.apellidos}`.trim(), avatar: PF.foto || PF.avatar,
+          titulacion: PF.titulacion, centro: PF.centro, experiencia: PF.experiencia, asig: PF.asig, niveles: PF.niveles, corta: PF.corta, bio: PF.bio, modo: PF.modo, zona: PF.zona,
+          precio: +PF.precio, grupos: PF.grupos, libre: PF.libre, idiomas: PF.idiomas });
+      }
+    } catch (x) { btn.disabled = false; btn.textContent = 'Guardar cambios'; return U.tostada(x.message); }
+    // El nombre de la cabecera
+    try { const ss = JSON.parse(localStorage.getItem('sesion') || 'null'); if (ss) { ss.nombre = MI_PERFIL.nombrePila || ss.nombre; localStorage.setItem('sesion', JSON.stringify(ss)); U.pintarCuenta(); } } catch (x) {}
+    PF = null;
+    U.tostada(antes === 'approved' && MI_PERFIL.estado === 'pending' ? 'Guardado. Como has cambiado tus estudios, tu perfil vuelve a revisión.' : REAL ? 'Guardado: las familias ya ven tu perfil así' : 'Guardado (en la maqueta solo se guarda en esta página)');
+    ir('perfil', true);
   }
 
   function vistaSolicitudes(corta) {
@@ -686,6 +858,45 @@ D.listo.then(async () => {
       if (preguntaPendiente) { const q = preguntaPendiente; preguntaPendiente = null; preguntar(q); }
     },
     informes: () => IA.escribir($('#resMes'), `Buen mes para ${hijo.nombre}. Siete clases sin faltar a ninguna, y en las dos asignaturas ha ganado seguridad. Lo único que se repite es el signo al despejar en Matemáticas: Laura ya lo está trabajando.`, 8),
+    perfil: () => {
+      const f = $('#fPerfil'); if (!f) return;
+      pintarPrevia(); textosPF();
+      const cambio = e => {
+        const t = e.target;
+        if (t.name && ['nombrePila', 'apellidos', 'titulacion', 'centro', 'experiencia', 'corta', 'bio', 'precio', 'zona'].includes(t.name)) PF[t.name] = t.name === 'precio' ? +t.value : t.value;
+        if (t.name === 'grupos') PF.grupos = t.checked;
+        if (t.hasAttribute('data-pf-nivel')) PF.niveles = [...f.querySelectorAll('[data-pf-nivel]:checked')].map(x => x.value);
+        if (t.hasAttribute('data-pf-idioma')) PF.idiomas = [...f.querySelectorAll('[data-pf-idioma]:checked')].map(x => x.value);
+        textosPF(); pintarPrevia();
+      };
+      f.addEventListener('input', cambio); f.addEventListener('change', cambio);
+      f.addEventListener('click', e => {
+        const a = e.target.closest('[data-pf-asig]');
+        if (a) { const id = a.dataset.pfAsig, on = !PF.asig.includes(id); PF.asig = on ? [...PF.asig, id] : PF.asig.filter(x => x !== id); a.setAttribute('aria-pressed', on); return pintarPrevia(); }
+        const h = e.target.closest('[data-pf-hueco]');
+        if (h) { const k = h.dataset.pfHueco, on = !PF.libre.includes(k); PF.libre = on ? [...PF.libre, k] : PF.libre.filter(x => x !== k); h.setAttribute('aria-pressed', on); return pintarPrevia(); }
+        const m = e.target.closest('[data-pf-modo]');
+        if (m) { PF.modo = m.dataset.pfModo; f.querySelectorAll('[data-pf-modo]').forEach(b => b.setAttribute('aria-pressed', b === m)); $('#pfZonaCampo').hidden = PF.modo === 'online'; return pintarPrevia(); }
+        if (e.target.closest('#pfCambiarFoto, #pfCambiarFoto2')) return $('#pfFoto').click();
+        if (e.target.closest('#pfDeshacer')) { PF = null; return ir('perfil', true); }
+      });
+      $('#pfFoto').onchange = e => {
+        const archivo = e.target.files[0]; if (!archivo) return;
+        if (archivo.size > 3 * 1024 * 1024) return U.tostada('La foto pesa más de 3 MB');
+        const r = new FileReader();
+        r.onload = () => { PF.foto = r.result; const b = $('#pfCambiarFoto'); b.style.background = `url(${r.result}) center/cover`; b.textContent = ''; pintarPrevia(); U.tostada('Foto lista: pulsa «Guardar cambios»'); };
+        r.readAsDataURL(archivo);
+      };
+      f.onsubmit = e => { e.preventDefault(); guardarPF($('#pfGuardar')); };
+      document.querySelectorAll('[data-pf-estado]').forEach(b => b.onclick = async () => {
+        const nuevo = b.dataset.pfEstado;
+        if (nuevo === 'paused' && !confirm('¿Pausar tu perfil? Dejarás de salir en el buscador hasta que lo vuelvas a publicar. Tus clases y mensajes siguen igual.')) return;
+        try { if (REAL) { await SUPA.estadoPerfilProfe(nuevo); MI_PERFIL = await SUPA.miPerfilProfe(); } else MI_PERFIL.estado = nuevo; }
+        catch (x) { return U.tostada(x.message); }
+        U.tostada(nuevo === 'paused' ? 'Perfil en pausa: ya no sales en el buscador' : 'Perfil publicado otra vez');
+        ir('perfil', true);
+      });
+    },
     preparar: () => { generarEjercicios(); $('#otrosEj').onclick = generarEjercicios; $('#conSol').onchange = generarEjercicios; },
     mensajes: () => { if (!document.querySelector('.hilo')) return; pintarHilo(document.querySelector('.hilo').dataset.abierto); document.querySelector('.convs').onclick = e => { const b = e.target.closest('[data-conv]'); if (b) pintarHilo(b.dataset.conv); }; },
     ingresos: () => setTimeout(() => document.querySelectorAll('.ingresos i').forEach(i => i.style.height = i.dataset.h + '%'), 60),

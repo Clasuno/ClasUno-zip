@@ -137,9 +137,27 @@ window.SUPA = (() => {
     const datos = {
       degree: b.titulacion, center: b.centro || null, headline: b.corta, description: b.bio,
       modality: b.modo, zone: b.modo === 'online' ? null : nombreZonaBD(b.zona), price_per_hour: b.precio,
-      availability: b.libre, languages: ['Español'], acepta_grupos: !!b.grupos
+      availability: b.libre, languages: b.idiomas && b.idiomas.length ? b.idiomas : ['Español'], acepta_grupos: !!b.grupos,
+      experience_years: b.experiencia === '' || b.experiencia == null ? null : Math.max(0, Math.min(60, Math.round(+b.experiencia) || 0))
     };
     const { error } = await sb.rpc('guardar_perfil_profe', { datos, asignaturas: b.asig.map(id => D.asig(id).nombre), niveles: b.niveles });
+    if (error) throw new Error(errorBonito(error));
+  }
+  // Mi perfil de profe (también pendiente o en pausa), en el formato de la web + estado
+  async function miPerfilProfe() {
+    const { data, error } = await sb.rpc('mi_perfil_profe');
+    if (error) throw new Error(errorBonito(error));
+    if (!data) return null;
+    return Object.assign(aProfe(data), { estado: data.status, nombrePila: data.first_name || '', apellidos: data.last_name || '',
+      experiencia: data.experience == null ? '' : data.experience, titulacion: data.degree || '', centro: data.center || '' });
+  }
+  async function cambiarNombre(nombre, apellidos) {
+    const { error } = await sb.from('profiles').update({ first_name: nombre, last_name: apellidos }).eq('id', usuario.id);
+    if (error) throw new Error(errorBonito(error));
+  }
+  // Pausar («paused») o volver a publicar («approved»): la base de datos solo deja hacerlo a un perfil ya aprobado
+  async function estadoPerfilProfe(nuevo) {
+    const { error } = await sb.from('teacher_profiles').update({ status: nuevo }).eq('user_id', usuario.id);
     if (error) throw new Error(errorBonito(error));
   }
   async function terminarBorradorProfe() {
@@ -242,7 +260,7 @@ window.SUPA = (() => {
   // ---------- Soporte ----------
   async function soporte(email, message) { const { error } = await sb.from('support_tickets').insert({ email, message, user_id: usuario ? usuario.id : null }); if (error) throw new Error(errorBonito(error)); }
 
-  return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, sincronizarFavs, fav,
+  return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, miPerfilProfe, cambiarNombre, estadoPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
     conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
