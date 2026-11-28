@@ -96,6 +96,9 @@ window.SUPA = (() => {
     if (/invalid login|invalid credentials/i.test(m)) return 'Correo o contraseña incorrectos.';
     if (/not confirmed/i.test(m)) return 'Confirma tu correo antes de entrar: revisa tu bandeja de entrada.';
     if (/rate limit|too many/i.test(m)) return 'Demasiados intentos. Espera unos minutos.';
+    if (/different from the old/i.test(m)) return 'La contraseña nueva tiene que ser distinta de la que tienes.';
+    if (/reauthenticat/i.test(m)) return 'Por seguridad, sal y vuelve a entrar en tu cuenta antes de cambiar la contraseña.';
+    if (/email.*(invalid|valid)|invalid.*email/i.test(m)) return 'Ese correo no es válido.';
     if (/password/i.test(m)) return 'La contraseña es demasiado débil. Usa al menos 8 caracteres.';
     if (/function .* does not exist|relation .* does not exist|PGRST202|42P01/i.test(m)) return 'Falta ejecutar el SQL «1-conectar-web.sql» en Supabase.';
     return m;
@@ -264,11 +267,42 @@ window.SUPA = (() => {
     return () => sb.removeChannel(canal);
   }
 
+  // ---------- Ajustes de la cuenta ----------
+  // Guarda datos de la cuenta (nombre, hijos, barrio, avisos…) en la cuenta de Supabase; el nombre también en el perfil público
+  async function guardarAjustes(datos) {
+    const { error } = await sb.auth.updateUser({ data: datos });
+    if (error) throw new Error(errorBonito(error));
+    if ('first_name' in datos || 'last_name' in datos) await cambiarNombre(datos.first_name || '', datos.last_name || '');
+  }
+  const datosCuenta = () => (usuario && usuario.user_metadata) || {};
+  const correo = () => (usuario && usuario.email) || '';
+  async function cambiarCorreo(nuevo) {
+    const { error } = await sb.auth.updateUser({ email: nuevo }, { emailRedirectTo: location.origin + location.pathname.replace(/[^/]*$/, '') + 'panel.html#ajustes' });
+    if (error) throw new Error(errorBonito(error));
+  }
+  async function cambiarClave(nueva) { const { error } = await sb.auth.updateUser({ password: nueva }); if (error) throw new Error(errorBonito(error)); }
+  async function salirDeTodo() { await sb.auth.signOut({ scope: 'global' }); try { localStorage.removeItem('sesion'); } catch (e) {} }
+  // Todo lo que la web guarda de ti, para descargarlo (las reglas RLS solo devuelven lo tuyo)
+  async function misDatos() {
+    const u = (await sb.auth.getUser()).data.user;
+    const tabla = async (t, filtro) => { let q = sb.from(t).select('*'); if (filtro) q = q.eq(filtro, u.id); const r = await q; return r.error ? [] : r.data; };
+    return {
+      exportado: new Date().toISOString(),
+      cuenta: { id: u.id, correo: u.email, creada: u.created_at, datos: u.user_metadata },
+      perfil: (await sb.from('profiles').select('*').eq('id', u.id).maybeSingle()).data,
+      perfil_profe: rolActual() === 'profe' ? (await sb.rpc('mi_perfil_profe')).data : null,
+      clases: await tabla('clases'), informes: await tabla('informes'), favoritos: await tabla('favorites'),
+      conversaciones: await tabla('conversations'), mensajes: await tabla('messages'),
+      grupos: await tabla('grupo_miembros', 'familia_id'), mensajes_de_grupo: await tabla('grupo_mensajes', 'autor_id')
+    };
+  }
+
   // ---------- Soporte ----------
   async function soporte(email, message) { const { error } = await sb.from('support_tickets').insert({ email, message, user_id: usuario ? usuario.id : null }); if (error) throw new Error(errorBonito(error)); }
 
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, miPerfilProfe, cambiarNombre, estadoPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
-    perfilAlumno, abrirChatFamilia, conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
+    perfilAlumno, abrirChatFamilia, guardarAjustes, datosCuenta, correo, cambiarCorreo, cambiarClave, salirDeTodo, misDatos,
+    conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

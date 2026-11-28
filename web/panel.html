@@ -160,6 +160,41 @@
 .previa-pf{position:sticky;top:86px}
 @media (max-width:1100px){.perfil-p{grid-template-columns:1fr}.previa-pf{position:static;order:-1}}
 @media (max-width:560px){.campos-2{grid-template-columns:1fr}.sec-pf{padding:18px}.guardar-pf{padding:10px 12px;bottom:8px}.guardar-pf #pfCambios{width:100%;font-size:13px}.guardar-pf>div{width:100%}.guardar-pf .boton{flex:1;padding:10px 12px}}
+/* ---------- Ajustes ---------- */
+.indice-aj{display:flex;gap:6px;flex-wrap:wrap;margin:-8px 0 18px}
+.indice-aj a{font-size:13.5px;font-weight:600;padding:6px 12px;border-radius:99px;background:var(--papel-2);color:var(--tinta);text-decoration:none}
+.indice-aj a:hover{background:var(--butano-claro);color:var(--butano)}
+.ajustes-p{display:grid;gap:16px;max-width:780px}
+.sec-aj{padding:22px 24px;scroll-margin-top:90px}
+.sec-aj h3{font-size:19px}
+.sub-aj{font-size:14px;margin:4px 0 0}
+.sec-aj form,.sec-aj>div,.sec-aj>p{margin-top:14px}
+.campos-aj{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.campos-aj .ancho{grid-column:1/-1}
+.fila-aj{display:flex;gap:8px;flex-wrap:wrap}
+.fila-aj .entrada{flex:1;min-width:200px}
+.hijo-aj{display:grid;grid-template-columns:1fr 190px auto;gap:8px;margin-top:8px;align-items:center}
+.etq-aj{font-weight:650;font-size:14px;margin-top:16px}
+.seg-aj{display:flex;gap:10px;flex-wrap:wrap}
+.seg-aj label{display:flex;gap:8px;align-items:center;padding:10px 14px;border:1.5px solid var(--linea-2);border-radius:12px;cursor:pointer;font-weight:600;font-size:14.5px}
+.seg-aj label:has(input:checked){border-color:var(--butano);background:var(--butano-claro)}
+.seg-aj input{accent-color:var(--butano)}
+.avisos-aj{display:grid;gap:4px}
+.interruptor-aj{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--linea);cursor:pointer;font-size:15px}
+.interruptor-aj:last-child{border-bottom:0}
+.interruptor-aj input{order:2;appearance:none;width:42px;height:24px;border-radius:99px;background:var(--linea-2);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.interruptor-aj input::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s}
+.interruptor-aj input:checked{background:var(--butano)}
+.interruptor-aj input:checked::after{transform:translateX(18px)}
+.seg-tema{display:inline-flex;border:1px solid var(--linea-2);border-radius:12px;overflow:hidden}
+.seg-tema button{border:0;background:transparent;padding:10px 16px;font-weight:650;color:var(--tinta)}
+.seg-tema button[aria-pressed="true"]{background:var(--tinta);color:var(--papel)}
+.acciones-aj{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--linea)}
+.acciones-aj:last-child{border-bottom:0}
+.acciones-aj p{font-size:14px}
+.boton.rojo{background:transparent;color:var(--aviso);border:1.5px solid color-mix(in srgb,var(--aviso) 55%,transparent)}
+.boton.rojo:hover{background:color-mix(in srgb,var(--aviso) 10%,transparent)}
+@media (max-width:600px){.campos-aj{grid-template-columns:1fr}.hijo-aj{grid-template-columns:1fr auto}.hijo-aj .combo{grid-column:1/-1;grid-row:2}.acciones-aj{flex-direction:column;align-items:flex-start}}
 /* Solicitudes: modalidad, perfil del alumno y chat */
 .modo-sol{display:inline-block;font-size:12.5px;font-weight:650;padding:1px 9px;border-radius:99px;margin-left:4px;white-space:nowrap;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
 .modo-sol.online{background:var(--butano-claro);color:var(--butano)}
@@ -399,7 +434,7 @@ D.listo.then(async () => {
   // ---------- Menús ----------
   const MENUS = {
     familia: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Asistente'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
-    profe: [['inicio', 'Inicio'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos']]
+    profe: [['inicio', 'Inicio'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
   };
   let chatPedido = U.param('chat');
   let actual = location.hash.slice(1) || (chatPedido ? 'mensajes' : 'inicio');
@@ -462,11 +497,7 @@ D.listo.then(async () => {
           <div class="tramo-barra" style="height:18px"><i style="width:40%;background:var(--tinta)"></i><i style="width:60%;background:var(--ok)"></i></div>
           <p class="suave" style="font-size:13px">Llevas 14 clases con Laura: nuestra comisión ya ha bajado al 10 %, así que ella se lleva más de lo que pagas. A partir de la 21, al 5 %.</p></div>
         <div class="hoja">${PAGOS.length ? '' : '<p class="suave" style="padding:22px">Aún no hay pagos.</p>'}${PAGOS.map(([d, t, e]) => `<div class="fila-clase" style="grid-template-columns:1fr auto"><div><b>${t}</b><p class="suave" style="font-size:14px">${fmt(dia(d), { day: 'numeric', month: 'long' })} · ${REAL ? 'se paga al aceptar (pasarela pendiente)' : 'tarjeta ···· 4242'}</p></div><b>${e.toFixed(2).replace('.', ',')} €</b></div>`).join('')}</div>`,
-      ajustes: () => `<h1>Ajustes</h1><div class="hoja" style="padding:26px"><h3>Hijos en la cuenta</h3>
-        ${(s.hijos || []).map(h => `<p style="margin-top:10px">👤 <b>${U.esc(h.nombre)}</b> <span class="suave">· ${U.esc(h.curso)}</span></p>`).join('') || '<p class="suave">Cuenta de alumno adulto.</p>'}
-        <hr class="regla" style="margin:20px 0"><h3>Avisos</h3>
-        ${['Informe después de cada clase', 'Recordatorio el día antes', 'Nuevos grupos de estudio en mi zona'].map(t => `<label style="display:flex;gap:10px;margin-top:12px"><input type="checkbox" checked> ${t}</label>`).join('')}
-        <hr class="regla" style="margin:20px 0"><button class="boton sec" type="button" id="salir">Cerrar sesión</button></div>`
+      ajustes: vistaAjustes
     },
     profe: {
       inicio: () => `<h1>Hola, ${U.esc(REAL ? s.nombre : 'Laura')}.</h1>
@@ -501,6 +532,7 @@ D.listo.then(async () => {
         ${ALUMNOS.length ? '' : '<p class="suave">Cuando des tus primeras clases, aquí verás a cada familia y cuánto baja tu comisión con ella.</p>'}${ALUMNOS.map(([n, c]) => { const pct = D.comision(c + 1); const sig = c < 5 ? 5 : c < 20 ? 20 : null; return `<div class="hoja" style="padding:20px;margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>${n}</b><span class="etiqueta ${pct === 5 ? 'ok' : 'naranja'}">Comisión actual ${pct} %</span></div>
           <div class="tramo"><div class="tramo-barra"><i style="width:${Math.min(c, 5) / 25 * 100}%;background:var(--butano)"></i><i style="width:${Math.max(0, Math.min(c, 20) - 5) / 25 * 100}%;background:var(--aviso)"></i><i style="width:${Math.max(0, Math.min(c, 25) - 20) / 25 * 100}%;background:var(--ok)"></i></div>
           <p class="suave" style="font-size:13px">${c} clases juntos${sig ? ` · en ${sig - c} clase${sig - c === 1 ? '' : 's'} bajas al ${sig === 5 ? 10 : 5} %` : ' · ya estás en el tramo más bajo'}</p></div></div>`; }).join('')}`,
+      ajustes: vistaAjustes,
       ingresos: () => { const m = STATS.ingresos, tope = Math.max(1, ...m); const meses = Array.from({ length: 6 }, (_, i) => { const d = new Date(hoy); d.setMonth(hoy.getMonth() - 5 + i); return fmt(d, { month: 'short' }); });
         return `<h1>Ingresos</h1><div class="hoja" style="padding:26px"><p class="suave">Lo que te ha llegado cada mes, ya sin comisión</p>
           <div class="ingresos">${m.map((v, i) => `<div><b style="font-size:13px">${v} €</b><i data-h="${(v / tope * 78).toFixed(1)}" style="height:0"></i><span>${meses[i]}</span></div>`).join('')}</div>
@@ -760,6 +792,80 @@ D.listo.then(async () => {
     PF = null;
     U.tostada(antes === 'approved' && MI_PERFIL.estado === 'pending' ? 'Guardado. Como has cambiado tus estudios, tu perfil vuelve a revisión.' : REAL ? 'Guardado: las familias ya ven tu perfil así' : 'Guardado (en la maqueta solo se guarda en esta página)');
     ir('perfil', true);
+  }
+
+  // ---------- Ajustes (familia y profe) ----------
+  const CURSOS = ['1º Primaria', '2º Primaria', '3º Primaria', '4º Primaria', '5º Primaria', '6º Primaria', '1º ESO', '2º ESO', '3º ESO', '4º ESO',
+    '1º Bachillerato', '2º Bachillerato', 'FP Grado medio', 'FP Grado superior', 'Universidad', 'Adultos'];
+  const AVISOS = {
+    familia: [['informe', 'Informe después de cada clase'], ['recordatorio', 'Recordatorio el día antes de cada clase'], ['mensajes', 'Mensajes nuevos de profes'], ['grupos', 'Grupos de estudio nuevos en mi zona']],
+    profe: [['solicitudes', 'Solicitudes de clase nuevas'], ['mensajes', 'Mensajes nuevos de familias'], ['recordatorio', 'Recordatorio el día antes de cada clase'], ['resumen', 'Resumen semanal de clases e ingresos']]
+  };
+  // Datos de la cuenta: en Supabase (con cuenta) o en este navegador (maqueta)
+  const cuenta = () => REAL ? SUPA.datosCuenta()
+    : (leerLS('ajustesMaqueta', null) || { first_name: s.nombre, last_name: s.apellidos || '', hijos: s.hijos || [], zona: s.zona || '', tipo: 'familia' });
+  async function guardarCuenta(datos) {
+    if (REAL) await SUPA.guardarAjustes(datos);
+    else { const c = Object.assign(cuenta(), datos); try { localStorage.setItem('ajustesMaqueta', JSON.stringify(c)); } catch (x) {} }
+    // Lo que se ve en el resto del panel y en la cabecera
+    if ('first_name' in datos) s.nombre = datos.first_name;
+    if ('last_name' in datos) s.apellidos = datos.last_name;
+    if ('hijos' in datos) s.hijos = datos.hijos;
+    if ('zona' in datos) s.zona = datos.zona;
+    try { const ss = JSON.parse(localStorage.getItem('sesion') || 'null'); if (ss) { Object.assign(ss, { nombre: s.nombre, apellidos: s.apellidos, hijos: s.hijos, zona: s.zona }); localStorage.setItem('sesion', JSON.stringify(ss)); } } catch (x) {}
+    U.pintarCuenta();
+  }
+  function vistaAjustes() {
+    const c = cuenta(), esProfe = rol === 'profe', tipo = c.tipo === 'alumno' ? 'alumno' : 'familia';
+    const hijos = c.hijos && c.hijos.length ? c.hijos : [{ nombre: '', curso: '3º ESO' }];
+    const av = Object.assign({}, ...AVISOS[rol].map(([k]) => ({ [k]: k !== 'resumen' })), c.avisos || {});
+    let tema = 'auto'; try { tema = localStorage.getItem('tema') || 'auto'; } catch (x) {}
+    const v = x => U.esc(x == null ? '' : x);
+    const zonas = [...D.ZONAS].sort((a, b) => a.nombre.localeCompare(b.nombre)).map(z => `<option value="${z.id}" ${c.zona === z.id ? 'selected' : ''}>${z.nombre}</option>`).join('');
+    const opcCurso = sel => CURSOS.map(x => `<option ${x === sel ? 'selected' : ''}>${x}</option>`).join('');
+    const filaHijo = h => `<div class="hijo-aj"><input class="entrada" data-hijo-nombre value="${v(h.nombre)}" placeholder="Nombre" maxlength="40" aria-label="Nombre"><select class="entrada" data-hijo-curso aria-label="Curso">${opcCurso(h.curso)}</select><button type="button" class="boton sec peq" data-quitar-hijo>Quitar</button></div>`;
+    const sec = (id, titulo, cuerpo, sub = '') => `<section class="hoja sec-aj" id="aj-${id}"><h3>${titulo}</h3>${sub ? `<p class="suave sub-aj">${sub}</p>` : ''}${cuerpo}</section>`;
+    return `<h1>Ajustes</h1>
+    <nav class="indice-aj" aria-label="Apartados">${[['cuenta', 'Tu cuenta'], ...(esProfe ? [['perfil', 'Perfil y cobros']] : [['alumnos', esProfe ? '' : 'Quién da clase']]), ['acceso', 'Correo y contraseña'], ['avisos', 'Avisos'], ['aspecto', 'Apariencia'], ['datos', 'Privacidad y datos'], ['sesion', 'Sesión']]
+      .map(([k, t]) => `<a href="#aj-${k}" data-ancla="aj-${k}">${t}</a>`).join('')}</nav>
+    <div class="ajustes-p">
+      ${sec('cuenta', 'Tu cuenta', `<form id="ajCuenta" class="campos-aj">
+          <label class="campo"><span>Nombre</span><input class="entrada" name="nombre" value="${v(c.first_name)}" maxlength="60" autocomplete="given-name" required></label>
+          <label class="campo"><span>Apellidos</span><input class="entrada" name="apellidos" value="${v(c.last_name)}" maxlength="80" autocomplete="family-name"></label>
+          ${esProfe ? '' : `<label class="campo ancho"><span>Tu barrio <span class="suave">(para enseñarte profes y grupos cerca)</span></span><select class="entrada" name="zona"><option value="">Sin barrio</option>${zonas}</select></label>`}
+          <p class="ancho"><button class="boton">Guardar</button></p></form>`, esProfe ? 'Tu nombre sale en tu ficha de profe. El resto de tu perfil público se cambia en «Mi perfil».' : 'Los profes ven tu nombre y la inicial de tu apellido, nunca tu correo.')}
+
+      ${esProfe ? sec('perfil', 'Perfil y cobros', `<p>Tu perfil está ${MI_PERFIL ? `<b>${(ESTADO_PERFIL[MI_PERFIL.estado] || { t: MI_PERFIL.estado }).t.toLowerCase()}</b>` : 'sin crear'}. Ahí cambias foto, asignaturas, precio, horario y puedes ponerlo en pausa.</p>
+          <p style="margin-top:12px"><button class="boton sec peq" type="button" data-ir="perfil">Ir a Mi perfil</button></p>
+          <hr class="regla" style="margin:18px 0"><p><b>Cobros</b></p><p class="suave" style="margin-top:4px">Los pagos todavía no están activados. Cuando lo estén, conectarás aquí tu cuenta bancaria a través de la pasarela de pago, en su propia página segura. ClasUno nunca te pedirá el número de cuenta por correo ni por chat.</p>`)
+      : sec('alumnos', 'Quién da clase', `<form id="ajAlumnos">
+          <div class="seg-aj" role="radiogroup">${[['familia', 'Soy madre, padre o tutor'], ['alumno', 'Soy alumno adulto']].map(([k, t]) => `<label><input type="radio" name="tipo" value="${k}" ${tipo === k ? 'checked' : ''}> ${t}</label>`).join('')}</div>
+          <div id="ajHijos" ${tipo === 'alumno' ? 'hidden' : ''}><p class="etq-aj">Tus hijos</p><div id="listaHijos">${hijos.map(filaHijo).join('')}</div>
+            <p style="margin-top:10px"><button type="button" class="boton sec peq" id="masHijo">+ Añadir otro hijo</button></p></div>
+          <div id="ajAdulto" ${tipo === 'alumno' ? '' : 'hidden'}><label class="campo" style="margin-top:12px"><span>Qué estudias</span><select class="entrada" name="cursoAdulto">${opcCurso((c.hijos && c.hijos[0] && c.hijos[0].curso) || 'Universidad')}</select></label></div>
+          <p style="margin-top:16px"><button class="boton">Guardar</button></p></form>`, 'Los profes a los que pides clase ven el nombre y el curso, para preparar la clase.')}
+
+      ${sec('acceso', 'Correo y contraseña', REAL ? `<p>Entras con <b>${v(SUPA.correo())}</b>.</p>
+          <form id="ajCorreo" class="fila-aj"><input class="entrada" type="email" name="correo" placeholder="Correo nuevo" autocomplete="email" required aria-label="Correo nuevo"><button class="boton sec">Cambiar correo</button></form>
+          <form id="ajClave" class="campos-aj" style="margin-top:18px">
+            <label class="campo"><span>Contraseña nueva</span><input class="entrada" type="password" name="clave" minlength="8" autocomplete="new-password" required></label>
+            <label class="campo"><span>Repítela</span><input class="entrada" type="password" name="clave2" minlength="8" autocomplete="new-password" required></label>
+            <p class="ancho"><button class="boton sec">Cambiar contraseña</button> <span class="suave" style="font-size:13px">Mínimo 8 caracteres.</span></p></form>`
+        : '<p class="suave">En la maqueta no hay cuenta de verdad. Con tu cuenta, aquí cambias el correo y la contraseña.</p>')}
+
+      ${sec('avisos', 'Avisos', `<div class="avisos-aj">${AVISOS[rol].map(([k, t]) => `<label class="interruptor-aj"><input type="checkbox" data-aviso="${k}" ${av[k] ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div>`,
+        'Se guardan solos. Los avisos por correo empezarán a llegar cuando activemos el envío de correos; mientras, lo verás todo en tu panel.')}
+
+      ${sec('aspecto', 'Apariencia', `<div class="seg-tema" role="radiogroup" aria-label="Tema">${[['auto', 'Automático'], ['light', 'Claro'], ['dark', 'Oscuro']].map(([k, t]) => `<button type="button" data-tema="${k}" aria-pressed="${tema === k}">${t}</button>`).join('')}</div>`,
+        'Automático sigue el modo claro u oscuro de tu móvil u ordenador.')}
+
+      ${sec('datos', 'Privacidad y datos', `<div class="acciones-aj">
+          <div><b>Descargar mis datos</b><p class="suave">Un archivo con tu cuenta, tus clases, informes, mensajes y grupos.</p></div><button type="button" class="boton sec peq" id="ajDescargar">Descargar</button></div>
+        <div class="acciones-aj"><div><b>Política de privacidad</b><p class="suave">Qué guardamos, para qué y cuánto tiempo.</p></div><a class="boton sec peq" href="legal.html#privacidad">Leer</a></div>
+        <div class="acciones-aj"><div><b>Borrar mi cuenta</b><p class="suave">Borramos tu cuenta y tus datos. Las facturas de clases pagadas se guardan el tiempo que obliga la ley.</p></div><button type="button" class="boton rojo peq" id="ajBorrar">Pedir el borrado</button></div>`)}
+
+      ${sec('sesion', 'Sesión', `<p style="display:flex;gap:8px;flex-wrap:wrap"><button class="boton sec" type="button" id="salir">Cerrar sesión</button>${REAL ? '<button class="boton sec" type="button" id="salirTodo">Cerrar sesión en todos los dispositivos</button>' : ''}</p>`)}
+    </div>`;
   }
 
   // ---------- Perfil de la familia y chat, desde las solicitudes (profe) ----------
@@ -1024,7 +1130,74 @@ D.listo.then(async () => {
         U.tostada('Informe enviado a la familia'); setTimeout(() => ir('inicio'), 900);
       };
     },
-    ajustes: () => { $('#salir').onclick = async () => { if (REAL) { try { await SUPA.salir(); } catch (e) {} } try { localStorage.removeItem('sesion'); } catch (e) {} location.href = 'index.html'; }; }
+    ajustes: () => {
+      const conBoton = async (form, fn) => { const b = form.querySelector('button:not([type="button"])'); const t = b.textContent; b.disabled = true; b.textContent = 'Guardando…';
+        try { await fn(); } catch (x) { U.tostada(x.message); } finally { b.disabled = false; b.textContent = t; } };
+      // Índice: ir al apartado sin cambiar el #ajustes de la dirección
+      document.querySelector('.indice-aj').onclick = e => { const a = e.target.closest('[data-ancla]'); if (!a) return; e.preventDefault(); document.getElementById(a.dataset.ancla).scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      $('#ajCuenta').onsubmit = e => { e.preventDefault(); const f = e.target; if (!f.nombre.value.trim()) return U.tostada('Escribe tu nombre');
+        conBoton(f, async () => { const d = { first_name: f.nombre.value.trim(), last_name: f.apellidos.value.trim() }; if (f.zona) d.zona = f.zona.value; await guardarCuenta(d); U.tostada('Cuenta guardada'); }); };
+      const fa = $('#ajAlumnos');
+      if (fa) {
+        fa.addEventListener('change', e => { if (e.target.name === 'tipo') { const adulto = e.target.value === 'alumno'; $('#ajHijos').hidden = adulto; $('#ajAdulto').hidden = !adulto; } });
+        fa.addEventListener('click', e => {
+          if (e.target.closest('[data-quitar-hijo]')) { const filas = fa.querySelectorAll('.hijo-aj'); if (filas.length > 1) e.target.closest('.hijo-aj').remove(); else U.tostada('Tiene que quedar al menos un hijo'); }
+          if (e.target.closest('#masHijo')) $('#listaHijos').insertAdjacentHTML('beforeend', `<div class="hijo-aj"><input class="entrada" data-hijo-nombre placeholder="Nombre" maxlength="40" aria-label="Nombre"><select class="entrada" data-hijo-curso aria-label="Curso">${CURSOS.map(x => `<option ${x === '3º ESO' ? 'selected' : ''}>${x}</option>`).join('')}</select><button type="button" class="boton sec peq" data-quitar-hijo>Quitar</button></div>`);
+        });
+        fa.onsubmit = e => { e.preventDefault();
+          const tipo = fa.tipo.value, nombreYo = (cuenta().first_name || s.nombre || '').trim();
+          const hijos = tipo === 'alumno' ? [{ nombre: nombreYo, curso: fa.cursoAdulto.value }]
+            : [...fa.querySelectorAll('.hijo-aj')].map(r => ({ nombre: r.querySelector('[data-hijo-nombre]').value.trim(), curso: r.querySelector('[data-hijo-curso]').value })).filter(h => h.nombre);
+          if (tipo === 'familia' && !hijos.length) return U.tostada('Escribe el nombre de al menos un hijo');
+          conBoton(fa, async () => { await guardarCuenta({ tipo, hijos }); U.tostada('Guardado'); });
+        };
+      }
+      const fc = $('#ajCorreo');
+      if (fc) fc.onsubmit = e => { e.preventDefault(); const nuevo = fc.correo.value.trim().toLowerCase();
+        if (!/^\S+@\S+\.\S+$/.test(nuevo)) return U.tostada('Escribe un correo válido');
+        if (nuevo === SUPA.correo()) return U.tostada('Ese ya es tu correo');
+        conBoton(fc, async () => { await SUPA.cambiarCorreo(nuevo); fc.reset(); U.tostada('Te hemos mandado un enlace para confirmar el cambio. Hasta entonces entras con el correo de siempre.'); }); };
+      const fk = $('#ajClave');
+      if (fk) fk.onsubmit = e => { e.preventDefault();
+        if (fk.clave.value.length < 8) return U.tostada('La contraseña necesita al menos 8 caracteres');
+        if (fk.clave.value !== fk.clave2.value) return U.tostada('Las dos contraseñas no coinciden');
+        conBoton(fk, async () => { await SUPA.cambiarClave(fk.clave.value); fk.reset(); U.tostada('Contraseña cambiada'); }); };
+      // Avisos: se guardan solos
+      let tAvisos = null;
+      document.querySelector('.avisos-aj').onchange = () => {
+        clearTimeout(tAvisos);
+        tAvisos = setTimeout(async () => {
+          const avisos = Object.fromEntries([...document.querySelectorAll('[data-aviso]')].map(i => [i.dataset.aviso, i.checked]));
+          try { await guardarCuenta({ avisos }); U.tostada('Avisos guardados'); } catch (x) { U.tostada(x.message); }
+        }, 400);
+      };
+      document.querySelector('.seg-tema').onclick = e => {
+        const b = e.target.closest('[data-tema]'); if (!b) return; const t = b.dataset.tema;
+        try { t === 'auto' ? localStorage.removeItem('tema') : localStorage.setItem('tema', t); } catch (x) {}
+        const aplicar = () => { if (t === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t; };
+        document.startViewTransition ? document.startViewTransition(aplicar) : aplicar();
+        document.querySelectorAll('[data-tema]').forEach(x => x.setAttribute('aria-pressed', x === b));
+      };
+      $('#ajDescargar').onclick = async e => {
+        const b = e.target; b.disabled = true; b.textContent = 'Preparando…';
+        try {
+          const datos = REAL ? await SUPA.misDatos() : { exportado: new Date().toISOString(), maqueta: true, cuenta: cuenta(), sesion: s };
+          const url = URL.createObjectURL(new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' }));
+          const a = document.createElement('a'); a.href = url; a.download = `mis-datos-clasuno-${isoD(hoy)}.json`; document.body.append(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+          U.tostada('Descargado: mis-datos-clasuno.json');
+        } catch (x) { U.tostada('No se han podido preparar tus datos: ' + x.message); }
+        b.disabled = false; b.textContent = 'Descargar';
+      };
+      $('#ajBorrar').onclick = async () => {
+        if (!confirm('¿Pedir que borremos tu cuenta? Te escribiremos al correo de tu cuenta para confirmarlo antes de borrar nada.')) return;
+        if (REAL) { try { await SUPA.soporte(SUPA.correo(), `Solicitud de borrado de cuenta (${rol}) · id ${yo}`); } catch (x) { return U.tostada(x.message); } }
+        U.tostada('Petición enviada. Te escribiremos para confirmarlo; tienes la respuesta en menos de 30 días.');
+      };
+      $('#salir').onclick = async () => { if (REAL) { try { await SUPA.salir(); } catch (e) {} } try { localStorage.removeItem('sesion'); } catch (e) {} location.href = 'index.html'; };
+      const st = $('#salirTodo');
+      if (st) st.onclick = async () => { if (!confirm('Se cerrará tu sesión en este y en todos tus dispositivos. ¿Seguir?')) return; try { await SUPA.salirDeTodo(); } catch (e) {} location.href = 'index.html'; };
+    }
   };
   // Delegación general
   $('#vista').addEventListener('click', e => {
