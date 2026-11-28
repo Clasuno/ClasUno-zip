@@ -43,6 +43,13 @@ Lo futurista está en lo que hace, no en la decoración: nada de brillos, degrad
 
 **Desplegables:** todos los `<select>` de la web se convierten solos (en `assets/comun.js`) en una casilla en la que se puede escribir: «cham» deja solo Chamartín y Chamberí, sin importar acentos ni mayúsculas, y «2 bach» encuentra «2º Bachillerato». El `<select>` de verdad sigue dentro, oculto, así que el resto del código no cambia. Para dejar uno normal, ponle `data-nativo`.
 
+**Móvil y tableta (hasta 1080 px), como una app:** `assets/comun.js` pone una barra fija abajo con iconos y quita el botón «Menú» de arriba.
+- Familia: Inicio · Buscar · Mensajes · Calendario · Más.
+- Profe: Inicio · Mensajes · Calendario · Solicitudes (con el número de pendientes) · Más.
+- Sin cuenta: Inicio · Buscar · Grupos · Asistente · Más.
+
+«Más» abre una hoja desde abajo con el resto de secciones, tu cuenta y el tema claro/oscuro; se cierra tocando fuera, con la ✕, con Esc o arrastrándola hacia abajo. Arriba quedan el logo, la campana de avisos y tu foto (o «Entrar»). En el panel, con cuenta, desaparecen el menú lateral y el pie, y el Inicio empieza con tu foto, tu nombre, la fecha y la campana. El panel pasa el número de avisos con `U.avisos({ solicitudes, mensajes })`.
+
 Todo funciona con **datos de ejemplo** (`assets/datos.js`) y `localStorage`. Falta conectarlo a Supabase (las tablas ya existen) y a un sistema de pagos (Stripe Connect encaja con la comisión variable).
 
 ## Ver en local

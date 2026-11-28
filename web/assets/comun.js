@@ -161,6 +161,7 @@
   window.addEventListener('hashchange', () => pintarCuenta());
   function pintarCuenta() {
     pintarNav();
+    pintarBarra();
     const s = sesion(), b = cab.querySelector('.boton-entrar'), dc = cab.querySelector('.nav a[href="dar-clases.html"]'), atajo = cab.querySelector('.atajo-panel');
     if (!b) return;
     if (dc) dc.hidden = !!s;
@@ -179,6 +180,131 @@
     if (atajo) { atajo.href = b.href; atajo.innerHTML = b.innerHTML; atajo.classList.add('con-cuenta'); }
     franjaPanel(s);
   }
+
+  // ---------- En el móvil y la tableta, la web funciona como una app ----------
+  // Barra inferior con iconos (Inicio, Mensajes, Calendario…) y una hoja «Más» con el resto de secciones.
+  // Arriba quedan el logo y, con la sesión iniciada, los avisos y tu foto. Se ve hasta 1080 px de ancho.
+  const ico = (d, cls = 'ico-app') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const ICO = {
+    inicio: '<path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
+    buscar: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
+    mensajes: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z"/><path d="M8.5 8.5h7M8.5 11.5h4.5"/>',
+    calendario: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    mas: '<circle cx="5.5" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="18.5" cy="12" r="1.2" fill="currentColor"/>',
+    grupos: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.9 14.4c2.3-.3 4.2 1.3 4.6 4.6"/>',
+    ia: '<path d="M11 4l1.8 4.7L17.5 10.5l-4.7 1.8L11 17l-1.8-4.7L4.5 10.5l4.7-1.8z"/><path d="M18 14.5l.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8z"/>',
+    persona: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/>',
+    informes: '<path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4M9.5 12.5h5M9.5 16h5"/>',
+    seguimiento: '<path d="M4 19.5h16"/><path d="M5.5 15.5l4-4.5 3.5 3 5.5-6.5"/>',
+    pagos: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 14.5h3"/>',
+    ajustes: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    ayuda: '<circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.6a2.4 2.4 0 0 1 4.7.8c0 1.7-2.4 2-2.4 3.7"/><circle cx="12" cy="17" r=".5" fill="currentColor"/>',
+    tema: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
+    solicitudes: '<path d="M3.5 13.5 6 5.5h12l2.5 8V19a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M3.5 13.5h5a3.5 3.5 0 0 0 7 0h5"/>',
+    preparar: '<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 4.5V3h6v1.5M8.5 10h7M8.5 13.5h7M8.5 17h4"/>',
+    escribir: '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>',
+    ingresos: '<circle cx="12" cy="12" r="8.5"/><path d="M15 8.9a3.6 3.6 0 1 0 0 6.2M7.8 11h5.4M7.8 13.4h5.4"/>',
+    entrar: '<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 8l4 4-4 4M14 12H4"/>',
+    clases: '<path d="M2.5 9 12 5l9.5 4-9.5 4z"/><path d="M6.5 11v4.5c1.5 1.4 3.5 2.1 5.5 2.1s4-.7 5.5-2.1V11M21.5 9v5"/>',
+    campana: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+    cerrar: '<path d="M6 6l12 12M18 6 6 18"/>',
+    flecha: '<path d="m9 6 6 6-6 6"/>'
+  };
+  const BARRA = {
+    visita: [['index.html', 'Inicio', 'inicio'], ['buscar.html', 'Buscar', 'buscar'], ['grupos.html', 'Grupos', 'grupos'], ['deberes.html', 'Asistente', 'ia'], ['#mas', 'Más', 'mas']],
+    familia: [['panel.html#inicio', 'Inicio', 'inicio'], ['buscar.html', 'Buscar', 'buscar'], ['panel.html#mensajes', 'Mensajes', 'mensajes'], ['panel.html#calendario', 'Calendario', 'calendario'], ['#mas', 'Más', 'mas']],
+    profe: [['panel.html#inicio', 'Inicio', 'inicio'], ['panel.html#mensajes', 'Mensajes', 'mensajes'], ['panel.html#calendario', 'Calendario', 'calendario'], ['panel.html#solicitudes', 'Solicitudes', 'solicitudes'], ['#mas', 'Más', 'mas']]
+  };
+  const MAS = {
+    visita: [['entrar.html', 'Entrar', 'entrar'], ['entrar.html?alta=familia', 'Crear cuenta de familia', 'persona'], ['dar-clases.html', 'Quiero dar clases', 'clases'], ['como-se-paga.html', 'Cómo se paga', 'pagos'], ['ayuda.html', 'Ayuda', 'ayuda']],
+    familia: [['panel.html#corrector', 'Asistente IA', 'ia'], ['panel.html#profes', 'Mis profes', 'persona'], ['panel.html#grupos', 'Mis grupos', 'grupos'], ['grupos.html', 'Buscar grupos de estudio', 'buscar'], ['panel.html#informes', 'Informes de clase', 'informes'],
+      ['panel.html#asistente', 'Seguimiento', 'seguimiento'], ['panel.html#pagos', 'Pagos y bonos', 'pagos'], ['panel.html#ajustes', 'Ajustes', 'ajustes'], ['ayuda.html', 'Ayuda', 'ayuda']],
+    profe: [['panel.html#perfil', 'Mi perfil', 'persona'], ['panel.html#preparar', 'Preparar clase', 'preparar'], ['panel.html#informe', 'Escribir informe', 'escribir'], ['panel.html#alumnos', 'Mis alumnos', 'grupos'],
+      ['panel.html#ingresos', 'Ingresos', 'ingresos'], ['panel.html#ajustes', 'Ajustes', 'ajustes'], ['ayuda.html', 'Ayuda', 'ayuda']]
+  };
+  const tipoCuenta = () => { const s = sesion(); return !s ? 'visita' : s.rol === 'profe' ? 'profe' : 'familia'; };
+  // ¿Es esta la sección en la que estás? (el panel sin «#» es su Inicio)
+  const esActual = h => {
+    const [p, hash] = h.split('#'), aqui = location.hash.slice(1) || (pagina === 'panel.html' ? 'inicio' : '');
+    if (hash) return pagina === p && aqui === hash;
+    if (h === 'buscar.html') return pagina === 'buscar.html' || pagina === 'profe.html';
+    if (h === 'grupos.html') return pagina === 'grupos.html' || pagina === 'grupo.html';
+    return pagina === h.split('?')[0] && !(tipoCuenta() === 'visita' && pagina === 'entrar.html' && h !== 'entrar.html');
+  };
+  const avisos = { mensajes: 0, solicitudes: 0 };
+  const avatarHtml = (s, cls) => s.avatar && /^https:\/\//.test(s.avatar)
+    ? `<span class="${cls} foto" aria-hidden="true" style="background-image:url('${esc(s.avatar)}')"></span>`
+    : `<span class="${cls}" aria-hidden="true">${esc((s.nombre || '?').trim().charAt(0).toUpperCase() || '?')}</span>`;
+
+  const barra = document.createElement('nav');
+  barra.className = 'barra-app'; barra.setAttribute('aria-label', 'Secciones');
+  document.body.append(barra);
+  const hojaMas = document.createElement('div');
+  hojaMas.className = 'hoja-app'; hojaMas.hidden = true;
+  document.body.append(hojaMas);
+  const accionesApp = document.createElement('div');
+  accionesApp.className = 'acciones-app';
+  cab.querySelector('.envoltura').append(accionesApp);
+
+  function pintarBarra() {
+    const t = tipoCuenta(), s = sesion();
+    document.documentElement.dataset.cuenta = t; // el panel quita su menú lateral en el móvil: la barra y «Más» ya llevan a todo
+    const items = BARRA[t];
+    const masActivo = !items.some(([h]) => h !== '#mas' && esActual(h)) && MAS[t].some(([h]) => esActual(h));
+    barra.innerHTML = `<div class="barra-app-caja">${items.map(([h, txt, ic]) => {
+      const activo = h === '#mas' ? masActivo : esActual(h);
+      const n = ic === 'mensajes' ? avisos.mensajes : ic === 'solicitudes' ? avisos.solicitudes : 0;
+      const marca = n ? `<i class="punto-app" aria-label="${n} nuevo${n > 1 ? 's' : ''}">${n > 9 ? '9+' : n}</i>` : '';
+      return h === '#mas'
+        ? `<button type="button" class="item-app${activo ? ' activo' : ''}" data-mas aria-haspopup="dialog" aria-expanded="false"><span class="ico-caja">${ico(ICO[ic])}</span><span>${txt}</span></button>`
+        : `<a class="item-app${activo ? ' activo' : ''}" href="${h}"${activo ? ' aria-current="page"' : ''}><span class="ico-caja">${ico(ICO[ic])}${marca}</span><span>${txt}</span></a>`;
+    }).join('')}</div>`;
+    // Arriba a la derecha: avisos y tu foto (con cuenta) o «Entrar»
+    accionesApp.innerHTML = !s
+      ? `<a class="boton peq" href="entrar.html">Entrar</a>`
+      : `<a class="campana-app" href="${t === 'profe' ? 'panel.html#solicitudes' : 'panel.html#mensajes'}" aria-label="Avisos">${ico(ICO.campana)}${avisos.mensajes + avisos.solicitudes ? '<i class="punto-campana"></i>' : ''}</a>
+         <a class="cuenta-app" href="${t === 'profe' ? 'panel.html#perfil' : 'panel.html#ajustes'}" aria-label="${t === 'profe' ? 'Mi perfil' : 'Mi cuenta'}">${avatarHtml(s, 'ava-app')}</a>`;
+  }
+  function pintarMas() {
+    const t = tipoCuenta(), s = sesion();
+    const cuenta = s ? `<a class="cuenta-mas" href="${t === 'profe' ? 'panel.html#perfil' : 'panel.html#ajustes'}">${avatarHtml(s, 'ava-app grande')}<span><b>${esc(s.nombre || 'Mi cuenta')}</b><small>${t === 'profe' ? 'Ver y editar mi perfil' : 'Mi cuenta y ajustes'}</small></span>${ico(ICO.flecha, 'ico-app chev')}</a>` : '';
+    hojaMas.innerHTML = `<div class="hoja-app-fondo" data-cerrar></div>
+      <div class="hoja-app-caja" role="dialog" aria-modal="true" aria-label="Más secciones">
+        <div class="hoja-app-cab"><span class="asa" aria-hidden="true"></span><b>Más</b><button type="button" class="cerrar-app" data-cerrar aria-label="Cerrar">${ico(ICO.cerrar)}</button></div>
+        ${cuenta}
+        <div class="lista-app">${MAS[t].map(([h, txt, ic]) => `<a href="${h}"${esActual(h) ? ' aria-current="page"' : ''}><span class="ico-fila">${ico(ICO[ic])}</span><span>${txt}</span>${ico(ICO.flecha, 'ico-app chev')}</a>`).join('')}
+          <button type="button" data-tema><span class="ico-fila">${ico(ICO.tema)}</span><span>Tema claro u oscuro</span></button></div>
+      </div>`;
+  }
+  let ultimoFoco = null;
+  function abrirMas() {
+    pintarMas(); ultimoFoco = document.activeElement;
+    hojaMas.hidden = false; document.documentElement.classList.add('con-hoja');
+    requestAnimationFrame(() => requestAnimationFrame(() => hojaMas.classList.add('abierta')));
+    barra.querySelector('[data-mas]')?.setAttribute('aria-expanded', 'true');
+    setTimeout(() => hojaMas.querySelector('.cerrar-app')?.focus(), 60);
+  }
+  function cerrarMas() {
+    if (hojaMas.hidden) return;
+    hojaMas.classList.remove('abierta'); document.documentElement.classList.remove('con-hoja');
+    barra.querySelector('[data-mas]')?.setAttribute('aria-expanded', 'false');
+    setTimeout(() => { hojaMas.hidden = true; }, 320);
+    if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+  }
+  barra.addEventListener('click', e => { if (e.target.closest('[data-mas]')) abrirMas(); });
+  hojaMas.addEventListener('click', e => {
+    if (e.target.closest('[data-cerrar]')) return cerrarMas();
+    if (e.target.closest('[data-tema]')) { cab.querySelector('.tema-btn').click(); return; }
+    if (e.target.closest('a')) setTimeout(cerrarMas, 30); // dentro del panel solo cambia la sección (#), así que hay que cerrarla
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarMas(); });
+  // Arrastrar la hoja hacia abajo la cierra
+  let y0 = null;
+  hojaMas.addEventListener('touchstart', e => { if (e.target.closest('.hoja-app-cab')) y0 = e.touches[0].clientY; }, { passive: true });
+  hojaMas.addEventListener('touchmove', e => { if (y0 === null) return; const dy = Math.max(0, e.touches[0].clientY - y0); hojaMas.querySelector('.hoja-app-caja').style.transform = `translateY(${dy}px)`; }, { passive: true });
+  hojaMas.addEventListener('touchend', e => { if (y0 === null) return; const caja = hojaMas.querySelector('.hoja-app-caja'), dy = e.changedTouches[0].clientY - y0; y0 = null; caja.style.transform = ''; if (dy > 80) cerrarMas(); });
+  // El panel avisa de mensajes o solicitudes nuevas para poner el número en la barra
+  const ponerAvisos = (a = {}) => { Object.assign(avisos, a); pintarBarra(); };
   // En la portada, quien ya tiene cuenta ve primero el camino a su panel
   function franjaPanel(s) {
     let f = document.querySelector('.franja-panel');
@@ -304,5 +430,5 @@
     if (n.tagName === 'SELECT') combo(n); else if (n.querySelector && n.querySelector('select')) mejorar(n);
   }))).observe(document.body, { childList: true, subtree: true });
 
-  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales, pintarCuenta, pintarNav: () => pintarCuenta() };
+  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales, pintarCuenta, pintarNav: () => pintarCuenta(), avisos: ponerAvisos };
 })();

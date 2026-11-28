@@ -61,6 +61,21 @@
 .ingresos i{width:100%;background:var(--ok);border:1px solid var(--linea-2);border-radius:6px 6px 0 0;display:block;transition:height .8s cubic-bezier(.2,.8,.2,1)}
 .ingresos span{font-family:var(--mono);font-size:11px;color:var(--tinta-2)}
 .bienvenida{padding:22px 26px;background:var(--ok);color:#fff;border-color:var(--tinta);margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+/* En el móvil y la tableta, con cuenta: sin menú lateral (la barra de abajo y «Más» llevan a todo) y con un saludo de app en Inicio */
+.saludo-app{display:none}
+@media (max-width:1080px){
+  html[data-cuenta="familia"] .lateral,html[data-cuenta="profe"] .lateral,html[data-cuenta="familia"] .pie,html[data-cuenta="profe"] .pie{display:none}
+  html[data-cuenta="familia"] .panel,html[data-cuenta="profe"] .panel{grid-template-columns:minmax(0,1fr);padding-top:20px}
+  .saludo-app{display:flex;align-items:center;gap:14px;margin:0 0 24px}
+  .saludo-app .ava-app{width:62px;height:62px;font-size:25px}
+  .saludo-app>div{flex:1;min-width:0}
+  .saludo-app b{display:block;font-size:32px;font-weight:650;letter-spacing:-.045em;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .saludo-app .fecha-app{display:block;margin-top:4px;color:var(--tinta-2);font-size:16px}
+  .saludo-app+h1,.saludo-app~.ini-cab>p:first-child,.saludo-app~.ini-cab h1{display:none}
+  .saludo-app~.ini-cab{padding-top:0}
+  body:has(.saludo-app) .acciones-app{display:none}
+  .guardar-pf{bottom:calc(96px + env(safe-area-inset-bottom))}
+}
 @media (max-width:980px){.panel{grid-template-columns:1fr}.lateral{position:static}.lateral nav{grid-auto-flow:column;overflow-x:auto;grid-auto-columns:max-content}.tarjetas{grid-template-columns:1fr 1fr}.informe .tres{grid-template-columns:1fr}}
 @media (max-width:700px){.chat{grid-template-columns:1fr;height:auto}.convs{border-right:0;border-bottom:1px solid var(--linea-2);display:flex;overflow-x:auto}.convs button{min-width:200px;border-bottom:0;border-right:1px dashed var(--linea)}.mensajes{height:380px}.tarjetas{grid-template-columns:1fr}.fila-clase{grid-template-columns:60px 1fr}.fila-clase>:last-child{grid-column:1/-1}}
 /* ---------- Panel de la familia ---------- */
@@ -607,7 +622,7 @@ D.listo.then(async () => {
       <span class="sol-botones"><button type="button" class="sol-si" data-sol-acepta="${i}" aria-label="Aceptar">Aceptar</button><button type="button" class="sol-no" data-sol-rechaza="${i}" aria-label="Rechazar">✕</button></span></li>`).join('');
     const estadoPerfil = MI_PERFIL ? ({ approved: 'publicada', pending: 'pendiente de revisión', paused: 'en pausa', rejected: 'sin aprobar' })[MI_PERFIL.estado] || MI_PERFIL.estado : null;
 
-    return `<div class="ini-profe">
+    return `<div class="ini-profe">${cabApp()}
       <header class="ini-cab"><p>${may(fmt(ahora, { weekday: 'long', day: 'numeric', month: 'long' }))}</p><h1>${saludo}, ${nombre}</h1><p class="ini-frase" id="iniFrase">${fraseDelDia(ahora)}</p></header>
       <div class="semana-ini">
         <button type="button" class="sem-flecha" data-ini-sem="-1" aria-label="Semana anterior">‹</button>
@@ -698,6 +713,7 @@ D.listo.then(async () => {
     $('#rol').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.r === rol));
     if (actual === 'favoritos') actual = 'profes'; // la antigua pestaña «Profes guardados» está ahora dentro de «Mis profes»
     if (!MENUS[rol].some(m => m[0] === actual) && !soloProfe(actual)) actual = 'inicio';
+    if (U.avisos) U.avisos({ solicitudes: rol === 'profe' ? SOLICITUDES.length : 0 }); // número en la barra de abajo del móvil
     $('#menu').innerHTML = MENUS[rol].map(([id, t, n]) => `<button type="button" data-v="${id}" aria-current="${id === actual}">${t}${n ? `<span class="num">${n}</span>` : ''}</button>`).join('');
   }
   $('#menu').onclick = e => { const b = e.target.closest('button'); if (!b) return; ir(b.dataset.v); };
@@ -804,6 +820,19 @@ D.listo.then(async () => {
   }
   const cabSeccion = (t, v, txt) => `<div class="cab-seccion"><h2>${t}</h2>${v ? `<button type="button" class="enlace-sec" data-ir="${v}">${txt}</button>` : ''}</div>`;
 
+  // Cabecera de app para el Inicio en el móvil y la tableta: tu foto, tu nombre, la fecha y los avisos
+  function cabApp() {
+    const profe = rol === 'profe', nombre = (REAL ? s.nombre : profe ? 'Laura' : s.nombre) || '';
+    const ava = s.avatar && /^https:\/\//.test(s.avatar)
+      ? `<span class="ava-app foto" style="background-image:url('${U.esc(s.avatar)}')"></span>`
+      : `<span class="ava-app">${U.esc(nombre.trim().charAt(0).toUpperCase() || '?')}</span>`;
+    const n = profe ? SOLICITUDES.length : 0;
+    return `<div class="saludo-app">
+      <a class="cuenta-app" href="#${profe ? 'perfil' : 'ajustes'}" aria-label="${profe ? 'Mi perfil' : 'Mi cuenta'}">${ava}</a>
+      <div><b>${U.esc(nombre)}</b><span class="fecha-app">${fmt(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
+      <a class="campana-app" href="#${profe ? 'solicitudes' : 'mensajes'}" aria-label="Avisos${n ? ': ' + n + ' sin responder' : ''}"><svg class="ico-app" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>${n ? '<i class="punto-campana"></i>' : ''}</a></div>`;
+  }
+
   function vistaInicioFamilia() {
     const prox = proximosEv(1)[0];
     const lunes = new Date(hoy); lunes.setHours(0, 0, 0, 0);
@@ -831,7 +860,7 @@ D.listo.then(async () => {
     const grupos = MIS_GRUPOS.length
       ? `<div class="grupos-p">${MIS_GRUPOS.slice(0, 2).map(tarjetaGrupo).join('')}</div>`
       : `<div class="hoja" style="padding:20px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap"><p class="suave">Con 2 a 4 alumnos de tu zona y tu curso, cada familia paga hasta la mitad.</p><a class="boton sec peq" href="grupos.html">Ver grupos de estudio</a></div>`;
-    return `<h1>Hola, ${U.esc(s.nombre)}.</h1>
+    return `${cabApp()}<h1>Hola, ${U.esc(s.nombre)}.</h1>
       <div class="hoja aviso-ia" ${REAL ? 'hidden' : ''}><div><b><span class="punto-ia"></span>${U.esc(hijo.nombre)} repite el mismo fallo en dos clases seguidas</b><p>Los signos al despejar en Matemáticas. Su profe ya lo sabe y empezará por ahí en la próxima clase. Mientras, 10 minutos de práctica con el asistente le vendrían bien.</p></div>
         <button class="boton peq" type="button" data-pregunta="¿Qué le cuesta más a ${U.esc(hijo.nombre)}?">Ver detalles</button></div>
       <div class="inicio-f">${hero}<div class="accesos">${accesos}</div></div>
