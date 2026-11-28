@@ -123,6 +123,7 @@ p{margin:0}
 }
 .cuenta-app,.campana-app{text-decoration:none}
 .ava-app{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--butano);color:var(--butano-t);font-weight:700;font-size:15px;background-size:cover;background-position:center}
+.ava-app.foto,.ava-mini.foto{border-radius:50%;overflow:visible}
 .ava-app.grande{width:50px;height:50px;font-size:20px}
 /* Hoja «Más»: sube desde abajo; se cierra tocando fuera, con la ✕, con Esc o arrastrándola hacia abajo */
 .hoja-app{position:fixed;inset:0;z-index:1003}

@@ -62,17 +62,38 @@
 .ingresos span{font-family:var(--mono);font-size:11px;color:var(--tinta-2)}
 .bienvenida{padding:22px 26px;background:var(--ok);color:#fff;border-color:var(--tinta);margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
 /* En el móvil y la tableta, con cuenta: sin menú lateral (la barra de abajo y «Más» llevan a todo) y con un saludo de app en Inicio */
-.saludo-app{display:none}
+/* Inicio: tu foto, tu nombre, la fecha y la campana de avisos (en todos los tamaños) */
+.saludo-app{display:flex;align-items:center;gap:18px;margin:0 0 30px}
+.saludo-app .cuenta-app{border-radius:50%;transition:transform .2s}
+.saludo-app .cuenta-app:hover{transform:scale(1.04)}
+.saludo-app .ava-app{width:78px;height:78px;font-size:32px;box-shadow:0 0 0 3px var(--papel),0 0 0 4px var(--linea)}
+.saludo-app>div{flex:1;min-width:0}
+.saludo-app b{display:block;font-size:clamp(32px,4vw,46px);font-weight:650;letter-spacing:-.045em;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saludo-app .fecha-app{display:block;margin-top:6px;color:var(--tinta-2);font-size:17px}
+.saludo-app .campana-app{position:relative;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;color:var(--tinta);flex:none}
+.saludo-app .campana-app:hover{background:var(--papel-2)}
+.saludo-app .campana-app .ico-app{width:28px;height:28px}
+.saludo-app .punto-campana{position:absolute;top:10px;right:11px;width:10px;height:10px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 2px var(--papel)}
+.saludo-app+h1,.saludo-app~.ini-cab>p:first-child,.saludo-app~.ini-cab h1{display:none}
+.saludo-app~.ini-cab{padding-top:0}
+/* «Hoy»: tarjetas grises con icono, como en una app */
+.hoy-tit{font-size:var(--t-seccion);letter-spacing:-.03em;margin:0 0 14px}
+.hoy-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:36px}
+.hoy-c{display:flex;align-items:center;gap:18px;width:100%;padding:22px 24px;border:0;border-radius:18px;background:var(--papel-2);color:var(--tinta);text-align:left;font-size:17px;font-weight:550;text-decoration:none}
+.hoy-c .ico-hoy{width:30px;height:30px;flex:none}
+.hoy-c>span{display:grid;gap:3px;min-width:0}
+.hoy-c small{color:var(--tinta-2);font-size:15px;font-weight:450}
+.hoy-c.blanca{background:var(--hoja);border:1px solid var(--linea);box-shadow:var(--sombra)}
+button.hoy-c{cursor:pointer;transition:transform .15s,background .15s}
+button.hoy-c:hover{background:color-mix(in srgb,var(--tinta) 7%,var(--papel-2))}
+button.hoy-c.blanca:hover{background:var(--hoja);transform:translateY(-1px)}
 @media (max-width:1080px){
   html[data-cuenta="familia"] .lateral,html[data-cuenta="profe"] .lateral,html[data-cuenta="familia"] .pie,html[data-cuenta="profe"] .pie{display:none}
-  html[data-cuenta="familia"] .panel,html[data-cuenta="profe"] .panel{grid-template-columns:minmax(0,1fr);padding-top:20px}
-  .saludo-app{display:flex;align-items:center;gap:14px;margin:0 0 24px}
-  .saludo-app .ava-app{width:62px;height:62px;font-size:25px}
-  .saludo-app>div{flex:1;min-width:0}
-  .saludo-app b{display:block;font-size:32px;font-weight:650;letter-spacing:-.045em;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .saludo-app .fecha-app{display:block;margin-top:4px;color:var(--tinta-2);font-size:16px}
-  .saludo-app+h1,.saludo-app~.ini-cab>p:first-child,.saludo-app~.ini-cab h1{display:none}
-  .saludo-app~.ini-cab{padding-top:0}
+  html[data-cuenta="familia"] .panel,html[data-cuenta="profe"] .panel{grid-template-columns:minmax(0,1fr);padding-top:22px}
+  .saludo-app{gap:14px;margin-bottom:26px}
+  .saludo-app .ava-app{width:64px;height:64px;font-size:26px}
+  .saludo-app .fecha-app{font-size:16px;margin-top:4px}
+  .hoy-c{padding:20px}
   body:has(.saludo-app) .acciones-app{display:none}
   .guardar-pf{bottom:calc(96px + env(safe-area-inset-bottom))}
 }
@@ -833,6 +854,18 @@ D.listo.then(async () => {
       <a class="campana-app" href="#${profe ? 'solicitudes' : 'mensajes'}" aria-label="Avisos${n ? ': ' + n + ' sin responder' : ''}"><svg class="ico-app" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>${n ? '<i class="punto-campana"></i>' : ''}</a></div>`;
   }
 
+  // «Hoy»: las clases de hoy (o que no hay ninguna) y un atajo al Asistente IA
+  const icoHoy = d => `<svg class="ico-hoy" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  function bloqueHoy() {
+    const deHoy = eventos(hoy, hoy).filter(e => e.estado !== 'cancelada');
+    const clases = deHoy.length
+      ? deHoy.map(e => `<button type="button" class="hoy-c" data-ev-dia="${e.f}">${icoHoy('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>')}<span><b>${U.esc(e.titulo)}</b><small>Hoy a las ${U.esc(cuandoEv(e))}${e.lugar ? ' · ' + U.esc(e.lugar) : ''}${ESTADO_EV[e.estado] ? ' · ' + ESTADO_EV[e.estado] : ''}</small></span></button>`).join('')
+      : `<div class="hoy-c">${icoHoy('<path d="M3 15c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2M3 19c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/><circle cx="12" cy="8" r="3"/>')}<span><b>No tienes clases hoy</b></span></div>`;
+    const quien = s.hijos && s.hijos.length ? `los deberes de ${U.esc(hijo.nombre)}` : 'tus deberes';
+    return `<h2 class="hoy-tit">Hoy</h2><div class="hoy-lista">${clases}
+      <button type="button" class="hoy-c blanca" data-ir="corrector">${icoHoy('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>')}<span><b>Corrige ${quien} con el asistente</b><small>Haz una foto y te dice qué está bien y dónde falla</small></span></button></div>`;
+  }
+
   function vistaInicioFamilia() {
     const prox = proximosEv(1)[0];
     const lunes = new Date(hoy); lunes.setHours(0, 0, 0, 0);
@@ -860,7 +893,7 @@ D.listo.then(async () => {
     const grupos = MIS_GRUPOS.length
       ? `<div class="grupos-p">${MIS_GRUPOS.slice(0, 2).map(tarjetaGrupo).join('')}</div>`
       : `<div class="hoja" style="padding:20px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap"><p class="suave">Con 2 a 4 alumnos de tu zona y tu curso, cada familia paga hasta la mitad.</p><a class="boton sec peq" href="grupos.html">Ver grupos de estudio</a></div>`;
-    return `${cabApp()}<h1>Hola, ${U.esc(s.nombre)}.</h1>
+    return `${cabApp()}<h1>Hola, ${U.esc(s.nombre)}.</h1>${bloqueHoy()}
       <div class="hoja aviso-ia" ${REAL ? 'hidden' : ''}><div><b><span class="punto-ia"></span>${U.esc(hijo.nombre)} repite el mismo fallo en dos clases seguidas</b><p>Los signos al despejar en Matemáticas. Su profe ya lo sabe y empezará por ahí en la próxima clase. Mientras, 10 minutos de práctica con el asistente le vendrían bien.</p></div>
         <button class="boton peq" type="button" data-pregunta="¿Qué le cuesta más a ${U.esc(hijo.nombre)}?">Ver detalles</button></div>
       <div class="inicio-f">${hero}<div class="accesos">${accesos}</div></div>
