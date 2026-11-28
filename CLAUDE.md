@@ -30,4 +30,5 @@ Proyecto `zlugjjcoatjdvvepilhx` (organización Clasuno). La seguridad la ponen l
 ## Cuentas de prueba
 - Profe: «Laura Prueba Profe» (`profe.prueba@clasuno.com`), aprobada, Chamberí, Matemáticas y Física.
 - Familia: «Marta Prueba Familia» (`familia.prueba@clasuno.com`), hijo Lucas, 3º ESO, Chamberí.
+- Profe 2: «Javier Ortega Prueba Profe» (`profe2.prueba@clasuno.com`), Física y Química y Matemáticas, ESO y Bachillerato, Chamberí, 20 €/h. Creado el 28-nov-2026, **pendiente de aprobar** (no sale en el buscador hasta aprobarlo).
 Las contraseñas no se apuntan aquí.
