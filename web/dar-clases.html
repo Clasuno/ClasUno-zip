@@ -12,7 +12,7 @@
 .cab-profes{background:#15171C;color:#fff;padding:90px 0 100px;position:relative;overflow:hidden}
 .cab-profes .cab-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45}
 .cab-profes .envoltura{position:relative}
-.cab-profes h1{font-size:clamp(40px,6vw,76px);max-width:820px}
+.cab-profes h1{font-size:var(--t-pagina);max-width:820px}
 .cab-profes .placa-gigante{position:absolute;right:-40px;top:40px;transform:rotate(-8deg);border:4px solid #fff;border-radius:18px;padding:20px 30px;font-family:var(--mono);font-size:22px;opacity:.16;white-space:nowrap}
 .calc{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:start}
 .calc .hoja{padding:28px}
@@ -50,7 +50,7 @@
     <div class="envoltura calc">
       <div class="hoja">
         <p class="kicker">Calculadora</p>
-        <h2 style="font-size:34px;margin-bottom:24px">Echa cuentas.</h2>
+        <h2 style="font-size:var(--t-seccion);margin-bottom:24px">Echa cuentas.</h2>
         <label class="campo"><span>Tu precio por hora: <b id="tPrecio">18 €</b></span><input type="range" id="precio" min="10" max="35" value="18"></label>
         <label class="campo"><span>Horas de clase a la semana: <b id="tHoras">8 h</b></span><input type="range" id="horas" min="1" max="30" value="8"></label>
         <label class="campo"><span>De esas, en grupo de estudio: <b id="tGrupo">25 %</b></span><input type="range" id="grupo" min="0" max="100" step="25" value="25"></label>
@@ -87,7 +87,7 @@
 
   <section class="envoltura" style="padding-bottom:70px">
     <div class="hoja" style="padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
-      <div><h2 style="font-size:36px">¿Empezamos?</h2><p class="suave" style="margin-top:8px">Sin permanencia. Puedes pausar tu perfil cuando quieras.</p></div>
+      <div><h2 style="font-size:var(--t-seccion)">¿Empezamos?</h2><p class="suave" style="margin-top:8px">Sin permanencia. Puedes pausar tu perfil cuando quieras.</p></div>
       <a class="boton" href="alta-profe.html">Crear mi perfil de profe</a>
     </div>
   </section>

@@ -29,10 +29,21 @@ a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--butano);outline-offset:2px;border-radius:8px}
+/* Un solo sistema de títulos para toda la web. Si hace falta otro tamaño, se cambia aquí, no en cada página.
+   · --t-portada: el titular grande de la portada
+   · --t-pagina: el título de cada página (Ayuda, Grupos, la ficha del profe…)
+   · --t-app: el título dentro del panel, de un grupo o al entrar
+   · --t-seccion: títulos de sección y de ventanas
+   · --t-tarjeta: títulos de tarjeta (h3)
+   Las etiquetas pequeñas van con .kicker (azul, sin mayúsculas). */
+:root{--t-portada:clamp(44px,7vw,96px);--t-pagina:clamp(38px,5.6vw,72px);--t-app:clamp(32px,4.2vw,48px);--t-seccion:28px;--t-tarjeta:20px}
 h1,h2,h3{letter-spacing:-.045em;line-height:1;margin:0;font-weight:600}
-h1{font-size:clamp(44px,7vw,96px)}
+h1{font-size:var(--t-portada)}
 h2{font-size:clamp(32px,4.4vw,58px)}
-h3{font-size:20px;font-weight:650;letter-spacing:-.015em}
+h3{font-size:var(--t-tarjeta);font-weight:650;letter-spacing:-.015em}
+.t-pagina{font-size:var(--t-pagina)!important}
+.t-app{font-size:var(--t-app)!important}
+.t-seccion{font-size:var(--t-seccion)!important;letter-spacing:-.03em}
 p{margin:0}
 .envoltura{max-width:var(--ancho);margin-left:auto!important;margin-right:auto!important;padding-left:20px!important;padding-right:20px!important}
 .envoltura>*{min-width:0}
@@ -111,7 +122,7 @@ textarea.entrada{min-height:110px;resize:vertical}
 .combo-lista li.activo{background:var(--butano-claro)}
 .combo-lista li[aria-selected=true]{font-weight:700}
 .combo-lista mark{background:transparent;color:var(--butano);font-weight:700}
-.combo-grupo{padding:10px 12px 4px;font-size:12px;font-weight:700;color:var(--tinta-2);text-transform:uppercase;letter-spacing:.05em}
+.combo-grupo{padding:10px 12px 4px;font-size:13px;font-weight:650;color:var(--tinta-2)}
 .combo-vacio{padding:10px 12px;color:var(--tinta-2);font-size:14px;font-weight:500}
 .entrada:focus{outline:none;border-color:var(--butano);box-shadow:0 0 0 4px color-mix(in srgb,var(--butano) 16%,transparent)}
 input[type=range]{width:100%;accent-color:var(--butano)}

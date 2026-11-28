@@ -44,7 +44,7 @@
     </div>
 
     <form id="fEntrar" novalidate>
-      <h1 style="font-size:46px">Hola de nuevo.</h1>
+      <h1 style="font-size:var(--t-app)">Hola de nuevo.</h1>
       <div class="campos">
         <label class="campo"><span>Correo electrónico</span><input class="entrada" type="email" name="correo" autocomplete="email" required></label>
         <label class="campo"><span>Contraseña</span><input class="entrada" type="password" name="clave" autocomplete="current-password" required></label>
@@ -56,7 +56,7 @@
     </form>
 
     <form id="fAlta" novalidate hidden>
-      <h1 style="font-size:46px">Crea tu cuenta.</h1>
+      <h1 style="font-size:var(--t-app)">Crea tu cuenta.</h1>
       <p class="suave" style="margin-top:8px">Gratis y sin cuotas. Para profes hay un <a href="alta-profe.html">alta aparte</a>.</p>
       <div class="quien">
         <label><input type="radio" name="tipo" value="familia" checked><b>Soy madre, padre o tutor</b><span style="font-size:13px;opacity:.8">Busco profe para mis hijos</span></label>
@@ -144,7 +144,7 @@
     try {
       const r = await SUPA.registrar({ email: v('correo').toLowerCase(), clave: fA.clave.value, nombre: v('nombre'), apellidos: v('apellidos'), rol: 'familia', extra: { tipo, zona: v('zona'), hijos } });
       if (r.session) { location.href = 'panel.html?nuevo=1'; return; }
-      fA.innerHTML = `<h1 style="font-size:42px">Mira tu correo.</h1><p class="suave" style="margin-top:12px;font-size:18px">Te hemos mandado un enlace a <b>${U.esc(v('correo'))}</b>. Púlsalo para confirmar la cuenta y entrarás directamente en tu panel.</p>`;
+      fA.innerHTML = `<h1 style="font-size:var(--t-app)">Mira tu correo.</h1><p class="suave" style="margin-top:12px;font-size:18px">Te hemos mandado un enlace a <b>${U.esc(v('correo'))}</b>. Púlsalo para confirmar la cuenta y entrarás directamente en tu panel.</p>`;
     } catch (x) { err(fA, x.message); ocupado(fA, false, 'Crear cuenta'); }
   };
 })();

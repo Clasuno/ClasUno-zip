@@ -104,7 +104,7 @@
     return `<article class="hoja tarjeta-profe" data-id="${p.id}">
       ${cara(p)}
       <div>
-        <h3 style="font-size:19px"><a class="enlace-tarjeta" href="profe.html?id=${p.id}" style="text-decoration:none">${p.nombre}</a></h3>
+        <h3><a class="enlace-tarjeta" href="profe.html?id=${p.id}" style="text-decoration:none">${p.nombre}</a></h3>
         <p class="suave" style="font-size:14px">${p.estudios}</p>
         <p style="font-size:15px;margin-top:6px">${p.corta}</p>
         <p style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">

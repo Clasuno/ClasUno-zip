@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="assets/estilo.css">
 <style>
 .cab-ayuda{padding:56px 0 40px;text-align:center}
-.cab-ayuda h1{font-size:clamp(42px,6.4vw,84px)}
+.cab-ayuda h1{font-size:var(--t-pagina)}
 .busca-ayuda{max-width:620px;margin:28px auto 0;position:relative}
 .busca-ayuda input{padding:18px 20px 18px 52px;font-size:18px;border-width:2px;box-shadow:4px 4px 0 var(--tinta)}
 .busca-ayuda::before{content:"⌕";position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--tinta-2)}
 .acordeon details{border-top:1px solid var(--linea);padding:18px 0}
-.acordeon summary{font-weight:750;font-size:19px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.acordeon summary{font-weight:650;font-size:var(--t-tarjeta);letter-spacing:-.015em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
 .acordeon summary::after{content:"+";font-size:26px;line-height:1;transition:transform .3s}
 .acordeon details[open] summary::after{transform:rotate(45deg)}
 .acordeon details p{margin-top:10px;max-width:760px}

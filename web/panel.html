@@ -12,7 +12,7 @@
 .panel{display:grid;grid-template-columns:250px 1fr;gap:30px;padding:30px 0 70px;align-items:start}
 .panel.sin-lateral{grid-template-columns:minmax(0,1fr)}
 .panel.sin-lateral .lateral{display:none}
-.tit-lateral{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2);padding:0 14px;margin-top:4px}
+.tit-lateral{font-size:15px;font-weight:600;color:var(--butano);padding:0 14px;margin-top:4px}
 .lateral{position:sticky;top:86px}
 .lateral nav{display:grid;gap:4px;margin-top:16px}
 .lateral nav button{border:0;background:transparent;text-align:left;padding:11px 14px;border-radius:10px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
@@ -24,20 +24,20 @@
 .rol button[aria-pressed="true"]{background:var(--butano);color:#fff}
 .vista{animation:entraV .4s cubic-bezier(.2,.8,.2,1)}
 @keyframes entraV{from{opacity:0;transform:translateY(14px)}}
-.vista h1{font-size:clamp(34px,4.6vw,56px);margin-bottom:22px}
+.vista h1{font-size:var(--t-app);margin-bottom:22px}
 .tarjetas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
 .dato{padding:20px}
 .dato b{display:block;font-size:38px;font-weight:700;line-height:1;margin-top:6px}
 .fila-clase{display:grid;grid-template-columns:76px 1fr auto;gap:16px;align-items:center;padding:16px 20px}
 .fila-clase+.fila-clase{border-top:1px dashed var(--linea)}
 .fecha{border:1px solid var(--linea-2);border-radius:10px;text-align:center;overflow:hidden;background:var(--hoja)}
-.fecha span{display:block;background:var(--butano);color:#fff;font-family:var(--mono);font-size:11px;padding:2px;text-transform:uppercase}
+.fecha span{display:block;background:var(--butano);color:#fff;font-size:12px;font-weight:600;padding:2px}
 .fecha b{display:block;font-size:26px;padding:4px 0}
 .informe{padding:24px}
 .informe+.informe{margin-top:16px}
 .informe .tres{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
 .informe .tres div{border-left:3px solid var(--c);padding-left:12px}
-.informe .tres p:first-child{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--c)}
+.informe .tres p:first-child{font-size:14px;font-weight:600;color:var(--c)}
 .chat{display:grid;grid-template-columns:260px 1fr;height:560px;overflow:hidden;padding:0}
 .convs{border-right:1px solid var(--linea-2);overflow:auto}
 .convs button{display:flex;gap:10px;width:100%;border:0;border-bottom:1px dashed var(--linea);background:transparent;padding:14px;text-align:left;align-items:center}
@@ -66,10 +66,10 @@
 /* ---------- Panel de la familia ---------- */
 .inicio-f{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:8px}
 .hero-clase{padding:24px;display:flex;gap:20px;align-items:center;border-color:var(--butano)}
-.hero-clase h2{font-size:clamp(24px,2.6vw,32px);margin:6px 0 6px;line-height:1.1}
+.hero-clase h2{font-size:var(--t-seccion);margin:6px 0 6px;line-height:1.1}
 .fecha.grande{min-width:84px}
 .fecha.grande b{font-size:38px;padding:6px 0 0}
-.fecha.grande small{display:block;font-size:12px;color:var(--tinta-2);padding-bottom:6px;text-transform:uppercase}
+.fecha.grande small{display:block;font-size:12px;color:var(--tinta-2);padding-bottom:6px}
 .acciones-hero{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
 .accesos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .acceso{padding:18px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;cursor:pointer;color:var(--tinta);transition:border-color .15s,transform .15s}
@@ -77,7 +77,7 @@
 .acceso b{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.03em}
 .acceso span{font-size:14px;color:var(--tinta-2)}
 .cab-seccion{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:30px 0 12px}
-.cab-seccion h2{font-size:26px}
+.cab-seccion h2{font-size:var(--t-seccion)}
 .enlace-sec{border:0;background:transparent;color:var(--butano);font-weight:600;font-size:15px;padding:4px 0}
 .enlace-sec:hover{text-decoration:underline}
 .semana{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
@@ -111,7 +111,7 @@
 .cal-p{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start}
 .cal-mes{padding:20px}
 .cal-cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.cal-cab h3{font-size:19px}
+.cal-cab h3{font-size:var(--t-tarjeta)}
 .cal-cab button{width:38px;height:38px;border-radius:10px;border:1px solid var(--linea-2);background:transparent;font-size:18px;color:var(--tinta)}
 .cal-sem,.cal-rej{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-sem span{text-align:center;font-size:12px;font-weight:600;color:var(--tinta-2);padding:4px 0}
@@ -131,8 +131,8 @@
 /* Inicio del profe: la agenda del día, sin cajas ni adornos */
 .ini-profe{max-width:980px}
 .ini-cab{padding:6px 0 26px;border-bottom:1px solid var(--linea-2)}
-.ini-cab>p:first-child{font-size:14px;color:var(--tinta-2)}
-.ini-cab h1{font-size:clamp(30px,3.6vw,42px);font-weight:600;letter-spacing:-.02em;margin:4px 0 0}
+.ini-cab>p:first-child{font-size:15px;font-weight:600;color:var(--butano)}
+.ini-cab h1{margin:6px 0 0}
 .ini-frase{font-size:18px;color:var(--tinta-2);margin-top:8px;max-width:620px;line-height:1.45}
 .ini-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:48px;padding-top:22px}
 /* Tira de la semana */
@@ -143,7 +143,7 @@
 .dia-chip{border:0;background:transparent;border-radius:14px;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--tinta);transition:background .15s,transform .15s}
 .dia-chip:hover{background:var(--papel-2)}
 .dia-chip:active{transform:scale(.96)}
-.dia-chip span{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2)}
+.dia-chip span{font-size:13px;color:var(--tinta-2)}
 .dia-chip b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;width:34px;height:34px;display:grid;place-items:center;border-radius:50%}
 .dia-chip.hoy b{color:var(--butano)}
 .dia-chip.pasado{opacity:.55}
@@ -183,7 +183,7 @@
 .sol-no:hover{border-color:var(--aviso);color:var(--aviso)}
 @media (max-width:560px){.semana-ini{gap:2px}.sem-flecha{width:28px;height:28px}.dia-chip b{font-size:17px;width:28px;height:28px}.dia-chip span{font-size:10.5px}.ag-datos div{grid-template-columns:1fr}}
 .ini-tit{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
-.ini-tit h2{font-size:15px;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--tinta-2)}
+.ini-tit h2{font-size:var(--t-seccion);letter-spacing:-.03em}
 .ag-accion{border:0;background:none;padding:0;color:var(--butano);font-weight:600;font-size:14px;cursor:pointer}
 .ag-accion:hover{text-decoration:underline}
 .agenda{list-style:none;margin:0;padding:0;border-left:1px solid var(--linea-2);margin-left:58px}
@@ -215,7 +215,7 @@
 @media (max-width:860px){.ini-cols{grid-template-columns:1fr;gap:34px}}
 .leyenda-c{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--tinta-2)}
 .leyenda-c i{margin-right:6px;vertical-align:middle}
-.tit-lista{padding:16px 20px 0;font-size:18px}
+.tit-lista{padding:16px 20px 0}
 /* ---------- Mi perfil (profe) ---------- */
 .aviso-perfil{padding:18px 20px;margin-bottom:18px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
 .estado-perfil{font-size:12.5px;font-weight:650;padding:3px 10px;border-radius:99px;background:var(--papel-2);white-space:nowrap}
@@ -225,7 +225,7 @@
 .perfil-p{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
 .perfil-form{display:grid;gap:16px}
 .sec-pf{padding:22px 24px}
-.sec-pf h3{font-size:19px;margin-bottom:14px}
+.sec-pf h3{font-size:var(--t-tarjeta);margin-bottom:14px}
 .campos-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .campos-2 .ancho{grid-column:1/-1}
 .foto-fila{display:flex;gap:18px;align-items:center;margin-bottom:16px}
@@ -257,7 +257,7 @@
 .indice-aj a:hover{background:var(--butano-claro);color:var(--butano)}
 .ajustes-p{display:grid;gap:16px;max-width:780px}
 .sec-aj{padding:22px 24px;scroll-margin-top:90px}
-.sec-aj h3{font-size:19px}
+.sec-aj h3{font-size:var(--t-tarjeta)}
 .sub-aj{font-size:14px;margin:4px 0 0}
 .sec-aj form,.sec-aj>div,.sec-aj>p{margin-top:14px}
 .campos-aj{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -761,7 +761,7 @@ D.listo.then(async () => {
       preparar: () => `<h1>Preparar la próxima clase</h1>
         ${REAL ? preparaReal() : `<div class="hoja" style="padding:24px;margin-bottom:18px"><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Lucas · 4º ESO · ${fmt((PROXIMAS[0] || { d: dia(2) }).d, { weekday: 'long', day: 'numeric' })} a las 18:00</p>
           <p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Desde la última clase ha practicado 3 veces con el asistente (34 min). Se ha atascado 4 veces con el mismo paso: <b>cambiar el signo al pasar un término al otro lado</b>. La fórmula de segundo grado ya la domina.</p>
-          <h3 style="margin-top:22px;font-size:17px">Propuesta para 60 minutos</h3>
+          <h3 style="margin-top:22px;font-size:var(--t-tarjeta)">Propuesta para 60 minutos</h3>
           <div class="estructura"><div><span>10'</span>Repaso de signos con 4 ejercicios rápidos (abajo).</div><div><span>25'</span>Problemas con enunciado, lo que pusiste en el último informe.</div><div><span>15'</span>Dos problemas él solo; tú solo miras.</div><div><span>10'</span>Resumen y deberes para el jueves.</div></div></div>`}
         <div class="hoja" style="padding:24px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><h3>Ejercicios de ecuaciones, para practicar</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="conSol"> Con soluciones</label><button class="boton sec peq" type="button" id="otrosEj">Otros ejercicios</button>
@@ -866,7 +866,7 @@ D.listo.then(async () => {
     };
     return `<h1>Mis profes</h1><p class="suave" style="margin:-10px 0 22px">Los profes con los que tienes clases, grupos o conversación.</p>
       ${MIS_PROFES.length ? `<div class="profes-p">${MIS_PROFES.map(tarjeta).join('')}</div>` : `<div class="hoja" style="padding:32px;text-align:center"><h3>Todavía no tienes profes</h3><p class="suave" style="margin:10px 0 18px">Escribe a un profe o reserva una primera clase a prueba y saldrá aquí.</p><a class="boton" href="buscar.html">Buscar profe</a></div>`}
-      <h2 style="font-size:26px;margin:34px 0 12px">♥ Guardados</h2>
+      <h2 style="font-size:var(--t-seccion);margin:34px 0 12px">♥ Guardados</h2>
       ${favs.length ? `<div style="display:grid;gap:14px">${favs.map(p => U.tarjetaProfe(p, s.zona)).join('')}</div>` : `<p class="suave">${U.favs().length ? 'Tus profes guardados ya están arriba.' : 'Pulsa «♡ Guardar» en cualquier profe para tenerlo aquí.'}</p>`}`;
   }
 
@@ -918,7 +918,7 @@ D.listo.then(async () => {
         <p style="font-size:14px;font-weight:600;color:var(--butano);margin-top:18px"><span class="punto-ia"></span>${U.esc(quien)} · ${may(fmt(d, { weekday: 'long', day: 'numeric', month: 'long' }))} a las ${hora(d)} · ${min} min${c.estado === 'pedida' ? ' · aún sin aceptar' : ''}</p>
         ${inf ? `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">En tu último informe (${fmt(inf.d, { day: 'numeric', month: 'long' })}, «${U.esc(inf.tema)}») apuntaste que le cuesta <b>${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}</b> y que tocaba <b>${U.esc(inf.luego.replace(/\.$/, '').toLowerCase())}</b>.</p>`
           : `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Es vuestra primera clase: todavía no hay informes de ${U.esc(quien)}. Dedica el principio a ver su nivel.</p>`}
-        <h3 style="margin-top:22px;font-size:17px">Propuesta para ${min} minutos</h3>
+        <h3 style="margin-top:22px;font-size:var(--t-tarjeta)">Propuesta para ${min} minutos</h3>
         <div class="estructura">${estructura.map(([m, txt]) => `<div><span>${m}'</span>${txt}</div>`).join('')}</div>
         <p style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">${CONV[c.familia_id] ? `<button class="boton sec peq" type="button" data-chat="${c.familia_id}">Escribir a la familia</button>` : ''}<button class="boton sec peq" type="button" data-ir="informe">Escribir el informe después</button></p></div>`;
   }
@@ -1144,10 +1144,10 @@ D.listo.then(async () => {
     const n = e => clases.filter(c => c.estado === e).length;
     const cara = f.avatar ? `<span class="cara" style="background:url(${f.avatar}) center/cover;width:64px;height:64px"></span>` : `<span class="cara" style="width:64px;height:64px;font-size:22px;background:var(--butano)">${U.esc(U.iniciales(nom))}</span>`;
     dlgFam.querySelector('.dlg-cuerpo').innerHTML = `
-      <div style="display:flex;gap:14px;align-items:center">${cara}<div><p class="kicker">${f.tipo === 'alumno' ? 'Alumno adulto' : 'Familia'}</p><h2 style="font-size:28px">${U.esc(nom)}</h2>
+      <div style="display:flex;gap:14px;align-items:center">${cara}<div><p class="kicker">${f.tipo === 'alumno' ? 'Alumno adulto' : 'Familia'}</p><h2 style="font-size:var(--t-seccion)">${U.esc(nom)}</h2>
         <p class="suave" style="font-size:14px">${z ? '📍 ' + z.nombre + ' · ' : ''}en ClasUno desde ${fmt(new Date(f.desde), { month: 'long', year: 'numeric' })}</p></div></div>
-      ${hijos.length ? `<h3 style="font-size:17px;margin-top:20px">${f.tipo === 'alumno' ? 'Estudia' : hijos.length > 1 ? 'Sus hijos' : 'Su hijo o hija'}</h3><ul class="lista-fam">${hijos.map(h => `<li><b>${U.esc(h.nombre)}</b>${h.curso ? ' · ' + U.esc(h.curso) : ''}</li>`).join('')}</ul>` : ''}
-      <h3 style="font-size:17px;margin-top:20px">Contigo</h3>
+      ${hijos.length ? `<h3 style="font-size:var(--t-tarjeta);margin-top:20px">${f.tipo === 'alumno' ? 'Estudia' : hijos.length > 1 ? 'Sus hijos' : 'Su hijo o hija'}</h3><ul class="lista-fam">${hijos.map(h => `<li><b>${U.esc(h.nombre)}</b>${h.curso ? ' · ' + U.esc(h.curso) : ''}</li>`).join('')}</ul>` : ''}
+      <h3 style="font-size:var(--t-tarjeta);margin-top:20px">Contigo</h3>
       <p class="suave" style="font-size:14px">${n('hecha')} ${n('hecha') === 1 ? 'clase hecha' : 'clases hechas'} · ${n('pedida')} ${n('pedida') === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'} · ${f.informes || 0} ${f.informes === 1 ? 'informe' : 'informes'}</p>
       ${clases.length ? `<ul class="lista-fam">${clases.slice(0, 6).map(c => { const d = new Date(c.empieza);
         return `<li>${fmt(d, { weekday: 'short', day: 'numeric', month: 'short' })} · ${hora(d)} · ${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.modalidad ? ' · ' + (c.modalidad === 'online' ? 'online' : 'en persona') : ''}${c.alumno ? ' · ' + U.esc(c.alumno) : ''} <span class="estado-ev ${c.estado === 'pedida' ? 'pedida' : ''}">${ESTADO_CLASE[c.estado] || c.estado}</span></li>`; }).join('')}</ul>` : ''}

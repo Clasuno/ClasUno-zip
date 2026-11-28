@@ -12,14 +12,14 @@
 <style>
 .ficha-cab{padding:34px 0 30px;border-bottom:1px solid var(--linea-2)}
 .ficha-cab .fila{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center}
-.ficha-cab h1{font-size:clamp(38px,5.5vw,70px)}
+.ficha-cab h1{font-size:var(--t-pagina)}
 .datos-rapidos{display:flex;gap:30px;flex-wrap:wrap;margin-top:18px}
 .datos-rapidos b{display:block;font-size:28px;font-weight:700;line-height:1}
 .datos-rapidos span{font-size:13px;color:var(--tinta-2)}
 .cuerpo-ficha{display:grid;grid-template-columns:1fr 410px;gap:40px;padding:40px 0 70px;align-items:start}
 .bloque{padding:28px}
 .bloque+.bloque{margin-top:20px}
-.bloque h2{font-size:26px;margin-bottom:14px}
+.bloque h2{font-size:var(--t-seccion);margin-bottom:14px}
 .reserva{position:sticky;top:86px;padding:24px}
 .tipos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
 .tipo{border:1px solid var(--linea-2);border-radius:12px;padding:10px 12px;text-align:left;background:var(--hoja);transition:all .2s}
@@ -128,7 +128,7 @@ D.listo.then(() => {
     </div>
 
     <aside class="hoja reserva" aria-label="Reservar">
-      <h2 style="font-size:24px">Pedir clase</h2>
+      <h2 style="font-size:var(--t-seccion)">Pedir clase</h2>
       <div class="tipos" id="tipos">
         <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>60 min · si no encaja, no pagas</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="suelta"><b>Clase suelta</b><small>${p.precio} € la hora</small></button>
@@ -220,7 +220,7 @@ D.listo.then(() => {
     }
     $('#dlgCuerpo').innerHTML = `
       <p class="kicker">Solicitud enviada</p>
-      <h2 style="font-size:32px">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
+      <h2 style="font-size:var(--t-seccion)">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
       <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de estudio' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min · ${MODO_TXT[modalidad]}.</p>
       <ol style="margin:18px 0 0;padding-left:20px;line-height:1.8">
         <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora (suele tardar ${p.responde}).</li>

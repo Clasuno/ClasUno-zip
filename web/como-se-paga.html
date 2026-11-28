@@ -21,7 +21,7 @@
 .principio .ic{font-size:30px;margin-bottom:12px}
 .tabla{width:100%;border-collapse:collapse;background:var(--hoja);border:1px solid var(--linea);border-radius:14px;overflow:hidden}
 .tabla th,.tabla td{padding:16px 18px;text-align:left;border-bottom:1px dashed var(--linea);vertical-align:top}
-.tabla th{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;background:var(--papel-2)}
+.tabla th{font-family:var(--mono);font-size:12px;background:var(--papel-2)}
 .tabla td:last-child{font-weight:650}
 .tabla td:last-child::before{content:"✓ ";color:var(--ok)}
 .linea-tiempo{position:relative;display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px}
@@ -29,7 +29,7 @@
 .hito{padding-top:50px;position:relative;padding-right:20px}
 .hito::before{content:"";position:absolute;top:12px;left:0;width:20px;height:20px;border-radius:50%;background:var(--hoja);border:3px solid var(--tinta)}
 .acordeon details{border-top:1px solid var(--linea);padding:18px 0}
-.acordeon summary{font-weight:750;font-size:19px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.acordeon summary{font-weight:650;font-size:var(--t-tarjeta);letter-spacing:-.015em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
 .acordeon summary::after{content:"+";font-size:26px;line-height:1;transition:transform .3s}
 .acordeon details[open] summary::after{transform:rotate(45deg)}
 .acordeon details p{margin-top:10px;max-width:760px}
@@ -42,7 +42,7 @@
   <section class="envoltura cab-pago">
     <div>
       <p class="kicker">Cómo se paga</p>
-      <h1 style="font-size:clamp(42px,6.4vw,86px)">Sin cuotas. Pagas la clase y ya.</h1>
+      <h1 style="font-size:var(--t-pagina)">Sin cuotas. Pagas la clase y ya.</h1>
       <p class="suave" style="font-size:19px;margin-top:20px;max-width:560px">Buscar, escribir y tener perfil es gratis para todos. Ganamos una parte de cada clase pagada en la web, y esa parte baja cuanto más tiempo seguís juntos.</p>
       <label class="campo" style="margin-top:30px;max-width:480px"><span>Mueve el número de clases con el mismo profe: <b id="nTxt">1ª clase</b></span><input type="range" id="n" min="1" max="30" value="1"></label>
       <label class="campo" style="margin-top:18px;max-width:480px"><span>Precio de la clase: <b id="pTxt">20 €</b></span><input type="range" id="p" min="10" max="35" value="20"></label>

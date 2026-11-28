@@ -99,7 +99,7 @@
   <section class="envoltura cab-grupos">
     <div>
       <p class="kicker">Grupos de estudio</p>
-      <h1 style="font-size:clamp(40px,6vw,80px)">Mismo barrio, mismo curso, un profe para todos.</h1>
+      <h1 style="font-size:var(--t-pagina)">Mismo barrio, mismo curso, un profe para todos.</h1>
     </div>
     <p class="suave" style="font-size:18px">Entre 2 y 4 alumnos <b>de la misma zona y del mismo curso</b> comparten profe y clase, cerca de casa o del colegio. Cada familia paga hasta la mitad y el profe gana más por hora. Te unes a un grupo que ya existe o creas el tuyo, abierto a tu zona o privado para quien tú invites.</p>
   </section>
@@ -113,7 +113,7 @@
     <div class="hoja invita aparece" id="invita">
       <div>
         <p class="kicker">Invita a otra familia</p>
-        <h2 style="font-size:clamp(28px,3.4vw,40px)">Cuantos más seáis, menos paga cada uno.</h2>
+        <h2 style="font-size:var(--t-seccion)">Cuantos más seáis, menos paga cada uno.</h2>
         <p class="suave" style="margin-top:12px;font-size:17px" id="invitaDesc"></p>
         <div class="invitar" style="margin-top:20px;flex-wrap:wrap">
           <button class="boton" type="button" id="invitaWa"></button>
@@ -359,7 +359,7 @@ D.listo.then(async () => {
       unidos.push(g.id);
       const p = profeDe(g), b = base(g), unos = p ? '' : 'unos ';
       const ocup = g.ocupadas + 1, hayHueco = ocup < g.plazas;
-      $('#dlgCuerpo').innerHTML = `<p class="kicker">Plaza reservada</p><h2 style="font-size:30px">Ya estás en el grupo de ${esc(g.curso)}.</h2>
+      $('#dlgCuerpo').innerHTML = `<p class="kicker">Plaza reservada</p><h2 style="font-size:var(--t-seccion)">Ya estás en el grupo de ${esc(g.curso)}.</h2>
         <p style="margin-top:12px">${D.asig(g.asig).nombre}${p ? ' con ' + p.nombre : ''} · ${esc(cuando(g))} · ${D.zona(g.zona).nombre}.</p>
         <p class="suave" style="margin-top:10px">No se cobra hasta la primera clase. Si entra alguien más, el precio baja para todos y te avisamos.${p ? '' : ' En cuanto seáis dos, os proponemos profe.'}</p>
         ${hayHueco && (!g.privado || g.codigo) ? `<p class="baja" style="margin-top:16px">${ocup >= 2 ? `Estás pagando <b style="color:inherit">${unos}${eur(precio(b, ocup))}</b>. Si se apunta <b>1 más</b>, pagas <b>${unos}${eur(precio(b, ocup + 1))}</b>.` : `Con <b>1 alumno más</b> el grupo arranca y pagas <b>${unos}${eur(precio(b, 2))}</b>.`} ¿Conoces a alguien de tu zona y del mismo curso?</p>
@@ -395,7 +395,7 @@ D.listo.then(async () => {
   function dlgCreado(g) {
     const a = D.asig(g.asig), z = D.zona(g.zona), enlace = enlaceGrupo(g);
     $('#dlgCuerpo').innerHTML = `<p class="kicker">${g.privado ? '🔒 Grupo privado creado' : '🌍 Grupo público creado'}</p>
-      <h2 style="font-size:30px">Tu grupo de ${a.nombre} de ${esc(g.curso)} ya está listo.</h2>
+      <h2 style="font-size:var(--t-seccion)">Tu grupo de ${a.nombre} de ${esc(g.curso)} ya está listo.</h2>
       <p style="margin-top:12px">${z.nombre} · ${esc(cuando(g))} · hasta ${g.plazas} alumnos. Ya estás dentro.</p>
       <p class="suave" style="margin-top:10px">${g.privado ? 'No sale en el tablón: solo podrán entrar las familias a las que mandes este enlace.' : 'Ya sale en el tablón para las familias de la zona. Si conoces a alguien, mándale el enlace.'} En cuanto seáis dos, os proponemos profe y hora.</p>
       <div class="enlace-inv"><input class="entrada" readonly value="${esc(enlace)}" aria-label="Enlace de invitación" onclick="this.select()"><button class="boton sec peq" type="button" id="dlgCopiar">Copiar</button></div>
