@@ -122,6 +122,9 @@
 .puntos-c i,.leyenda-c i{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--butano)}
 .puntos-c i.grupo,.leyenda-c i.grupo{background:var(--ok)}
 .puntos-c i.cancelada,.leyenda-c i.cancelada{background:transparent;border:1.5px solid var(--aviso)}
+.puntos-c i.sinAceptar,.leyenda-c i.sinAceptar{background:transparent;border:1.5px solid var(--butano)}
+.puntos-c i.hecha,.leyenda-c i.hecha{background:var(--tinta-2);opacity:.6}
+.estado-ev.sinAceptar{color:var(--butano)}
 .leyenda-c{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--tinta-2)}
 .leyenda-c i{margin-right:6px;vertical-align:middle}
 .tit-lista{padding:16px 20px 0;font-size:18px}
@@ -409,8 +412,22 @@ D.listo.then(async () => {
     : PROXIMAS.map(c => ({ d: conHora(c.d, c.hora), hora: c.hora, profe: c.profe, tipoTxt: c.tipo, estado: 'clase', lugar: c.lugar })))
     .filter(c => D.profe(c.profe))
     .map(c => { const p = D.profe(c.profe); return { ...c, tipo: 'clase', f: isoD(c.d), titulo: `${D.asig(p.asig[0]).nombre} con ${p.nombre}`, lugar: c.lugar || (p.zona ? D.zona(p.zona).nombre : 'Online') }; });
+  // Profe: sus clases con cada familia (pendientes de aceptar, aceptadas y hechas)
+  function clasesDelProfe() {
+    if (REAL) return CLASES.filter(c => c.teacher_id === yo && ['pedida', 'aceptada', 'hecha'].includes(c.estado)).map(c => {
+      const d = new Date(c.empieza);
+      return { d, f: isoD(d), hora: hora(d), tipo: 'clase', vistaProfe: true, fam: c.familia_id, titulo: `${c.alumno || 'Alumno'} · ${TIPO_TXT[c.tipo]}`, tipoTxt: `${c.minutos} min`,
+        lugar: c.modalidad === 'online' ? 'Online' : c.modalidad === 'presencial' ? 'En persona' : '', estado: c.estado === 'pedida' ? 'sinAceptar' : c.estado === 'hecha' ? 'hecha' : 'clase' };
+    });
+    // Maqueta
+    return [[1, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [2, '17:00', 'Iker · Primera a prueba', 'En persona', 'sinAceptar'], [4, '19:00', 'Nora · Bono de 10', 'Online', 'clase'],
+      [8, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [-2, '18:00', 'Pablo · Clase suelta', 'En persona', 'hecha']].map(([n, h, t, l, e]) => {
+      const d = conHora(dia(n), h); return { d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', lugar: l, estado: e };
+    });
+  }
   function eventos(desde, hasta) {
     const fin = new Date(hasta); fin.setHours(23, 59, 59, 999);
+    if (rol === 'profe') return clasesDelProfe().filter(e => e.d >= desde && e.d <= fin).sort((a, b) => a.d - b.d);
     return [...SUELTAS.filter(e => e.d >= desde && e.d <= fin), ...MIS_GRUPOS.flatMap(g => sesionesGrupo(g, desde, hasta))].sort((a, b) => a.d - b.d);
   }
   function proximosEv(n) {
@@ -418,9 +435,11 @@ D.listo.then(async () => {
     const ya = new Date(hoy.getTime() - 3600e3);
     return eventos(desde, hasta).filter(e => e.estado !== 'cancelada' && e.d >= ya).slice(0, n);
   }
-  const ESTADO_EV = { clase: '', prevista: 'pendiente de profe', extra: 'clase extra', cancelada: 'cancelada', pedida: 'esperando respuesta del profe' };
+  const ESTADO_EV = { clase: '', prevista: 'pendiente de profe', extra: 'clase extra', cancelada: 'cancelada', pedida: 'esperando respuesta del profe', sinAceptar: 'sin aceptar', hecha: 'hecha' };
   const cuandoEv = e => (e.hora && e.hora !== 'Por decidir' ? e.hora : 'hora por decidir');
-  const accionEv = (e, sec = true) => e.tipo === 'grupo'
+  const accionEv = (e, sec = true) => e.vistaProfe
+    ? (e.estado === 'sinAceptar' ? `<button class="boton ${sec ? 'sec' : ''} peq" type="button" data-ir="solicitudes">Ver solicitud</button>` : e.fam ? `<button class="boton ${sec ? 'sec' : ''} peq" type="button" data-escribir-fam="${e.fam}">Escribir</button>` : `<button class="boton ${sec ? 'sec' : ''} peq" type="button" data-ir="mensajes">Escribir</button>`)
+    : e.tipo === 'grupo'
     ? `<a class="boton ${sec ? 'sec' : ''} peq" href="grupo.html?id=${encodeURIComponent(e.grupo.id)}">Abrir el grupo</a>`
     : `<button class="boton ${sec ? 'sec' : ''} peq" type="button" data-chat="${e.profe}">Escribir a ${U.esc(D.profe(e.profe).nombre.split(' ')[0])}</button>`;
   const filaEvento = e => `<div class="fila-clase ${e.estado === 'cancelada' ? 'tachada' : ''}">
@@ -434,7 +453,7 @@ D.listo.then(async () => {
   // ---------- Menús ----------
   const MENUS = {
     familia: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Asistente'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
-    profe: [['inicio', 'Inicio'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
+    profe: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
   };
   let chatPedido = U.param('chat');
   let actual = location.hash.slice(1) || (chatPedido ? 'mensajes' : 'inicio');
@@ -533,6 +552,7 @@ D.listo.then(async () => {
           <div class="tramo"><div class="tramo-barra"><i style="width:${Math.min(c, 5) / 25 * 100}%;background:var(--butano)"></i><i style="width:${Math.max(0, Math.min(c, 20) - 5) / 25 * 100}%;background:var(--aviso)"></i><i style="width:${Math.max(0, Math.min(c, 25) - 20) / 25 * 100}%;background:var(--ok)"></i></div>
           <p class="suave" style="font-size:13px">${c} clases juntos${sig ? ` · en ${sig - c} clase${sig - c === 1 ? '' : 's'} bajas al ${sig === 5 ? 10 : 5} %` : ' · ya estás en el tramo más bajo'}</p></div></div>`; }).join('')}`,
       ajustes: vistaAjustes,
+      calendario: vistaCalendario,
       ingresos: () => { const m = STATS.ingresos, tope = Math.max(1, ...m); const meses = Array.from({ length: 6 }, (_, i) => { const d = new Date(hoy); d.setMonth(hoy.getMonth() - 5 + i); return fmt(d, { month: 'short' }); });
         return `<h1>Ingresos</h1><div class="hoja" style="padding:26px"><p class="suave">Lo que te ha llegado cada mes, ya sin comisión</p>
           <div class="ingresos">${m.map((v, i) => `<div><b style="font-size:13px">${v} €</b><i data-h="${(v / tope * 78).toFixed(1)}" style="height:0"></i><span>${meses[i]}</span></div>`).join('')}</div>
@@ -631,14 +651,16 @@ D.listo.then(async () => {
       celdas += `<button type="button" class="cdia ${f === hoyF ? 'hoy' : ''} ${f === calDia ? 'sel' : ''} ${f < hoyF ? 'pasada' : ''}" data-cdia="${f}" aria-label="${fmt(deIso(f), { weekday: 'long', day: 'numeric', month: 'long' })}${es.length ? ': ' + es.length + (es.length > 1 ? ' clases' : ' clase') : ''}">${d}${puntos ? `<span class="puntos-c">${puntos}</span>` : ''}</button>`;
     }
     const delDia = calDia ? eventos(deIso(calDia), deIso(calDia)) : null, lista = proximosEv(8);
-    return `<h1>Calendario</h1><p class="suave" style="margin:-10px 0 22px">Todas tus clases juntas: las de cada profe y las de tus grupos de estudio.</p>
+    const esP = rol === 'profe';
+    return `<h1>Calendario</h1><p class="suave" style="margin:-10px 0 22px">${esP ? 'Tus clases con cada familia: las aceptadas, las que tienes por aceptar y las que ya has dado.' : 'Todas tus clases juntas: las de cada profe y las de tus grupos de estudio.'}</p>
       <div class="cal-p">
         <div class="hoja cal-mes"><div class="cal-cab"><button type="button" data-cmes="-1" aria-label="Mes anterior">‹</button><h3>${may(fmt(m, { month: 'long', year: 'numeric' }))}</h3><button type="button" data-cmes="1" aria-label="Mes siguiente">›</button></div>
           <div class="cal-sem">${['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'].map(x => `<span>${x}</span>`).join('')}</div>
           <div class="cal-rej">${celdas}</div>
-          <div class="leyenda-c"><span><i class="clase clase"></i>Clase con un profe</span><span><i class="grupo clase"></i>Grupo de estudio</span><span><i class="grupo cancelada"></i>Cancelada</span></div></div>
+          <div class="leyenda-c">${esP ? '<span><i class="clase clase"></i>Clase</span><span><i class="clase sinAceptar"></i>Sin aceptar</span><span><i class="clase hecha"></i>Hecha</span>'
+            : '<span><i class="clase clase"></i>Clase con un profe</span><span><i class="grupo clase"></i>Grupo de estudio</span><span><i class="grupo cancelada"></i>Cancelada</span>'}</div></div>
         <div style="min-width:0">${delDia ? `<div class="hoja" style="margin-bottom:16px"><h3 class="tit-lista">${may(fmt(deIso(calDia), { weekday: 'long', day: 'numeric', month: 'long' }))}</h3>${delDia.length ? delDia.map(filaEvento).join('') : '<p class="suave" style="padding:10px 20px 18px">Este día no tienes clase.</p>'}</div>` : ''}
-          <div class="hoja"><h3 class="tit-lista">Próximas clases</h3>${lista.length ? lista.map(filaEvento).join('') : `<p class="suave" style="padding:10px 20px 18px">No tienes clases. <a href="buscar.html">Busca profe</a> o <a href="grupos.html">únete a un grupo</a>.</p>`}</div></div>
+          <div class="hoja"><h3 class="tit-lista">Próximas clases</h3>${lista.length ? lista.map(filaEvento).join('') : esP ? '<p class="suave" style="padding:10px 20px 18px">No tienes clases por delante. Cuando aceptes una solicitud, saldrá aquí.</p>' : `<p class="suave" style="padding:10px 20px 18px">No tienes clases. <a href="buscar.html">Busca profe</a> o <a href="grupos.html">únete a un grupo</a>.</p>`}</div></div>
       </div>`;
   }
 

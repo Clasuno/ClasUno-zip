@@ -65,15 +65,30 @@ window.SUPA = (() => {
   })();
 
   // ---------- Sesión ----------
-  let usuario = null;
+  let usuario = null, avatarPedido = null;
+  // Tu foto de perfil, para la cabecera
+  async function cargarAvatar() {
+    if (!usuario) return;
+    const id = usuario.id;
+    const { data } = await sb.from('profiles').select('avatar_url').eq('id', id).maybeSingle();
+    ponerAvatar(id, (data && data.avatar_url) || null);
+  }
+  function ponerAvatar(id, url) {
+    try { const s = JSON.parse(localStorage.getItem('sesion') || 'null'); if (s && s.id === id && s.avatar !== url) { s.avatar = url; localStorage.setItem('sesion', JSON.stringify(s)); } } catch (e) {}
+    if (window.U && U.pintarCuenta) U.pintarCuenta();
+  }
   function sincronizar(session) {
     usuario = session ? session.user : null;
     try {
       if (usuario) {
         const m = usuario.user_metadata || {};
+        // La foto está en el perfil (no en la sesión): se conserva la que ya sabíamos y se pide aparte
+        const antes = JSON.parse(localStorage.getItem('sesion') || 'null');
+        const avatar = antes && antes.id === usuario.id ? antes.avatar || null : null;
         localStorage.setItem('sesion', JSON.stringify({ id: usuario.id, real: true, email: usuario.email,
           nombre: m.first_name || (usuario.email || '').split('@')[0], apellidos: m.last_name || '',
-          rol: m.role === 'teacher' ? 'profe' : (m.tipo || 'familia'), hijos: m.hijos || [], zona: m.zona || '' }));
+          rol: m.role === 'teacher' ? 'profe' : (m.tipo || 'familia'), hijos: m.hijos || [], zona: m.zona || '', avatar }));
+        if (avatarPedido !== usuario.id) { avatarPedido = usuario.id; cargarAvatar(); }
       } else {
         const s = JSON.parse(localStorage.getItem('sesion') || 'null');
         if (s && s.real) localStorage.removeItem('sesion');
@@ -132,6 +147,7 @@ window.SUPA = (() => {
     if (error) throw new Error('No se ha podido subir la foto: ' + error.message);
     const url = sb.storage.from('avatars').getPublicUrl(ruta).data.publicUrl;
     await sb.from('profiles').update({ avatar_url: url }).eq('id', usuario.id);
+    ponerAvatar(usuario.id, url); // la cabecera enseña ya la foto nueva
     return url;
   }
   async function guardarPerfilProfe(b) {

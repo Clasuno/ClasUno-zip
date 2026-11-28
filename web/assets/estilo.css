@@ -57,6 +57,11 @@ p{margin:0}
 /* «Mi panel» con la sesión iniciada: lo principal de la cabecera */
 .nav .boton-entrar.con-cuenta{padding-left:6px;gap:8px}
 .ava-mini{width:24px;height:24px;border-radius:50%;background:var(--butano-t);color:var(--butano);display:inline-grid;place-items:center;font-size:12.5px;font-weight:700;flex:none}
+.ava-mini.foto{background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--butano-t)}
+.nav .boton-entrar[aria-current="page"]{background:var(--butano);color:var(--butano-t);box-shadow:0 0 0 3px color-mix(in srgb,var(--butano) 30%,transparent)}
+/* Enlaces de la cabecera con icono (profe) */
+.nav a.con-icono{display:inline-flex;align-items:center;gap:7px}
+.icono-nav{width:18px;height:18px;flex:none}
 .cab .atajo-panel{display:none;padding-left:6px;gap:8px;white-space:nowrap}
 .franja-panel{background:var(--butano-claro);border-bottom:1px solid var(--linea)}
 .franja-panel .envoltura{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}

@@ -13,9 +13,12 @@
     ['buscar.html', 'Buscar profesor'], ['grupos.html', 'Grupos de estudio'], ['como-se-paga.html', 'Cómo se paga'],
     ['ayuda.html', 'Ayuda']
   ];
+  // Profe: su panel de inicio, su calendario y los mensajes (con icono); el perfil va en el botón de la derecha, con su foto
+  const ICONO_MSJ = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M8.5 8.5h7M8.5 11.5h4.5"/></svg>';
+  const ICONO_INICIO = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>';
+  const ICONO_CAL = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
   const NAV_PROFE = [
-    ['panel.html#solicitudes', 'Solicitudes'], ['panel.html#mensajes', 'Mensajes'], ['panel.html#preparar', 'Preparar clase'],
-    ['panel.html#perfil', 'Mi perfil'], ['ayuda.html', 'Ayuda']
+    ['panel.html#inicio', 'Inicio', ICONO_INICIO], ['panel.html#calendario', 'Calendario', ICONO_CAL], ['panel.html#mensajes', 'Mensajes', ICONO_MSJ]
   ];
   const esProfe = () => { const s = sesion(); return !!(s && s.rol === 'profe'); };
   const actualNav = h => {
@@ -23,7 +26,7 @@
     if (hash) return pagina === p && location.hash.slice(1) === hash;
     return h === pagina || (h === 'grupos.html' && pagina === 'grupo.html');
   };
-  const enlacesNav = () => (esProfe() ? NAV_PROFE : NAV).map(([h, t]) => `<a class="nav-enlace" href="${h}"${actualNav(h) ? ' aria-current="page"' : ''}>${t}</a>`).join('');
+  const enlacesNav = () => (esProfe() ? NAV_PROFE : NAV).map(([h, t, ic]) => `<a class="nav-enlace${ic ? ' con-icono' : ''}" href="${h}"${actualNav(h) ? ' aria-current="page"' : ''}>${ic || ''}${t}</a>`).join('');
   // «Dar clases» va aparte, justo a la izquierda del botón «Entrar»
   const darClases = `<a class="boton sec peq" href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
   const cab = document.createElement('header');
@@ -145,7 +148,7 @@
     nav.querySelectorAll('.nav-enlace').forEach(a => a.remove());
     tema.insertAdjacentHTML('beforebegin', enlacesNav());
   }
-  window.addEventListener('hashchange', pintarNav);
+  window.addEventListener('hashchange', () => pintarCuenta());
   function pintarCuenta() {
     pintarNav();
     const s = sesion(), b = cab.querySelector('.boton-entrar'), dc = cab.querySelector('.nav a[href="dar-clases.html"]'), atajo = cab.querySelector('.atajo-panel');
@@ -154,9 +157,15 @@
     // En el móvil, «Mi panel» sale fuera del menú, siempre a la vista
     if (atajo) atajo.hidden = !s;
     if (!s) { b.textContent = 'Entrar'; b.href = 'entrar.html'; b.classList.remove('con-cuenta'); return; }
-    b.href = s.rol === 'profe' ? 'panel.html?rol=profe' : 'panel.html';
+    // Tu foto (si la hay) o tu inicial. El profe va a su perfil; la familia, a su panel.
+    const profe = s.rol === 'profe';
+    b.href = profe ? 'panel.html#perfil' : 'panel.html';
     b.classList.add('con-cuenta');
-    b.innerHTML = `<span class="ava-mini" aria-hidden="true">${esc((s.nombre || '?').trim().charAt(0).toUpperCase() || '?')}</span>Mi panel`;
+    const ava = s.avatar && /^https:\/\//.test(s.avatar)
+      ? `<span class="ava-mini foto" aria-hidden="true" style="background-image:url('${esc(s.avatar)}')"></span>`
+      : `<span class="ava-mini" aria-hidden="true">${esc((s.nombre || '?').trim().charAt(0).toUpperCase() || '?')}</span>`;
+    b.innerHTML = ava + (profe ? 'Perfil' : 'Mi panel');
+    if (profe && pagina === 'panel.html' && location.hash === '#perfil') b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     if (atajo) { atajo.href = b.href; atajo.innerHTML = b.innerHTML; atajo.classList.add('con-cuenta'); }
     franjaPanel(s);
   }
@@ -285,5 +294,5 @@
     if (n.tagName === 'SELECT') combo(n); else if (n.querySelector && n.querySelector('select')) mejorar(n);
   }))).observe(document.body, { childList: true, subtree: true });
 
-  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales, pintarCuenta, pintarNav };
+  window.U = { cara, estrellas, coma, modoTxt, placa, tarjetaProfe, favs, alternarFav, contarFavs, tostada, param, esc, contar, sesion, iniciales, pintarCuenta, pintarNav: () => pintarCuenta() };
 })();
