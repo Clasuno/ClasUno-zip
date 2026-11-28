@@ -271,7 +271,7 @@ D.listo.then(async () => {
         const p = persona(c.teacher_id), d = new Date(c.empieza);
         return { profe: c.teacher_id, quien: c.alumno || hijo.nombre, d, hora: hora(d), tipo: `${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.estado === 'pedida' ? ' · esperando respuesta' : ''}`, lugar: p.zona ? D.zona(p.zona).nombre : 'Online' };
       }).filter(c => D.profe(c.profe));
-      INFORMES = (await SUPA.misInformes()).map(i => ({ profe: i.teacher_id, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
+      INFORMES = (await SUPA.misInformes()).map(i => ({ profe: i.teacher_id, familia: i.familia_id, alumno: i.alumno, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
       SOLICITUDES = CLASES.filter(c => c.teacher_id === yo && c.estado === 'pedida').map(c => { const d = new Date(c.empieza); return { id: c.id, familia: 'Familia', alumno: c.alumno || 'Alumno', tipo: TIPO_TXT[c.tipo], cuando: `${fmt(d, { weekday: 'long', day: 'numeric' })} ${hora(d)}`, zona: c.minutos + ' min' }; });
       const porAlumno = {}; CLASES.filter(c => c.teacher_id === yo && c.estado === 'hecha').forEach(c => { const k = c.alumno || 'Alumno'; porAlumno[k] = (porAlumno[k] || 0) + 1; });
       ALUMNOS = Object.entries(porAlumno).map(([n, c]) => ['Familia · ' + n, c]);
@@ -454,12 +454,13 @@ D.listo.then(async () => {
       solicitudes: () => `<h1>Solicitudes</h1>${vistaSolicitudes()}`,
       perfil: vistaPerfilProfe,
       preparar: () => `<h1>Preparar la próxima clase</h1>
-        ${REAL ? '<div class="hoja" style="padding:24px;margin-bottom:18px"><p>Cuando tus alumnos practiquen con el asistente entre clases, aquí verás en qué se han atascado y una propuesta para la siguiente clase. Mientras, puedes generar ejercicios.</p></div>' : ''}<div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Lucas · 4º ESO · ${fmt(PROXIMAS[0].d, { weekday: 'long', day: 'numeric' })} a las 18:00</p>
+        ${REAL ? preparaReal() : `<div class="hoja" style="padding:24px;margin-bottom:18px"><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Lucas · 4º ESO · ${fmt((PROXIMAS[0] || { d: dia(2) }).d, { weekday: 'long', day: 'numeric' })} a las 18:00</p>
           <p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Desde la última clase ha practicado 3 veces con el asistente (34 min). Se ha atascado 4 veces con el mismo paso: <b>cambiar el signo al pasar un término al otro lado</b>. La fórmula de segundo grado ya la domina.</p>
           <h3 style="margin-top:22px;font-size:17px">Propuesta para 60 minutos</h3>
-          <div class="estructura"><div><span>10'</span>Repaso de signos con 4 ejercicios rápidos (abajo).</div><div><span>25'</span>Problemas con enunciado, lo que pusiste en el último informe.</div><div><span>15'</span>Dos problemas él solo; tú solo miras.</div><div><span>10'</span>Resumen y deberes para el jueves.</div></div></div>
-        <div class="hoja" style="padding:24px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><h3>Ejercicios de signos, a su nivel</h3>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="conSol"> Con soluciones</label><button class="boton sec peq" type="button" id="otrosEj">Otros ejercicios</button><button class="boton peq" type="button" onclick="U.tostada('Ejercicios enviados a Lucas y a su familia')">Enviar a Lucas</button></div></div>
+          <div class="estructura"><div><span>10'</span>Repaso de signos con 4 ejercicios rápidos (abajo).</div><div><span>25'</span>Problemas con enunciado, lo que pusiste en el último informe.</div><div><span>15'</span>Dos problemas él solo; tú solo miras.</div><div><span>10'</span>Resumen y deberes para el jueves.</div></div></div>`}
+        <div class="hoja" style="padding:24px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><h3>Ejercicios de ecuaciones, para practicar</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="conSol"> Con soluciones</label><button class="boton sec peq" type="button" id="otrosEj">Otros ejercicios</button>
+            ${REAL ? '<button class="boton peq" type="button" id="copiarEj">Copiar para mandarlos</button>' : `<button class="boton peq" type="button" onclick="U.tostada('Ejercicios enviados a Lucas y a su familia')">Enviar a Lucas</button>`}</div></div>
           <div class="ejercicios" id="ejercicios"></div></div>`,
       mensajes: vistaChat,
       informe: () => `<h1>Informe de la clase</h1><form class="hoja" style="padding:26px" id="fInforme">
@@ -584,6 +585,33 @@ D.listo.then(async () => {
         <div style="min-width:0">${delDia ? `<div class="hoja" style="margin-bottom:16px"><h3 class="tit-lista">${may(fmt(deIso(calDia), { weekday: 'long', day: 'numeric', month: 'long' }))}</h3>${delDia.length ? delDia.map(filaEvento).join('') : '<p class="suave" style="padding:10px 20px 18px">Este día no tienes clase.</p>'}</div>` : ''}
           <div class="hoja"><h3 class="tit-lista">Próximas clases</h3>${lista.length ? lista.map(filaEvento).join('') : `<p class="suave" style="padding:10px 20px 18px">No tienes clases. <a href="buscar.html">Busca profe</a> o <a href="grupos.html">únete a un grupo</a>.</p>`}</div></div>
       </div>`;
+  }
+
+  // ---------- Preparar clase (profe con cuenta): sus clases de verdad y lo que dicen sus informes ----------
+  let claseSel = null;
+  const clasesPorDelante = () => CLASES.filter(c => c.teacher_id === yo && ['aceptada', 'pedida'].includes(c.estado) && new Date(c.empieza) >= new Date(hoy.getTime() - 3 * 3600e3))
+    .sort((a, b) => new Date(a.empieza) - new Date(b.empieza));
+  function preparaReal() {
+    const lista = clasesPorDelante();
+    if (!lista.length) return `<div class="hoja" style="padding:24px;margin-bottom:18px"><b>Aún no tienes clases por delante</b>
+      <p class="suave" style="margin-top:6px">Cuando aceptes una solicitud, aquí podrás elegir cada clase y ver lo que le cuesta al alumno según tus informes, con una propuesta para organizar la hora. Mientras, puedes generar ejercicios aquí abajo.</p>
+      <p style="margin-top:12px"><button class="boton sec peq" type="button" data-ir="solicitudes">Ver solicitudes</button></p></div>`;
+    const c = lista.find(x => x.id === claseSel) || lista[0], d = new Date(c.empieza), quien = c.alumno || 'tu alumno';
+    // Lo último que escribiste sobre esa familia
+    const inf = INFORMES.filter(i => i.familia === c.familia_id && (!c.alumno || !i.alumno || i.alumno === c.alumno)).sort((a, b) => b.d - a.d)[0];
+    const min = c.minutos || 60, t = p => Math.max(5, Math.round(min * p / 5) * 5);
+    const estructura = inf
+      ? [[t(.17), `Repaso rápido de lo que le cuesta: ${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}.`], [t(.42), `Lo que dejaste para hoy: ${U.esc(inf.luego.replace(/\.$/, '').toLowerCase())}.`], [t(.25), `Que lo haga ${U.esc(quien)} solo; tú solo miras y corriges al final.`], [t(.16), 'Resumen, deberes y apuntar el informe de la clase.']]
+      : [[t(.17), `Conocer a ${U.esc(quien)}: qué le cuesta, qué examen tiene cerca y cómo estudia.`], [t(.33), 'Un par de ejercicios de su temario para ver el nivel de verdad.'], [t(.34), 'Empezar por lo que más le cueste, con ejemplos sencillos.'], [t(.16), 'Resumen y qué haréis en la siguiente clase.']];
+    return `<div class="hoja" style="padding:24px;margin-bottom:18px">
+        <label class="campo"><span>¿Qué clase vas a preparar?</span><select class="entrada" id="prepClase">${lista.map(x => { const dx = new Date(x.empieza);
+          return `<option value="${x.id}" ${x === c ? 'selected' : ''}>${fmt(dx, { weekday: 'long', day: 'numeric', month: 'short' })} · ${hora(dx)} · ${U.esc(x.alumno || 'Alumno')} · ${TIPO_TXT[x.tipo]}${x.estado === 'pedida' ? ' (sin aceptar)' : ''}</option>`; }).join('')}</select></label>
+        <p style="font-size:14px;font-weight:600;color:var(--butano);margin-top:18px"><span class="punto-ia"></span>${U.esc(quien)} · ${may(fmt(d, { weekday: 'long', day: 'numeric', month: 'long' }))} a las ${hora(d)} · ${min} min${c.estado === 'pedida' ? ' · aún sin aceptar' : ''}</p>
+        ${inf ? `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">En tu último informe (${fmt(inf.d, { day: 'numeric', month: 'long' })}, «${U.esc(inf.tema)}») apuntaste que le cuesta <b>${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}</b> y que tocaba <b>${U.esc(inf.luego.replace(/\.$/, '').toLowerCase())}</b>.</p>`
+          : `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Es vuestra primera clase: todavía no hay informes de ${U.esc(quien)}. Dedica el principio a ver su nivel.</p>`}
+        <h3 style="margin-top:22px;font-size:17px">Propuesta para ${min} minutos</h3>
+        <div class="estructura">${estructura.map(([m, txt]) => `<div><span>${m}'</span>${txt}</div>`).join('')}</div>
+        <p style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">${CONV[c.familia_id] ? `<button class="boton sec peq" type="button" data-chat="${c.familia_id}">Escribir a la familia</button>` : ''}<button class="boton sec peq" type="button" data-ir="informe">Escribir el informe después</button></p></div>`;
   }
 
   // ---------- Mi perfil (profe): verlo como lo ven las familias y cambiarlo todo ----------
@@ -712,6 +740,7 @@ D.listo.then(async () => {
   }
 
   function vistaSolicitudes(corta) {
+    if (!SOLICITUDES.length) return `<div class="hoja" id="solicitudes" style="padding:22px"><p class="suave">No tienes solicitudes pendientes. Cuando una familia te pida una clase, te llegará aquí para aceptarla o proponer otra hora.</p></div>`;
     return `<div class="hoja" id="solicitudes">${SOLICITUDES.slice(0, corta ? 2 : 9).map((r, i) => `<div class="fila-clase" style="grid-template-columns:1fr auto" data-i="${i}">
       <div><b>${r.familia} · ${r.alumno}</b><p class="suave" style="font-size:14px">${r.tipo} · ${r.cuando} · ${r.zona}</p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="boton peq" type="button" data-acepta>Aceptar</button><button class="boton sec peq" type="button" data-otra>Proponer otra hora</button><button class="boton sec peq" type="button" data-sug="${i}"><span class="punto-ia"></span>Respuesta sugerida</button></div></div>`).join('')}</div>`;
@@ -720,7 +749,11 @@ D.listo.then(async () => {
     const ids = Object.keys(CHATS); const pedido = chatPedido;
     if (pedido && D.profe(pedido) && !CHATS[pedido]) { CHATS[pedido] = []; ids.unshift(pedido); }
     const abierto = (pedido && CHATS[pedido]) ? pedido : ids[0];
-    if (!abierto) return `<h1>Mensajes</h1><div class="hoja" style="padding:36px;text-align:center"><h3>Aún no tienes conversaciones</h3>
+    if (!abierto) return rol === 'profe'
+      ? `<h1>Mensajes</h1><div class="hoja" style="padding:36px;text-align:center"><h3>Aún no tienes conversaciones</h3>
+        <p class="suave" style="margin:10px auto 18px;max-width:460px">Cuando una familia te escriba desde tu ficha o te pida una clase, la conversación aparecerá aquí.</p>
+        <p><button class="boton sec" type="button" data-ir="perfil">Revisar mi perfil</button></p></div>`
+      : `<h1>Mensajes</h1><div class="hoja" style="padding:36px;text-align:center"><h3>Aún no tienes conversaciones</h3>
       <p class="suave" style="margin:10px auto 18px;max-width:460px">Escribe a un profe desde su ficha para preguntarle lo que necesites. Los chats de tus grupos de estudio están dentro de cada grupo.</p>
       <p style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="boton" href="buscar.html">Buscar profe</a>${MIS_GRUPOS.length ? '<button class="boton sec" type="button" data-ir="grupos">Chats de mis grupos</button>' : ''}</p></div>`;
     const deGrupos = rol === 'familia' && MIS_GRUPOS.length ? `<p class="chats-grupo"><span class="suave">Chats de tus grupos:</span> ${MIS_GRUPOS.map(g => `<a class="boton sec peq" href="grupo.html?id=${encodeURIComponent(g.id)}#chat">${D.asig(g.asig).nombre} · ${U.esc(g.curso)}</a>`).join('')}</p>` : '';
@@ -897,7 +930,14 @@ D.listo.then(async () => {
         ir('perfil', true);
       });
     },
-    preparar: () => { generarEjercicios(); $('#otrosEj').onclick = generarEjercicios; $('#conSol').onchange = generarEjercicios; },
+    preparar: () => {
+      generarEjercicios(); $('#otrosEj').onclick = generarEjercicios; $('#conSol').onchange = generarEjercicios;
+      const pc = $('#prepClase'); if (pc) pc.onchange = () => { claseSel = pc.value; ir('preparar', true); };
+      const ce = $('#copiarEj'); if (ce) ce.onclick = async () => {
+        const txt = 'Ejercicios para practicar:\n' + [...document.querySelectorAll('#ejercicios .ejercicio')].map((e, i) => `${i + 1}. ${e.firstChild.textContent.trim()}${e.querySelector('small') ? '   (' + e.querySelector('small').textContent + ')' : ''}`).join('\n');
+        try { await navigator.clipboard.writeText(txt); U.tostada('Ejercicios copiados: pégalos en el chat con la familia'); } catch (x) { prompt('Copia los ejercicios:', txt); }
+      };
+    },
     mensajes: () => { if (!document.querySelector('.hilo')) return; pintarHilo(document.querySelector('.hilo').dataset.abierto); document.querySelector('.convs').onclick = e => { const b = e.target.closest('[data-conv]'); if (b) pintarHilo(b.dataset.conv); }; },
     ingresos: () => setTimeout(() => document.querySelectorAll('.ingresos i').forEach(i => i.style.height = i.dataset.h + '%'), 60),
     informe: () => {
