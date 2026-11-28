@@ -180,8 +180,10 @@ window.SUPA = (() => {
   }
 
   // ---------- Clases, informes y grupos ----------
-  async function pedirClase({ teacherId, tipo, empieza, minutos, alumno }) {
-    const { data, error } = await sb.from('clases').insert({ teacher_id: teacherId, familia_id: usuario.id, tipo, empieza, minutos, alumno }).select().single();
+  async function pedirClase({ teacherId, tipo, empieza, minutos, alumno, modalidad }) {
+    const fila = { teacher_id: teacherId, familia_id: usuario.id, tipo, empieza, minutos, alumno };
+    if (modalidad) fila.modalidad = modalidad;
+    const { data, error } = await sb.from('clases').insert(fila).select().single();
     if (error) throw new Error(errorBonito(error));
     return data;
   }
@@ -238,6 +240,11 @@ window.SUPA = (() => {
   }
   async function quitarSesion(sesionId) { const { error } = await sb.from('grupo_sesiones').delete().eq('id', sesionId); if (error) throw new Error(errorBonito(error)); }
 
+  // ---------- El profe y sus familias ----------
+  // Perfil de una familia que le ha pedido clase (null si no tiene relación con ella)
+  async function perfilAlumno(fam) { const { data, error } = await sb.rpc('perfil_alumno', { fam }); if (error) throw new Error(errorBonito(error)); return data; }
+  async function abrirChatFamilia(fam) { const { data, error } = await sb.rpc('abrir_chat_familia', { fam }); if (error) throw new Error(errorBonito(error)); return data; }
+
   // ---------- Chat ----------
   async function conversaciones() {
     const { data } = await sb.from('conversations').select('id, student_id, teacher_id, created_at').order('created_at', { ascending: false });
@@ -263,5 +270,5 @@ window.SUPA = (() => {
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, miPerfilProfe, cambiarNombre, estadoPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
-    conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
+    perfilAlumno, abrirChatFamilia, conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

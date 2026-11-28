@@ -160,6 +160,13 @@
 .previa-pf{position:sticky;top:86px}
 @media (max-width:1100px){.perfil-p{grid-template-columns:1fr}.previa-pf{position:static;order:-1}}
 @media (max-width:560px){.campos-2{grid-template-columns:1fr}.sec-pf{padding:18px}.guardar-pf{padding:10px 12px;bottom:8px}.guardar-pf #pfCambios{width:100%;font-size:13px}.guardar-pf>div{width:100%}.guardar-pf .boton{flex:1;padding:10px 12px}}
+/* Solicitudes: modalidad, perfil del alumno y chat */
+.modo-sol{display:inline-block;font-size:12.5px;font-weight:650;padding:1px 9px;border-radius:99px;margin-left:4px;white-space:nowrap;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.modo-sol.online{background:var(--butano-claro);color:var(--butano)}
+.acciones-sol{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px}
+.acciones-sol .enlace-sec{font-size:14px}
+.lista-fam{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px;font-size:14.5px}
+.lista-fam li{padding:8px 12px;border-radius:10px;background:var(--papel-2)}
 .chats-grupo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:-8px 0 16px}
 @media (max-width:980px){.inicio-f,.cal-p{grid-template-columns:1fr}}
 @media (max-width:760px){.semana{grid-template-columns:1fr}.dia-sem{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center}.dia-sem p{width:64px;flex:none}.dia-sem .ev{flex:1;min-width:140px}.hero-clase{flex-direction:column;align-items:flex-start}}
@@ -248,9 +255,9 @@ D.listo.then(async () => {
   try { const g = JSON.parse(localStorage.getItem('chats') || 'null'); if (g) CHATS = g; } catch (e) {}
   const guardarChats = () => { try { localStorage.setItem('chats', JSON.stringify(CHATS)); } catch (e) {} };
   let SOLICITUDES = [
-    { familia: 'Rosa T.', alumno: 'Iker · 2º ESO', tipo: 'Primera a prueba', cuando: 'Lunes 18:00', zona: 'Chamberí' },
-    { familia: 'Andrés M.', alumno: 'Nora · 1º Bachillerato', tipo: 'Bono de 10', cuando: 'Miércoles 19:00', zona: 'Centro' },
-    { familia: 'Lucía R.', alumno: 'Plaza en grupo 4º ESO', tipo: 'Grupo de estudio', cuando: 'Martes 18:00', zona: 'Chamberí' }
+    { fam: 'demo-rosa', familia: 'Rosa T.', alumno: 'Iker · 2º ESO', tipo: 'Primera a prueba', cuando: 'Lunes 18:00', zona: '60 min', modalidad: 'presencial' },
+    { fam: 'demo-andres', familia: 'Andrés M.', alumno: 'Nora · 1º Bachillerato', tipo: 'Bono de 10', cuando: 'Miércoles 19:00', zona: '90 min', modalidad: 'online' },
+    { fam: 'demo-lucia', familia: 'Lucía R.', alumno: 'Plaza en grupo 4º ESO', tipo: 'Grupo de estudio', cuando: 'Martes 18:00', zona: '60 min', modalidad: 'presencial' }
   ];
   let ALUMNOS = [['Familia García · Lucas', 14], ['Familia Pérez · Nora', 4], ['Familia Ruiz · Pablo', 27], ['Familia Soto · Alba', 8]];
   let PAGOS = [[-5, 'Grupo de estudio · Laura', 11.6], [-4, 'Clase suelta · Daniel', 15], [-30, 'Bono 10 clases · Laura', 171], [-34, 'Primera a prueba · Daniel', 15]];
@@ -260,8 +267,12 @@ D.listo.then(async () => {
   // ---------- Datos de verdad, si has entrado con una cuenta ----------
   let REAL = false, CLASES = [], yo = null, quitarEscucha = null;
   const CONV = {};
+  // Las familias que han escrito o pedido clase al profe (nombre, hijos, zona…), para el chat y las solicitudes
+  const FAMILIAS = {};
+  const nombreFam = id => FAMILIAS[id] ? `${FAMILIAS[id].nombre || 'Familia'}${FAMILIAS[id].inicial ? ' ' + FAMILIAS[id].inicial + '.' : ''}` : (REAL ? 'Familia' : 'Familia García');
+  const hijosFam = id => { const h = FAMILIAS[id] && (FAMILIAS[id].hijos || []).filter(x => x && x.nombre); return h && h.length ? h.map(x => x.nombre + (x.curso ? ' · ' + x.curso : '')).join(', ') : (REAL ? 'Alumno' : 'Lucas · 4º ESO'); };
   const TIPO_TXT = { prueba: 'Primera a prueba', suelta: 'Clase suelta', bono: 'Bono de 10', grupo: 'Grupo de estudio' };
-  const persona = id => D.profe(id) || { id, nombre: 'Familia', asig: ['mat'], libre: [], responde: '—', precio: 0 };
+  const persona = id => D.profe(id) || { id, nombre: FAMILIAS[id] ? nombreFam(id) : 'Familia', avatar: FAMILIAS[id] ? FAMILIAS[id].avatar : null, asig: ['mat'], libre: [], responde: '—', precio: 0 };
   const hora = d => d.toTimeString().slice(0, 5);
   if (window.SUPA && (await SUPA.sesionLista) && SUPA.usuario()) {
     REAL = true; rol = SUPA.rol(); yo = SUPA.usuario().id;
@@ -272,7 +283,7 @@ D.listo.then(async () => {
         return { profe: c.teacher_id, quien: c.alumno || hijo.nombre, d, hora: hora(d), tipo: `${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.estado === 'pedida' ? ' · esperando respuesta' : ''}`, lugar: p.zona ? D.zona(p.zona).nombre : 'Online' };
       }).filter(c => D.profe(c.profe));
       INFORMES = (await SUPA.misInformes()).map(i => ({ profe: i.teacher_id, familia: i.familia_id, alumno: i.alumno, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
-      SOLICITUDES = CLASES.filter(c => c.teacher_id === yo && c.estado === 'pedida').map(c => { const d = new Date(c.empieza); return { id: c.id, familia: 'Familia', alumno: c.alumno || 'Alumno', tipo: TIPO_TXT[c.tipo], cuando: `${fmt(d, { weekday: 'long', day: 'numeric' })} ${hora(d)}`, zona: c.minutos + ' min' }; });
+      SOLICITUDES = CLASES.filter(c => c.teacher_id === yo && c.estado === 'pedida').map(c => { const d = new Date(c.empieza); return { id: c.id, fam: c.familia_id, familia: 'Familia', alumno: c.alumno || 'Alumno', tipo: TIPO_TXT[c.tipo], cuando: `${fmt(d, { weekday: 'long', day: 'numeric' })} ${hora(d)}`, zona: c.minutos + ' min', modalidad: c.modalidad }; });
       const porAlumno = {}; CLASES.filter(c => c.teacher_id === yo && c.estado === 'hecha').forEach(c => { const k = c.alumno || 'Alumno'; porAlumno[k] = (porAlumno[k] || 0) + 1; });
       ALUMNOS = Object.entries(porAlumno).map(([n, c]) => ['Familia · ' + n, c]);
       const vivas = CLASES.filter(c => c.familia_id === yo && !['cancelada', 'rechazada'].includes(c.estado));
@@ -290,6 +301,17 @@ D.listo.then(async () => {
         const otro = c.student_id === yo ? c.teacher_id : c.student_id;
         CONV[otro] = c.id;
         CHATS[otro] = (await SUPA.mensajes(c.id)).map(m => [m.sender_id === yo ? 'yo' : 'ella', m.body]);
+      }
+      // Profe: quién es cada familia (para las solicitudes, el chat y su perfil)
+      if (rol === 'profe') {
+        const ids = [...new Set([...CLASES.filter(c => c.teacher_id === yo).map(c => c.familia_id), ...Object.keys(CONV)])];
+        (await Promise.all(ids.map(id => SUPA.perfilAlumno(id).catch(() => null)))).forEach(f => { if (f) FAMILIAS[f.id] = f; });
+        SOLICITUDES.forEach(r => {
+          if (!FAMILIAS[r.fam]) return;
+          r.familia = nombreFam(r.fam);
+          const h = (FAMILIAS[r.fam].hijos || []).find(x => x && x.nombre === r.alumno);
+          if (h && h.curso) r.alumno += ' · ' + h.curso;
+        });
       }
     } catch (e) { console.warn(e); U.tostada('No se han podido cargar tus datos: ' + e.message); }
     $('#rol').hidden = true; $('#rol').nextElementSibling.hidden = true;
@@ -739,10 +761,57 @@ D.listo.then(async () => {
     ir('perfil', true);
   }
 
+  // ---------- Perfil de la familia y chat, desde las solicitudes (profe) ----------
+  const ESTADO_CLASE = { pedida: 'Pendiente', aceptada: 'Aceptada', hecha: 'Hecha', cancelada: 'Cancelada', rechazada: 'Rechazada' };
+  // En la maqueta, las familias de las solicitudes de ejemplo
+  if (!REAL) SOLICITUDES.forEach((r, i) => { const [hijo, curso] = r.alumno.split(' · ');
+    FAMILIAS[r.fam] = { id: r.fam, nombre: r.familia.split(' ')[0], inicial: (r.familia.split(' ')[1] || '').replace('.', ''), avatar: null, desde: new Date(hoy.getTime() - (40 + i * 25) * 864e5).toISOString(),
+      tipo: 'familia', zona: ['chamberi', 'centro', 'chamberi'][i], hijos: [{ nombre: /grupo/i.test(hijo) ? 'Martín' : hijo, curso: curso || '4º ESO' }],
+      clases: [{ id: 'x' + i, empieza: dia(2 + i).toISOString(), tipo: ['prueba', 'bono', 'grupo'][i], minutos: +r.zona || 60, estado: 'pedida', modalidad: r.modalidad }], informes: 0 }; });
+  let dlgFam = null;
+  function verPerfilFamilia(f) {
+    if (!dlgFam) {
+      dlgFam = document.createElement('dialog');
+      dlgFam.innerHTML = '<button class="dlg-cerrar" type="button" aria-label="Cerrar">×</button><div class="dlg-cuerpo"></div>';
+      document.body.append(dlgFam);
+      dlgFam.addEventListener('click', e => {
+        if (e.target.closest('.dlg-cerrar') || e.target === dlgFam) return dlgFam.close();
+        const w = e.target.closest('[data-escribir-fam]'); if (w) { dlgFam.close(); escribirFamilia(w.dataset.escribirFam); }
+      });
+    }
+    const z = f.zona && D.zona(f.zona), hijos = (f.hijos || []).filter(h => h && h.nombre), clases = f.clases || [], nom = nombreFam(f.id);
+    const n = e => clases.filter(c => c.estado === e).length;
+    const cara = f.avatar ? `<span class="cara" style="background:url(${f.avatar}) center/cover;width:64px;height:64px"></span>` : `<span class="cara" style="width:64px;height:64px;font-size:22px;background:var(--butano)">${U.esc(U.iniciales(nom))}</span>`;
+    dlgFam.querySelector('.dlg-cuerpo').innerHTML = `
+      <div style="display:flex;gap:14px;align-items:center">${cara}<div><p class="kicker">${f.tipo === 'alumno' ? 'Alumno adulto' : 'Familia'}</p><h2 style="font-size:28px">${U.esc(nom)}</h2>
+        <p class="suave" style="font-size:14px">${z ? '📍 ' + z.nombre + ' · ' : ''}en ClasUno desde ${fmt(new Date(f.desde), { month: 'long', year: 'numeric' })}</p></div></div>
+      ${hijos.length ? `<h3 style="font-size:17px;margin-top:20px">${f.tipo === 'alumno' ? 'Estudia' : hijos.length > 1 ? 'Sus hijos' : 'Su hijo o hija'}</h3><ul class="lista-fam">${hijos.map(h => `<li><b>${U.esc(h.nombre)}</b>${h.curso ? ' · ' + U.esc(h.curso) : ''}</li>`).join('')}</ul>` : ''}
+      <h3 style="font-size:17px;margin-top:20px">Contigo</h3>
+      <p class="suave" style="font-size:14px">${n('hecha')} ${n('hecha') === 1 ? 'clase hecha' : 'clases hechas'} · ${n('pedida')} ${n('pedida') === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'} · ${f.informes || 0} ${f.informes === 1 ? 'informe' : 'informes'}</p>
+      ${clases.length ? `<ul class="lista-fam">${clases.slice(0, 6).map(c => { const d = new Date(c.empieza);
+        return `<li>${fmt(d, { weekday: 'short', day: 'numeric', month: 'short' })} · ${hora(d)} · ${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.modalidad ? ' · ' + (c.modalidad === 'online' ? 'online' : 'en persona') : ''}${c.alumno ? ' · ' + U.esc(c.alumno) : ''} <span class="estado-ev ${c.estado === 'pedida' ? 'pedida' : ''}">${ESTADO_CLASE[c.estado] || c.estado}</span></li>`; }).join('')}</ul>` : ''}
+      <p class="suave" style="font-size:13px;margin-top:16px">🔒 Por privacidad no enseñamos su correo ni su teléfono. Hablad por el chat; la dirección se acuerda cuando la clase está aceptada.</p>
+      <p style="margin-top:16px"><button class="boton" type="button" data-escribir-fam="${f.id}">Escribir a ${U.esc(nom.split(' ')[0])}</button></p>`;
+    dlgFam.showModal();
+  }
+  async function abrirPerfilFamilia(fam) {
+    let f = FAMILIAS[fam];
+    if (!f && REAL) { try { f = await SUPA.perfilAlumno(fam); } catch (x) { return U.tostada(x.message); } if (f) FAMILIAS[fam] = f; }
+    if (!f && !REAL) f = FAMILIAS[fam] = { id: fam, nombre: 'Marta', inicial: 'G', desde: new Date(hoy.getTime() - 200 * 864e5).toISOString(), tipo: 'familia', zona: 'chamberi', hijos: [{ nombre: 'Lucas', curso: '4º ESO' }], clases: [], informes: 3 };
+    if (!f) return U.tostada('No se ha podido abrir el perfil de esta familia');
+    verPerfilFamilia(f);
+  }
+  async function escribirFamilia(fam) {
+    if (REAL && !CONV[fam]) { try { CONV[fam] = await SUPA.abrirChatFamilia(fam); } catch (x) { return U.tostada(x.message); } }
+    if (!CHATS[fam]) CHATS[fam] = [];
+    chatPedido = fam; ir('mensajes');
+  }
+
   function vistaSolicitudes(corta) {
     if (!SOLICITUDES.length) return `<div class="hoja" id="solicitudes" style="padding:22px"><p class="suave">No tienes solicitudes pendientes. Cuando una familia te pida una clase, te llegará aquí para aceptarla o proponer otra hora.</p></div>`;
     return `<div class="hoja" id="solicitudes">${SOLICITUDES.slice(0, corta ? 2 : 9).map((r, i) => `<div class="fila-clase" style="grid-template-columns:1fr auto" data-i="${i}">
-      <div><b>${r.familia} · ${r.alumno}</b><p class="suave" style="font-size:14px">${r.tipo} · ${r.cuando} · ${r.zona}</p></div>
+      <div><b>${U.esc(r.familia)} · ${U.esc(r.alumno)}</b><p class="suave" style="font-size:14px">${r.tipo} · ${r.cuando} · ${r.zona}${r.modalidad ? ` <span class="modo-sol ${r.modalidad}">${r.modalidad === 'online' ? '💻 Online' : '📍 En persona'}</span>` : ''}</p>
+        ${r.fam ? `<p class="acciones-sol"><button class="enlace-sec" type="button" data-perfil-fam="${r.fam}">Ver perfil del alumno</button><button class="enlace-sec" type="button" data-escribir-fam="${r.fam}">Escribir a la familia</button></p>` : ''}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="boton peq" type="button" data-acepta>Aceptar</button><button class="boton sec peq" type="button" data-otra>Proponer otra hora</button><button class="boton sec peq" type="button" data-sug="${i}"><span class="punto-ia"></span>Respuesta sugerida</button></div></div>`).join('')}</div>`;
   }
   function vistaChat() {
@@ -758,7 +827,7 @@ D.listo.then(async () => {
       <p style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="boton" href="buscar.html">Buscar profe</a>${MIS_GRUPOS.length ? '<button class="boton sec" type="button" data-ir="grupos">Chats de mis grupos</button>' : ''}</p></div>`;
     const deGrupos = rol === 'familia' && MIS_GRUPOS.length ? `<p class="chats-grupo"><span class="suave">Chats de tus grupos:</span> ${MIS_GRUPOS.map(g => `<a class="boton sec peq" href="grupo.html?id=${encodeURIComponent(g.id)}#chat">${D.asig(g.asig).nombre} · ${U.esc(g.curso)}</a>`).join('')}</p>` : '';
     return `<h1>Mensajes</h1>${deGrupos}<div class="hoja chat">
-      <div class="convs">${ids.map(id => { const p = persona(id), u = CHATS[id][CHATS[id].length - 1]; return `<button type="button" data-conv="${id}" aria-current="${id === abierto}">${U.cara(p, 'p')}<span><b>${rol === 'profe' ? (REAL ? 'Familia' : 'Familia García') : p.nombre}</b><small>${u ? U.esc(u[1]) : 'Nueva conversación'}</small></span></button>`; }).join('')}</div>
+      <div class="convs">${ids.map(id => { const p = persona(id), u = CHATS[id][CHATS[id].length - 1]; return `<button type="button" data-conv="${id}" aria-current="${id === abierto}">${U.cara(p, 'p')}<span><b>${rol === 'profe' ? U.esc(nombreFam(id)) : p.nombre}</b><small>${u ? U.esc(u[1]) : 'Nueva conversación'}</small></span></button>`; }).join('')}</div>
       <div class="hilo" data-abierto="${abierto}"></div></div>`;
   }
   function pintarHilo(id) {
@@ -770,10 +839,10 @@ D.listo.then(async () => {
     }
     h.dataset.abierto = id;
     document.querySelectorAll('.convs button').forEach(b => b.setAttribute('aria-current', b.dataset.conv === id));
-    h.innerHTML = `<div class="hilo-cab">${U.cara(p, 'p')}<div><b>${rol === 'profe' ? (REAL ? 'Familia' : 'Familia García') : p.nombre}</b><p class="suave" style="font-size:13px">${rol === 'profe' ? (REAL ? 'Alumno' : 'Lucas · 4º ESO') : 'Suele responder en ' + p.responde}</p></div>
+    h.innerHTML = `<div class="hilo-cab">${U.cara(p, 'p')}<div><b>${rol === 'profe' ? U.esc(nombreFam(id)) : p.nombre}</b><p class="suave" style="font-size:13px">${rol === 'profe' ? U.esc(hijosFam(id)) : 'Suele responder en ' + p.responde}</p></div>${rol === 'profe' && (FAMILIAS[id] || !REAL) ? `<button class="boton sec peq" style="margin-left:auto" type="button" data-perfil-fam="${id}">Ver perfil</button>` : ''}
       ${rol === 'familia' ? `<a class="boton peq" style="margin-left:auto" href="profe.html?id=${p.id}">Pedir clase</a>` : ''}</div>
       <p class="aviso-chat">🔒 Por seguridad, no compartas teléfonos ni direcciones hasta tener una reserva.</p>
-      <div class="mensajes" id="msjs">${CHATS[id].map(([q, t]) => `<div class="msj ${q === 'yo' ? 'mio' : ''}">${U.esc(t)}</div>`).join('') || `<p class="suave" style="text-align:center;margin:auto">Empieza la conversación. Cuéntale qué necesitas y para qué curso.</p>`}</div>
+      <div class="mensajes" id="msjs">${CHATS[id].map(([q, t]) => `<div class="msj ${q === 'yo' ? 'mio' : ''}">${U.esc(t)}</div>`).join('') || `<p class="suave" style="text-align:center;margin:auto">${rol === 'profe' ? 'Empieza la conversación: preséntate y confirma el día, la hora y si la clase es online o en persona.' : 'Empieza la conversación. Cuéntale qué necesitas y para qué curso.'}</p>`}</div>
       <div class="escribiendo" id="escribiendo"></div>
       <form class="escribe" id="fMsj"><button class="boton sec peq" type="button" id="sugerir" title="Sugerir respuesta" aria-label="Sugerir respuesta"><span class="punto-ia" style="margin:0"></span></button><input class="entrada" placeholder="Escribe un mensaje…" aria-label="Mensaje" autocomplete="off"><button class="boton">Enviar</button></form>`;
     const m = $('#msjs'); m.scrollTop = m.scrollHeight;
@@ -959,6 +1028,9 @@ D.listo.then(async () => {
   // Delegación general
   $('#vista').addEventListener('click', e => {
     const c = e.target.closest('[data-chat]'); if (c) { chatPedido = c.dataset.chat; return ir('mensajes'); }
+    // Profe: perfil de la familia y empezar el chat
+    const pf = e.target.closest('[data-perfil-fam]'); if (pf) return abrirPerfilFamilia(pf.dataset.perfilFam);
+    const ef = e.target.closest('[data-escribir-fam]'); if (ef) return escribirFamilia(ef.dataset.escribirFam);
     // Calendario
     const cm = e.target.closest('[data-cmes]'); if (cm) { calMes.setMonth(calMes.getMonth() + Number(cm.dataset.cmes)); return ir('calendario', true); }
     const cd = e.target.closest('[data-cdia]'); if (cd) { calDia = cd.dataset.cdia; return ir('calendario', true); }

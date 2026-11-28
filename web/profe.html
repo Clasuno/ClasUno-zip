@@ -84,8 +84,9 @@ D.listo.then(() => {
           <h1>${p.nombre}</h1>
           <p class="suave" style="font-size:18px;margin-top:8px">${p.estudios}</p>
           <p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-            <span class="etiqueta ok">✓ Comprobado en persona</span>
-            <span class="etiqueta ok">✓ Certificado para menores</span>
+            ${/* Solo lo que de verdad está comprobado (en los datos de ejemplo se da por hecho) */ ''}
+            ${!p.real || p.verificado ? '<span class="etiqueta ok">✓ Comprobado en persona</span>' : ''}
+            ${!p.real || p.certificado ? '<span class="etiqueta ok">✓ Certificado para menores</span>' : '<span class="etiqueta">Certificado para menores: pendiente de revisar</span>'}
             <span class="etiqueta">Responde en ${p.responde}</span>
             ${p.grupos ? '<span class="etiqueta naranja">Grupos de estudio</span>' : ''}
           </p>
@@ -139,6 +140,11 @@ D.listo.then(() => {
           ${[60, 90, 120].map((d, i) => `<button type="button" data-d="${d}" aria-pressed="${i === 0}" style="flex:1;border:0;padding:9px;font-weight:650;background:${i === 0 ? 'var(--tinta)' : 'transparent'};color:${i === 0 ? 'var(--papel)' : 'inherit'}">${d} min</button>`).join('')}
         </div></label>
       <p class="suave" id="notaPrueba" style="font-size:13px;margin-top:6px">La clase de prueba es siempre de 60 minutos.</p>
+      <div class="campo" style="margin-top:14px"><span style="display:block;margin-bottom:6px;font-weight:600;font-size:14px">¿Cómo quieres la clase?</span>
+        ${p.modo === 'ambas'
+          ? `<div class="segmentado" id="modoSel" style="display:flex;border:1px solid var(--linea-2);border-radius:10px;overflow:hidden">${[['presencial', 'En persona'], ['online', 'Online']].map(([k, t], i) => `<button type="button" data-m="${k}" aria-pressed="${i === 0}" style="flex:1;border:0;padding:9px;font-weight:650;background:${i === 0 ? 'var(--tinta)' : 'transparent'};color:${i === 0 ? 'var(--papel)' : 'inherit'}">${t}</button>`).join('')}</div>
+             <p class="suave" style="font-size:13px;margin-top:6px" id="notaModo">${z ? `En persona por la zona de ${z.nombre}: el sitio lo acordáis por mensaje.` : ''}</p>`
+          : `<p style="font-size:15px">${p.modo === 'online' ? '💻 <b>Online</b>, por videollamada: este profe solo da clases online.' : `📍 <b>En persona</b>${z ? ` por la zona de ${z.nombre}` : ''}: este profe no da clases online.`}</p>`}</div>
       <p style="margin-top:16px;font-weight:650;font-size:14px">Elige hueco <span class="suave" style="font-weight:400">(esta semana)</span></p>
       <div class="semana" id="semana"></div>
       <div class="desglose" id="desglose"></div>
@@ -152,7 +158,14 @@ D.listo.then(() => {
   setTimeout(() => document.querySelectorAll('[data-w]').forEach(s => s.style.width = s.dataset.w + '%'), 300);
 
   // Reserva
-  let tipo = 'prueba', dur = 60, hueco = null;
+  let tipo = 'prueba', dur = 60, hueco = null, modalidad = p.modo === 'online' ? 'online' : 'presencial';
+  const MODO_TXT = { presencial: 'en persona', online: 'online' };
+  if ($('#modoSel')) $('#modoSel').onclick = e => {
+    const b = e.target.closest('[data-m]'); if (!b) return; modalidad = b.dataset.m;
+    $('#modoSel').querySelectorAll('button').forEach(x => { const on = x === b; x.setAttribute('aria-pressed', on); x.style.background = on ? 'var(--tinta)' : 'transparent'; x.style.color = on ? 'var(--papel)' : 'inherit'; });
+    $('#notaModo').textContent = modalidad === 'online' ? 'Por videollamada: el enlace te llega con la reserva.' : (z ? `En persona por la zona de ${z.nombre}: el sitio lo acordáis por mensaje.` : '');
+    calc();
+  };
   const sem = $('#semana');
   sem.innerHTML = '<span></span>' + D.DIAS.map(d => `<span class="d">${d}</span>`).join('') +
     D.HORAS.map(h => `<span class="h">${h}h</span>` + D.DIAS.map(d => `<button type="button" class="hueco ${p.libre.includes(d + h) ? 'libre' : ''}" data-h="${d + h}" ${p.libre.includes(d + h) ? `aria-label="${d} a las ${h}"` : 'disabled aria-hidden="true" tabindex="-1"'}></button>`).join('')).join('');
@@ -190,7 +203,7 @@ D.listo.then(() => {
     $('#desglose').innerHTML = filas.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') + `<div class="total"><span>Total</span><span>${eur(total)}</span></div>`;
     const btn = $('#pedir');
     btn.disabled = !hueco;
-    btn.textContent = hueco ? `Pedir para el ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00` : 'Elige un hueco';
+    btn.textContent = hueco ? `Pedir para el ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${MODO_TXT[modalidad]}` : 'Elige un hueco';
   }
   calc();
   // Próxima fecha real para un hueco «L16», «X18»…
@@ -201,14 +214,14 @@ D.listo.then(() => {
       if (!u) { location.href = 'entrar.html?alta=familia&volver=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
       if (SUPA.rol() === 'profe') return U.tostada('Las clases las piden las familias desde su cuenta');
       const btn = $('#pedir'); btn.disabled = true; btn.textContent = 'Enviando…';
-      try { const ses = U.sesion() || {}; await SUPA.pedirClase({ teacherId: p.id, tipo, empieza: fechaHueco(hueco).toISOString(), minutos: tipo === 'prueba' ? 60 : dur, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null }); }
+      try { const ses = U.sesion() || {}; await SUPA.pedirClase({ teacherId: p.id, tipo, empieza: fechaHueco(hueco).toISOString(), minutos: tipo === 'prueba' ? 60 : dur, alumno: (ses.hijos && ses.hijos[0] && ses.hijos[0].nombre) || null, modalidad }); }
       catch (x) { U.tostada(x.message); btn.disabled = false; calc(); return; }
       calc();
     }
     $('#dlgCuerpo').innerHTML = `
       <p class="kicker">Solicitud enviada</p>
       <h2 style="font-size:32px">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
-      <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de estudio' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min.</p>
+      <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de estudio' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min · ${MODO_TXT[modalidad]}.</p>
       <ol style="margin:18px 0 0;padding-left:20px;line-height:1.8">
         <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora (suele tardar ${p.responde}).</li>
         <li>Pagas entonces; el dinero queda guardado hasta después de la clase.</li>
