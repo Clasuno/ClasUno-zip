@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="assets/estilo.css">
 <style>
 .panel{display:grid;grid-template-columns:250px 1fr;gap:30px;padding:30px 0 70px;align-items:start}
+.panel.sin-lateral{grid-template-columns:minmax(0,1fr)}
+.panel.sin-lateral .lateral{display:none}
+.tit-lateral{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-2);padding:0 14px;margin-top:4px}
 .lateral{position:sticky;top:86px}
 .lateral nav{display:grid;gap:4px;margin-top:16px}
 .lateral nav button{border:0;background:transparent;text-align:left;padding:11px 14px;border-radius:10px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
@@ -453,15 +456,23 @@ D.listo.then(async () => {
   // ---------- Menús ----------
   const MENUS = {
     familia: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Asistente'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
-    profe: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', REAL ? 'Escribir informe' : 'Informe pendiente', REAL ? 0 : 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
+    // Con cuenta de profe, Inicio, Calendario, Mensajes y Perfil van en la cabecera y se ven solos;
+    // el menú lateral («Mi panel») tiene el resto. En la maqueta se deja todo en el lateral.
+    profe: REAL
+      ? [['solicitudes', 'Solicitudes', SOLICITUDES.length], ['preparar', 'Preparar clase'], ['informe', 'Escribir informe'], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
+      : [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', 'Informe pendiente', 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
   };
+  const SOLO_PROFE = ['inicio', 'calendario', 'mensajes', 'perfil'];
+  const soloProfe = v => REAL && rol === 'profe' && SOLO_PROFE.includes(v);
+  // Título del menú lateral del profe
+  if (REAL && rol === 'profe') $('#menu').insertAdjacentHTML('beforebegin', '<p class="tit-lateral">Mi panel</p>');
   let chatPedido = U.param('chat');
   let actual = location.hash.slice(1) || (chatPedido ? 'mensajes' : 'inicio');
 
   function menu() {
     $('#rol').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.r === rol));
     if (actual === 'favoritos') actual = 'profes'; // la antigua pestaña «Profes guardados» está ahora dentro de «Mis profes»
-    if (!MENUS[rol].some(m => m[0] === actual)) actual = 'inicio';
+    if (!MENUS[rol].some(m => m[0] === actual) && !soloProfe(actual)) actual = 'inicio';
     $('#menu').innerHTML = MENUS[rol].map(([id, t, n]) => `<button type="button" data-v="${id}" aria-current="${id === actual}">${t}${n ? `<span class="num">${n}</span>` : ''}</button>`).join('');
   }
   $('#menu').onclick = e => { const b = e.target.closest('button'); if (!b) return; ir(b.dataset.v); };
@@ -470,6 +481,8 @@ D.listo.then(async () => {
   function ir(v, sinAnim) {
     actual = v;
     menu(); v = actual; // menu() corrige pestañas que ya no existen
+    // Inicio, Calendario, Mensajes y Perfil del profe se ven solos, sin el menú lateral
+    document.querySelector('.panel').classList.toggle('sin-lateral', soloProfe(v));
     history.replaceState(null, '', `panel.html${rol === 'profe' && !REAL ? '?rol=profe' : ''}#${v}`);
     if (U.pintarNav) U.pintarNav(); // la cabecera marca la sección en la que estás
     const pintar = () => { $('#vista').innerHTML = `<div class="vista">${VISTAS[rol][v]()}</div>`; DESPUES[v] && DESPUES[v](); };

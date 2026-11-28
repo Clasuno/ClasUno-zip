@@ -17,16 +17,21 @@
   const ICONO_MSJ = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M8.5 8.5h7M8.5 11.5h4.5"/></svg>';
   const ICONO_INICIO = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>';
   const ICONO_CAL = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path stroke="currentColor" stroke-width="1.9" stroke-linecap="round" d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  const ICONO_PANEL = '<svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>';
+  // «Mi panel» agrupa el resto de secciones del profe (las del menú lateral)
+  const SECCIONES_PANEL_PROFE = ['solicitudes', 'preparar', 'informe', 'alumnos', 'ingresos', 'ajustes'];
   const NAV_PROFE = [
-    ['panel.html#inicio', 'Inicio', ICONO_INICIO], ['panel.html#calendario', 'Calendario', ICONO_CAL], ['panel.html#mensajes', 'Mensajes', ICONO_MSJ]
+    ['panel.html#inicio', 'Inicio', ICONO_INICIO], ['panel.html#calendario', 'Calendario', ICONO_CAL], ['panel.html#mensajes', 'Mensajes', ICONO_MSJ],
+    ['panel.html#solicitudes', 'Mi panel', ICONO_PANEL, SECCIONES_PANEL_PROFE]
   ];
   const esProfe = () => { const s = sesion(); return !!(s && s.rol === 'profe'); };
-  const actualNav = h => {
+  const actualNav = (h, grupo) => {
     const [p, hash] = h.split('#');
+    if (grupo) return pagina === p && grupo.includes(location.hash.slice(1));
     if (hash) return pagina === p && location.hash.slice(1) === hash;
     return h === pagina || (h === 'grupos.html' && pagina === 'grupo.html');
   };
-  const enlacesNav = () => (esProfe() ? NAV_PROFE : NAV).map(([h, t, ic]) => `<a class="nav-enlace${ic ? ' con-icono' : ''}" href="${h}"${actualNav(h) ? ' aria-current="page"' : ''}>${ic || ''}${t}</a>`).join('');
+  const enlacesNav = () => (esProfe() ? NAV_PROFE : NAV).map(([h, t, ic, grupo]) => `<a class="nav-enlace${ic ? ' con-icono' : ''}" href="${h}"${actualNav(h, grupo) ? ' aria-current="page"' : ''}>${ic || ''}${t}</a>`).join('');
   // «Dar clases» va aparte, justo a la izquierda del botón «Entrar»
   const darClases = `<a class="boton sec peq" href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
   const cab = document.createElement('header');
