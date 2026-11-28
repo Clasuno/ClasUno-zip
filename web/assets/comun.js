@@ -24,14 +24,19 @@
     ['panel.html#inicio', 'Inicio', ICONO_INICIO], ['panel.html#calendario', 'Calendario', ICONO_CAL], ['panel.html#mensajes', 'Mensajes', ICONO_MSJ],
     ['panel.html#solicitudes', 'Mi panel', ICONO_PANEL, SECCIONES_PANEL_PROFE]
   ];
+  // Alumno o familia con la sesión iniciada: el Asistente IA (corrector) entra en la cabecera; «Cómo se paga» queda en el pie
+  const NAV_FAMILIA = [
+    ['buscar.html', 'Buscar profesor'], ['grupos.html', 'Grupos de estudio'], ['panel.html#corrector', 'Asistente IA'], ['ayuda.html', 'Ayuda']
+  ];
   const esProfe = () => { const s = sesion(); return !!(s && s.rol === 'profe'); };
   const actualNav = (h, grupo) => {
     const [p, hash] = h.split('#');
     if (grupo) return pagina === p && grupo.includes(location.hash.slice(1));
+    if (h === 'panel.html#corrector' && pagina === 'deberes.html') return true;
     if (hash) return pagina === p && location.hash.slice(1) === hash;
     return h === pagina || (h === 'grupos.html' && pagina === 'grupo.html');
   };
-  const enlacesNav = () => (esProfe() ? NAV_PROFE : NAV).map(([h, t, ic, grupo]) => `<a class="nav-enlace${ic ? ' con-icono' : ''}" href="${h}"${actualNav(h, grupo) ? ' aria-current="page"' : ''}>${ic || ''}${t}</a>`).join('');
+  const enlacesNav = () => (esProfe() ? NAV_PROFE : sesion() ? NAV_FAMILIA : NAV).map(([h, t, ic, grupo]) => `<a class="nav-enlace${ic ? ' con-icono' : ''}" href="${h}"${actualNav(h, grupo) ? ' aria-current="page"' : ''}>${ic || ''}${t}</a>`).join('');
   // «Dar clases» va aparte, justo a la izquierda del botón «Entrar»
   const darClases = `<a class="boton sec peq" href="dar-clases.html"${pagina === 'dar-clases.html' ? ' aria-current="page"' : ''}>Dar clases</a>`;
   const cab = document.createElement('header');

@@ -353,6 +353,8 @@
 <script src="assets/supa.js"></script>
 <script src="assets/comun.js"></script>
 <script src="assets/ia.js"></script>
+<script src="assets/deberes.js"></script>
+<script src="assets/corrector.js"></script>
 <script>
 D.listo.then(async () => {
   const D = window.D, $ = s => document.querySelector(s);
@@ -678,7 +680,7 @@ D.listo.then(async () => {
 
   // ---------- Menús ----------
   const MENUS = {
-    familia: [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Asistente'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
+    familia: [['inicio', 'Inicio'], ['corrector', 'Asistente IA'], ['calendario', 'Calendario'], ['profes', 'Mis profes', MIS_PROFES.length], ['grupos', 'Mis grupos', MIS_GRUPOS.length], ['mensajes', 'Mensajes', REAL ? 0 : 1], ['informes', 'Informes', INFORMES.length], ['asistente', 'Seguimiento'], ['pagos', 'Pagos y bonos'], ['ajustes', 'Ajustes']],
     // Con cuenta de profe, Inicio, Calendario, Mensajes y Perfil van en la cabecera y se ven solos;
     // el menú lateral («Mi panel») tiene el resto. En la maqueta se deja todo en el lateral.
     profe: REAL
@@ -743,7 +745,10 @@ D.listo.then(async () => {
           <p id="resMes" style="font-size:18px;margin-top:8px;letter-spacing:-.01em;min-height:54px"></p>
           <div class="tendencias"><div><span class="suave">Matemáticas</span><b>2 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Inglés</span><b>3 → 4 de 5</b><span class="suave" style="font-size:13px">Seguridad en el tema</span></div><div><span class="suave">Clases este mes</span><b>7</b><span class="suave" style="font-size:13px">sin faltar a ninguna</span></div></div></div>
         ${INFORMES.length ? INFORMES.map(tarjetaInforme).join('') : '<p class="suave">Todavía no hay informes. El profe lo escribe al acabar cada clase.</p>'}`,
-      asistente: () => `<h1>Asistente</h1><p class="suave" style="margin:-10px 0 20px">Pregúntale lo que quieras sobre las clases de ${U.esc(hijo.nombre)}. Responde con lo que han escrito sus profes.</p>
+      // Asistente IA: el corrector de deberes (assets/corrector.js), con el curso del hijo ya elegido
+      corrector: () => `<h1>Asistente IA</h1><p class="suave" style="margin:-10px 0 22px;font-size:18px;max-width:680px">Haz una foto a los deberes o escribe el ejercicio: te dice qué está bien, en qué paso falla cada uno y te da la solución explicada. Si te queda una duda, pregúntale.</p>
+        <div id="corrPanel" aria-label="Corrector de deberes"></div>`,
+      asistente: () => `<h1>Seguimiento</h1><p class="suave" style="margin:-10px 0 20px">Pregunta lo que quieras sobre las clases de ${U.esc(hijo.nombre)}. Responde con lo que han escrito sus profes.</p>
         <div class="hoja asis"><div class="asis-msjs" id="asisMsjs"></div>
           <div class="sugerencias" id="asisSug">${[`¿Cómo va ${hijo.nombre}?`, '¿Qué le cuesta más?', '¿Cuándo es la próxima clase?', '¿Cuánto llevamos gastado este mes?', 'Hazme un plan para el examen de mates del día 18'].map(q => `<button type="button">${U.esc(q)}</button>`).join('')}</div>
           <form id="fAsis"><input class="entrada" placeholder="Escribe tu pregunta…" aria-label="Pregunta" autocomplete="off"><button class="boton">Preguntar</button></form></div>`,
@@ -1314,6 +1319,11 @@ D.listo.then(async () => {
   }
 
   const DESPUES = {
+    corrector: () => {
+      const el = $('#corrPanel'); if (!el) return;
+      const cursoHijo = (s.hijos || []).map(h => h && h.curso).find(c => Corrector.CURSOS.includes(c)) || null;
+      Corrector.montar(el, { curso: cursoHijo, compacto: false });
+    },
     asistente: () => {
       $('#asisMsjs').innerHTML = `<div class="burbuja ia">Hola, ${U.esc(s.nombre)}. Tengo los informes, las clases y los pagos de ${U.esc(hijo.nombre)}. ¿Qué quieres saber?</div>`;
       $('#asisSug').onclick = e => { const b = e.target.closest('button'); if (b) preguntar(b.textContent); };
