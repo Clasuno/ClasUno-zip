@@ -150,6 +150,105 @@ button.hoy-c.blanca:hover{background:var(--hoja);transform:translateY(-1px)}
 .dlg-contacto .por-que li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:700}
 .dlg-contacto .por-que b{color:var(--tinta);font-weight:600}
 .dlg-contacto .dlg-botones{display:flex;gap:8px;flex-wrap:wrap}
+/* Clase hecha: avisos dentro de cada clase de la agenda y en «Hoy» de la familia */
+.ag-estado{font-size:14px;color:var(--tinta-2);margin:4px 0 10px}
+.ag-estado.ok{color:var(--ok);font-weight:600}
+.hoy-c em.hoy-ok{font-style:normal;font-size:14px;font-weight:600;color:var(--ok)}
+.hueco-libre{grid-template-columns:auto minmax(0,1fr) auto}
+.hueco-botones{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:640px){.hueco-botones{grid-column:1/-1}}
+/* Informes por escribir (inicio del profe) */
+.inf-pend li{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.inf-pend li small{display:block;color:var(--tinta-2);font-size:13px}
+/* Grabadora del informe */
+.grabar{display:grid;place-items:center;cursor:pointer;transition:transform .15s}
+.grabar:active{transform:scale(.94)}
+.grabar.on{background:#C62B30}
+.grab-sub{display:block;color:var(--tinta-2);font-size:14px;margin-top:2px}
+.dictado{margin-top:14px}
+.dictado textarea{min-height:96px;resize:vertical}
+.prep-examen{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--butano-claro);font-size:16px}
+/* Exámenes */
+.cab-botones{display:flex;gap:16px}
+.ex-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:8px}
+.ex-c{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 18px}
+.ex-c .fecha{min-width:58px}
+.ex-c .fecha b{font-size:24px;padding:2px 0 0}
+.ex-c .fecha small{display:block;font-size:12px;color:var(--tinta-2);padding-bottom:4px}
+.ex-txt{display:grid;gap:2px;min-width:0}
+.ex-txt b{font-size:17px;font-weight:600}
+.ex-txt small{color:var(--tinta-2);font-size:14px}
+.ex-cuenta{font-size:13px;font-weight:600;color:var(--butano)}
+.ex-c.cerca .ex-cuenta{color:#C62B30}
+.ex-c.cerca .fecha span{background:#C62B30}
+.ex-acc{display:flex;gap:6px;align-items:center}
+.ex-borrar{width:34px;height:34px;border:0;border-radius:10px;background:none;color:var(--tinta-2);font-size:15px;cursor:pointer}
+.ex-borrar:hover{background:var(--papel-2);color:var(--tinta)}
+.ex-c.pide-nota{grid-template-columns:minmax(0,1fr);background:var(--butano-claro);border-color:transparent}
+.nota-rapida{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nota-rapida .entrada{width:96px}
+.ex-vacio{padding:18px 20px;grid-column:1/-1}
+.ex-vacio p{color:var(--tinta-2);font-size:15px}
+@media (max-width:640px){.ex-c{grid-template-columns:auto minmax(0,1fr)}.ex-acc{grid-column:1/-1;justify-content:space-between}}
+/* Notas de examen junto al progreso */
+.prog-notas{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:10px;border-top:1px dashed var(--linea);font-size:14px}
+.prog-notas-t{color:var(--tinta-2);margin-right:4px}
+.nota-chip{display:inline-grid;justify-items:center;min-width:40px;padding:3px 8px;border-radius:9px;background:var(--papel-2);font-weight:650;font-variant-numeric:tabular-nums}
+.nota-chip small{font-size:10px;font-weight:500;color:var(--tinta-2);line-height:1}
+.nota-chip.ult{background:var(--tinta);color:var(--papel)}
+.nota-chip.ult small{color:inherit;opacity:.7}
+.flecha-n{color:var(--tinta-2)}
+.prog-notas .sube{color:var(--ok);margin-left:4px}
+.prog-notas .baja{color:#C62B30;margin-left:4px}
+.lista-notas{padding:6px 18px;margin-bottom:28px}
+.fila-nota{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 0;border-top:1px dashed var(--linea)}
+.fila-nota:first-child{border-top:0}
+.fila-nota span{display:grid;min-width:0}
+.fila-nota small{color:var(--tinta-2);font-size:13px}
+/* Formularios de examen y nota */
+.dlg-en .dlg-cuerpo{padding:28px}
+.dlg-en h2{font-size:24px;letter-spacing:-.03em;margin-bottom:6px}
+.form-en{display:grid;gap:14px;margin-top:18px}
+.form-en small.suave{display:block;font-size:13px;margin-top:4px;font-weight:400}
+.dos-campos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check-en{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+.check-en input{margin-top:4px;width:18px;height:18px;flex:none}
+.dlg-en .dlg-botones{display:flex;gap:8px;flex-wrap:wrap}
+/* Estadísticas del profe */
+.est-completo{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:20px 22px;margin-bottom:16px}
+.est-completo b{font-size:18px}
+.est-completo p{margin-top:4px;font-size:15px;max-width:620px}
+.interruptor{flex:none;width:56px;height:32px;border-radius:99px;border:0;background:var(--linea-2);position:relative;cursor:pointer;transition:background .2s}
+.interruptor span{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.interruptor[aria-checked="true"]{background:var(--ok)}
+.interruptor[aria-checked="true"] span{transform:translateX(24px)}
+.interruptor:focus-visible{outline:2px solid var(--butano);outline-offset:2px}
+.est-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.est-tile{padding:18px 20px;display:grid;gap:4px}
+.est-tile span{font-size:14px;color:var(--tinta-2)}
+.est-tile b{font-size:34px;font-weight:650;letter-spacing:-.04em;line-height:1.05;font-variant-numeric:tabular-nums}
+.est-tile small{font-size:13px;color:var(--tinta-2)}
+.est-conv{margin:14px 0 0;font-size:16px}
+.est-graf{padding:20px 22px;margin-top:16px}
+.graf-visitas{display:block;width:100%;max-width:460px;height:auto;overflow:visible}
+.graf-visitas path{fill:color-mix(in srgb,var(--butano) 55%,var(--hoja))}
+.graf-visitas path.ult{fill:var(--butano)}
+.graf-visitas .hit{fill:transparent}
+.graf-visitas .barra-v:hover path{fill:var(--butano-2)}
+.graf-visitas text{fill:var(--tinta-2);font-size:11px;font-family:var(--f)}
+.graf-visitas text.val{fill:var(--tinta);font-weight:600}
+.graf-visitas .base{stroke:var(--linea-2);stroke-width:1}
+.est-mejora{padding:18px 22px;margin-top:16px;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.est-mejora b{font-size:28px;letter-spacing:-.03em}
+.est-mejora b.sube{color:var(--ok)}
+.est-mejora p{flex:1;min-width:220px;color:var(--tinta-2);font-size:15px}
+.consejos{display:grid;gap:10px}
+.consejo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px 18px}
+.consejo .c-ico{color:var(--tinta-2);font-size:18px}
+.consejo b{font-size:16px;font-weight:600}
+.consejo p{color:var(--tinta-2);font-size:14px;margin-top:2px}
+.consejos-ok{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--ok);font-size:14px;font-weight:600}
+@media (max-width:640px){.consejo{grid-template-columns:auto minmax(0,1fr)}.consejo .boton{grid-column:2;justify-self:start}.dos-campos{grid-template-columns:1fr}}
 @media (max-width:1080px){
   html[data-cuenta="familia"] .lateral,html[data-cuenta="profe"] .lateral,html[data-cuenta="familia"] .pie,html[data-cuenta="profe"] .pie{display:none}
   html[data-cuenta="familia"] .panel,html[data-cuenta="profe"] .panel{grid-template-columns:minmax(0,1fr);padding-top:22px}
@@ -493,6 +592,12 @@ D.listo.then(async () => {
 
   // ---------- Datos de verdad, si has entrado con una cuenta ----------
   let REAL = false, CLASES = [], yo = null, quitarEscucha = null;
+  // Exámenes y notas que apunta la familia, y avisos de «tiene hueco». En la maqueta, unos de ejemplo guardados en el navegador.
+  const isoDia = n => { const d = dia(n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const lsLeer = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? def : v; } catch (e) { return def; } };
+  let EXAMENES = lsLeer('examenes', [{ id: 'ex1', alumno: hijo.nombre, asignatura: 'mat', fecha: isoDia(9), tema: 'Ecuaciones de segundo grado' }, { id: 'ex2', alumno: hijo.nombre, asignatura: 'ing', fecha: isoDia(-2), tema: 'Unit 4' }]);
+  let NOTAS = lsLeer('notas', [{ id: 'n1', alumno: hijo.nombre, asignatura: 'mat', nota: 4.5, fecha: isoDia(-40), antes: true, teacher_id: 'laura' }, { id: 'n2', alumno: hijo.nombre, asignatura: 'mat', nota: 6, fecha: isoDia(-15), teacher_id: 'laura' }, { id: 'n3', alumno: hijo.nombre, asignatura: 'ing', nota: 6.5, fecha: isoDia(-30), antes: true, teacher_id: 'daniel' }]);
+  let HUECOS = lsLeer('avisame', []).map(t => ({ teacher_id: t, avisado: null, visto: false }));
   const CONV = {};
   // Las familias que han escrito o pedido clase al profe (nombre, hijos, zona…), para el chat y las solicitudes
   const FAMILIAS = {};
@@ -504,12 +609,13 @@ D.listo.then(async () => {
   if (window.SUPA && (await SUPA.sesionLista) && SUPA.usuario()) {
     REAL = true; rol = SUPA.rol(); yo = SUPA.usuario().id;
     try {
+      await SUPA.cerrarClases(); // las clases aceptadas que acabaron hace más de 6 horas pasan a «hecha»
       CLASES = await SUPA.misClases();
       PROXIMAS = CLASES.filter(c => c.familia_id === yo && new Date(c.empieza) >= hoy && ['pedida', 'aceptada'].includes(c.estado)).map(c => {
         const p = persona(c.teacher_id), d = new Date(c.empieza);
         return { profe: c.teacher_id, quien: c.alumno || hijo.nombre, d, hora: hora(d), tipo: `${TIPO_TXT[c.tipo]} · ${c.minutos} min${c.estado === 'pedida' ? ' · esperando respuesta' : ''}`, lugar: p.zona ? D.zona(p.zona).nombre : 'Online' };
       }).filter(c => D.profe(c.profe));
-      INFORMES = (await SUPA.misInformes()).map(i => ({ profe: i.teacher_id, familia: i.familia_id, alumno: i.alumno, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
+      INFORMES = (await SUPA.misInformes()).map(i => ({ clase: i.clase_id, profe: i.teacher_id, familia: i.familia_id, alumno: i.alumno, d: new Date(i.creado), tema: i.tema, bien: i.bien, cuesta: i.cuesta, luego: i.luego, nivel: [i.seguridad || 3] })).filter(i => rol === 'profe' || D.profe(i.profe));
       SOLICITUDES = CLASES.filter(c => c.teacher_id === yo && c.estado === 'pedida').map(c => { const d = new Date(c.empieza); return { id: c.id, fam: c.familia_id, familia: 'Familia', alumno: c.alumno || 'Alumno', tipo: TIPO_TXT[c.tipo], cuando: `${fmt(d, { weekday: 'long', day: 'numeric' })} ${hora(d)}`, zona: c.minutos + ' min', modalidad: c.modalidad }; });
       const porAlumno = {}; CLASES.filter(c => c.teacher_id === yo && c.estado === 'hecha').forEach(c => { const k = c.alumno || 'Alumno'; porAlumno[k] = (porAlumno[k] || 0) + 1; });
       ALUMNOS = Object.entries(porAlumno).map(([n, c]) => ['Familia · ' + n, c]);
@@ -523,6 +629,7 @@ D.listo.then(async () => {
       STATS.semana = CLASES.filter(c => c.teacher_id === yo && c.estado === 'aceptada' && new Date(c.empieza) >= hoy && new Date(c.empieza) < sem).length;
       const yoProfe = D.profe(yo); STATS.nota = yoProfe && yoProfe.nota ? '★ ' + U.coma(yoProfe.nota) : 'Nuevo';
       STATS.proximoPago = 'cuando esté activada la pasarela de pago';
+      [EXAMENES, NOTAS, HUECOS] = await Promise.all([SUPA.misExamenes(), SUPA.misNotas(), rol === 'familia' ? SUPA.misAvisos() : []]);
       CHATS = {};
       for (const c of await SUPA.conversaciones()) {
         const otro = c.student_id === yo ? c.teacher_id : c.student_id;
@@ -659,24 +766,27 @@ D.listo.then(async () => {
   }
   // Clases sueltas, a prueba y de bono
   const SUELTAS = (REAL
-    ? CLASES.filter(c => c.familia_id === yo && !['cancelada', 'rechazada'].includes(c.estado)).map(c => { const d = new Date(c.empieza); return { d, hora: hora(d), profe: c.teacher_id, tipoTxt: `${TIPO_TXT[c.tipo]} · ${c.minutos} min`, estado: c.estado === 'pedida' ? 'pedida' : 'clase' }; })
+    ? CLASES.filter(c => c.familia_id === yo && !['cancelada', 'rechazada'].includes(c.estado)).map(c => { const d = new Date(c.empieza); return { d, hora: hora(d), profe: c.teacher_id, tipoTxt: `${TIPO_TXT[c.tipo]} · ${c.minutos} min`, estado: c.estado === 'pedida' ? 'pedida' : 'clase', llegada: c.llegada, hecha: c.estado === 'hecha' }; })
     : PROXIMAS.map(c => ({ d: conHora(c.d, c.hora), hora: c.hora, profe: c.profe, tipoTxt: c.tipo, estado: 'clase', lugar: c.lugar })))
     .filter(c => D.profe(c.profe))
     .map(c => { const p = D.profe(c.profe); return { ...c, tipo: 'clase', f: isoD(c.d), titulo: `${D.asig(p.asig[0]).nombre} con ${p.nombre}`, lugar: c.lugar || (p.zona ? D.zona(p.zona).nombre : 'Online') }; });
+  // Maqueta: lo que el profe marca en sus clases de ejemplo (llegada, hecha, cancelada) y los informes que ya ha escrito
+  const DEMO_CL = {}, DEMO_INFORMADAS = new Set();
   // Profe: sus clases con cada familia (pendientes de aceptar, aceptadas y hechas)
   function clasesDelProfe() {
     if (REAL) return CLASES.filter(c => c.teacher_id === yo && ['pedida', 'aceptada', 'hecha'].includes(c.estado)).map(c => {
       const d = new Date(c.empieza);
       return { id: c.id, d, f: isoD(d), hora: hora(d), tipo: 'clase', vistaProfe: true, fam: c.familia_id, titulo: `${c.alumno || 'Alumno'} · ${TIPO_TXT[c.tipo]}`, tipoTxt: `${c.minutos} min`,
         alumno: c.alumno || 'Alumno', tipoNombre: TIPO_TXT[c.tipo], minutos: c.minutos || 60, precio: +c.precio || 0,
-        lugar: c.modalidad === 'online' ? 'Online' : c.modalidad === 'presencial' ? 'En persona' : '', estado: c.estado === 'pedida' ? 'sinAceptar' : c.estado === 'hecha' ? 'hecha' : 'clase' };
+        lugar: c.modalidad === 'online' ? 'Online' : c.modalidad === 'presencial' ? 'En persona' : '', estado: c.estado === 'pedida' ? 'sinAceptar' : c.estado === 'hecha' ? 'hecha' : 'clase',
+        llegada: c.llegada, terminada: c.terminada, cerradaSola: c.cerrada_sola };
     });
     // Maqueta
     return [[1, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [2, '17:00', 'Iker · Primera a prueba', 'En persona', 'sinAceptar'], [4, '19:00', 'Nora · Bono de 10', 'Online', 'clase'],
       [8, '18:00', 'Lucas · Grupo de estudio 4º ESO', 'En persona', 'clase'], [-2, '18:00', 'Pablo · Clase suelta', 'En persona', 'hecha']].map(([n, h, t, l, e], i) => {
       const d = conHora(dia(n), h), [alumno, tipoNombre] = t.split(' · ');
-      return { id: 'demo-' + i, d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', alumno, tipoNombre, minutos: 60, precio: 18, lugar: l, estado: e };
-    });
+      return Object.assign({ id: 'demo-' + i, d, f: isoD(d), hora: h, tipo: 'clase', vistaProfe: true, fam: null, titulo: t, tipoTxt: '60 min', alumno, tipoNombre, minutos: 60, precio: 18, lugar: l, estado: e }, DEMO_CL['demo-' + i]);
+    }).filter(e => e.estado !== 'cancelada');
   }
 
   // ---------- Inicio del profe: la agenda, con la semana arriba y cada clase desplegable ----------
@@ -707,6 +817,51 @@ D.listo.then(async () => {
     return `${cuantas} Ya has terminado por hoy.`;
   }
 
+  // ---------- Clase hecha: «He llegado», «Clase terminada» y «No se hizo» ----------
+  const tieneInforme = id => REAL ? INFORMES.some(i => i.clase === id) : DEMO_INFORMADAS.has(id);
+  // Clases ya dadas (o que acabaron) en las últimas 3 semanas sin informe, la más reciente primero
+  function informesPendientes() {
+    if (rol !== 'profe') return [];
+    return clasesDelProfe().filter(e => (e.estado === 'hecha' || (e.estado === 'clase' && finEv(e) < Date.now())) && finEv(e) > Date.now() - 21 * 864e5 && !tieneInforme(e.id))
+      .sort((a, b) => b.d - a.d);
+  }
+  async function accionClase(id, que) {
+    if (que === 'no' && !confirm('¿Marcar que esta clase no se hizo? Quedará cancelada y no se cobrará.')) return;
+    if (REAL) {
+      const c = CLASES.find(x => x.id === id); if (!c) return;
+      try {
+        if (que === 'llegue') Object.assign(c, await SUPA.marcarLlegada(id));
+        else if (que === 'terminar') Object.assign(c, await SUPA.marcarHecha(id));
+        else { await SUPA.cambiarClase(id, 'cancelada'); c.estado = 'cancelada'; }
+      } catch (x) { return U.tostada(x.message); }
+    } else {
+      const ahoraIso = new Date().toISOString();
+      DEMO_CL[id] = Object.assign(DEMO_CL[id] || {}, que === 'llegue' ? { llegada: ahoraIso } : que === 'terminar' ? { estado: 'hecha', terminada: ahoraIso } : { estado: 'cancelada' });
+    }
+    U.tostada(que === 'llegue' ? 'Anotado: has llegado. La familia lo ve en su panel.' : que === 'terminar' ? 'Clase hecha. Ahora toca el informe: cuéntalo en voz alta y lo escribimos.' : 'Clase marcada como no hecha');
+    menu();
+    if (actual === 'inicio') repintarInicio(); else ir(actual, true);
+  }
+
+  // «hoy a las 18:00», «ayer a las 18:00», «el martes 24 a las 18:00»
+  const cuandoRel = d => { const n = Math.round((deIso(isoD(new Date())) - deIso(isoD(d))) / 864e5);
+    return `${n === 0 ? 'Hoy' : n === 1 ? 'Ayer' : 'El ' + fmt(d, { weekday: 'long', day: 'numeric' })} a las ${hora(d)}`; };
+  // Exámenes y última nota de una familia, para el profe
+  const asigNom = id => (D.asig(id) || { nombre: id }).nombre;
+  const diasHasta = iso => Math.round((deIso(iso) - deIso(isoD(new Date()))) / 864e5);
+  const cuandoExamen = iso => { const n = diasHasta(iso); return n === 0 ? 'hoy' : n === 1 ? 'mañana' : n < 0 ? `hace ${-n} ${n === -1 ? 'día' : 'días'}` : `en ${n} días`; };
+  const notaTxt = n => U.coma(Math.round(n * 100) / 100);
+  function datosExamenesFam(fam, alumno) {
+    if (!fam) return [];
+    const mio = x => x.familia_id === fam && (!alumno || !x.alumno || x.alumno === alumno);
+    const ex = EXAMENES.filter(x => mio(x) && diasHasta(x.fecha) >= 0).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
+    const nt = NOTAS.filter(mio).sort((a, b) => a.fecha < b.fecha ? 1 : -1)[0];
+    return [
+      ex ? ['Examen', `<b>${U.esc(asigNom(ex.asignatura))}</b> el ${fmt(deIso(ex.fecha), { weekday: 'long', day: 'numeric' })} (${cuandoExamen(ex.fecha)})${ex.tema ? ': ' + U.esc(ex.tema) : ''}`] : null,
+      nt ? ['Última nota', `${notaTxt(nt.nota)} en ${U.esc(asigNom(nt.asignatura))} (${fmt(deIso(nt.fecha), { day: 'numeric', month: 'short' })})`] : null
+    ];
+  }
+
   // Lo que se ve al desplegar una clase
   function detalleClase(e, pasada) {
     const fam = e.fam && FAMILIAS[e.fam];
@@ -717,14 +872,28 @@ D.listo.then(async () => {
       fam ? ['Familia', U.esc(nombreFam(e.fam))] : null,
       ['Dónde', e.lugar === 'Online' ? 'Online, por videollamada' : e.lugar ? 'En persona' + (fam && fam.zona && D.zona(fam.zona) ? `, por ${D.zona(fam.zona).nombre}` : '') : 'Por concretar'],
       e.precio ? ['Precio', eurTxt(e.precio)] : null,
-      inf ? ['Último informe', `${U.esc(inf.tema)}: le cuesta ${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}`] : null
+      inf ? ['Último informe', `${U.esc(inf.tema)}: le cuesta ${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}`] : null,
+      ...datosExamenesFam(e.fam, e.alumno),
+      e.llegada ? ['Llegada', `A las ${hora(new Date(e.llegada))}`] : null
     ].filter(Boolean);
     const b = (txt, attrs, pri) => `<button type="button" class="boton ${pri ? '' : 'sec'} peq" ${attrs}>${txt}</button>`;
-    const acciones = e.estado === 'sinAceptar'
-      ? b('Aceptar', `data-clase-acepta="${e.id}"`, true) + b('Rechazar', `data-clase-rechaza="${e.id}"`)
-      : pasada ? b('Escribir el informe', 'data-ir="informe"', true) + (e.fam ? b('Escribir a la familia', `data-escribir-fam="${e.fam}"`) : '')
-      : b('Preparar la clase', `data-ini-preparar="${e.id}"`, true) + (e.fam ? b('Escribir a la familia', `data-escribir-fam="${e.fam}"`) : b('Escribir', 'data-ir="mensajes"'));
-    return `<dl class="ag-datos">${datos.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+    const ahora = Date.now(), empezada = e.d.getTime() <= ahora, pronto = e.d.getTime() - 30 * 60e3 <= ahora, enPersona = e.lugar !== 'Online';
+    const sinInforme = !tieneInforme(e.id), escribir = e.fam ? b('Escribir a la familia', `data-escribir-fam="${e.fam}"`) : '';
+    let aviso = '', acciones;
+    if (e.estado === 'sinAceptar') acciones = b('Aceptar', `data-clase-acepta="${e.id}"`, true) + b('Rechazar', `data-clase-rechaza="${e.id}"`);
+    else if (e.estado === 'hecha') {
+      aviso = `<p class="ag-estado ok">✓ Clase hecha${e.terminada ? ` a las ${hora(new Date(e.terminada))}` : ''}${e.cerradaSola ? ' (se marcó sola al pasar 6 horas)' : ''}.${sinInforme ? ' Falta el informe para la familia.' : ''}</p>`;
+      acciones = (sinInforme ? b('🎙 Escribir el informe', `data-informe-de="${e.id}"`, true) : '') + escribir;
+    } else if (pasada) {
+      aviso = '<p class="ag-estado">¿Se hizo la clase? Si no dices nada, se marca como hecha 6 horas después de acabar.</p>';
+      acciones = b('Sí, terminada', `data-clase-terminar="${e.id}"`, true) + b('No se hizo', `data-clase-no="${e.id}"`) + escribir;
+    } else if (empezada) {
+      aviso = e.llegada ? '' : '<p class="ag-estado">La clase ya ha empezado.</p>';
+      acciones = (enPersona && !e.llegada ? b('He llegado', `data-clase-llegue="${e.id}"`) : '') + b('Clase terminada', `data-clase-terminar="${e.id}"`, true);
+    } else if (pronto && enPersona && !e.llegada) {
+      acciones = b('He llegado', `data-clase-llegue="${e.id}"`, true) + b('Preparar la clase', `data-ini-preparar="${e.id}"`) + escribir;
+    } else acciones = b('Preparar la clase', `data-ini-preparar="${e.id}"`, true) + (e.fam ? escribir : b('Escribir', 'data-ir="mensajes"'));
+    return `<dl class="ag-datos">${datos.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>${aviso}
       <p class="ag-botones">${acciones}${e.fam ? `<button type="button" class="ag-accion" data-perfil-fam="${e.fam}">Ver perfil del alumno</button>` : ''}</p>`;
   }
 
@@ -754,7 +923,8 @@ D.listo.then(async () => {
       if (esHoy && !raya && e.d > ahora) { raya = true; if (delDia[0].d < ahora) pre = `<li class="ag-ahora" aria-label="Ahora"><span>${hora(ahora)}</span></li>`; }
       const pasada = finEv(e) <= ahora.getTime(), ya = esHoy && e.d <= ahora && !pasada, k = String(e.id), abierta = iniAbierta === k;
       const detalle = [e.tipoNombre, `${e.minutos || 60} min`, e.lugar ? e.lugar.toLowerCase() : ''].filter(Boolean).join(' · ');
-      const nota = e.estado === 'sinAceptar' ? '<span class="ag-nota">por confirmar</span>' : ya ? '<span class="ag-nota ya">ahora</span>' : e.estado === 'hecha' ? '<span class="ag-nota hecha">hecha</span>' : '';
+      const nota = e.estado === 'sinAceptar' ? '<span class="ag-nota">por confirmar</span>' : e.estado === 'hecha' ? '<span class="ag-nota hecha">hecha</span>'
+        : e.llegada ? '<span class="ag-nota ya">en clase</span>' : ya ? '<span class="ag-nota ya">ahora</span>' : pasada ? '<span class="ag-nota">¿se hizo?</span>' : '';
       return `${pre}<li class="ag-item ${pasada ? 'pasada' : ''} ${ya ? 'ya' : ''} ${e.estado === 'sinAceptar' ? 'por-confirmar' : ''} ${abierta ? 'abierta' : ''}">
         <time>${U.esc(cuandoEv(e))}<small>${horaFin(e)}</small></time>
         <button type="button" class="ag-fila" data-ini-clase="${k}" aria-expanded="${abierta}"><span><b>${U.esc(e.alumno)}</b> ${nota}<small>${U.esc(detalle)}</small></span><i class="ag-flecha" aria-hidden="true"></i></button>
@@ -766,6 +936,7 @@ D.listo.then(async () => {
     // Por responder: se acepta o se rechaza aquí mismo
     const pend = SOLICITUDES.slice(0, 4).map((r, i) => `<li><span><b>${U.esc(r.alumno.split(' · ')[0])}</b> ${U.esc(r.tipo.toLowerCase())}<small>${U.esc(r.cuando)}${r.modalidad ? (r.modalidad === 'online' ? ' · online' : ' · en persona') : ''}</small></span>
       <span class="sol-botones"><button type="button" class="sol-si" data-sol-acepta="${i}" aria-label="Aceptar">Aceptar</button><button type="button" class="sol-no" data-sol-rechaza="${i}" aria-label="Rechazar">✕</button></span></li>`).join('');
+    const infPend = informesPendientes();
     const estadoPerfil = MI_PERFIL ? ({ approved: 'publicada', pending: 'pendiente de revisión', paused: 'en pausa', rejected: 'sin aprobar' })[MI_PERFIL.estado] || MI_PERFIL.estado : null;
 
     return `<div class="ini-profe">${cabApp()}
@@ -783,8 +954,11 @@ D.listo.then(async () => {
         </section>
         <aside class="ini-lado">
           <section><div class="ini-tit"><h2>Por responder</h2>${SOLICITUDES.length > 4 ? `<button type="button" class="ag-accion" data-ir="solicitudes">Ver todas</button>` : ''}</div>
-            ${SOLICITUDES.length ? `<ul class="ini-lista sol">${pend}</ul>` : '<p class="ini-vacio">Nada pendiente. Las nuevas solicitudes te llegarán aquí.</p>'}
-            ${REAL ? '' : '<p class="ini-vacio" style="margin-top:10px">Falta el informe de la clase de ayer con Lucas. <button type="button" class="ag-accion" data-ir="informe">Escribirlo</button></p>'}</section>
+            ${SOLICITUDES.length ? `<ul class="ini-lista sol">${pend}</ul>` : '<p class="ini-vacio">Nada pendiente. Las nuevas solicitudes te llegarán aquí.</p>'}</section>
+          ${infPend.length ? `<section><div class="ini-tit"><h2>Informes por escribir</h2></div>
+            <ul class="ini-lista inf-pend">${infPend.slice(0, 4).map(e => `<li><span><b>¿Qué tal con ${U.esc(e.alumno)}?</b><small>${cuandoRel(e.d)} · ${U.esc(e.tipoNombre || 'Clase')}</small></span>
+              <button type="button" class="boton peq" data-informe-de="${e.id}"><span aria-hidden="true">🎙</span> Contarlo</button></li>`).join('')}</ul>
+            <p class="ini-vacio" style="margin-top:8px">Cuéntalo en voz alta en 20 segundos y lo convertimos en el informe para la familia.</p></section>` : ''}
           <section><div class="ini-tit"><h2>Este mes</h2><button type="button" class="ag-accion" data-ir="ingresos">Ingresos</button></div>
             <dl class="ini-datos"><div><dt>Te llegan</dt><dd>${STATS.mes}</dd></div><div><dt>Clases esta semana</dt><dd>${STATS.semana}</dd></div><div><dt>Alumnos</dt><dd>${ALUMNOS.length}</dd></div><div><dt>Valoración</dt><dd>${STATS.nota === 'Nuevo' ? 'sin reseñas' : STATS.nota}</dd></div></dl></section>
           ${estadoPerfil ? `<p class="ini-perfil">Tu ficha está <b>${estadoPerfil}</b>. <button type="button" class="ag-accion" data-ir="perfil">Editarla</button></p>` : ''}
@@ -845,8 +1019,8 @@ D.listo.then(async () => {
     // Con cuenta de profe, Inicio, Calendario, Mensajes y Perfil van en la cabecera y se ven solos;
     // el menú lateral («Mi panel») tiene el resto. En la maqueta se deja todo en el lateral.
     profe: REAL
-      ? [['solicitudes', 'Solicitudes', SOLICITUDES.length], ['preparar', 'Preparar clase'], ['informe', 'Escribir informe'], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
-      : [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', 'Informe pendiente', 1], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
+      ? [['solicitudes', 'Solicitudes', SOLICITUDES.length], ['preparar', 'Preparar clase'], ['informe', 'Escribir informe'], ['estadisticas', 'Estadísticas'], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
+      : [['inicio', 'Inicio'], ['calendario', 'Calendario'], ['perfil', 'Mi perfil'], ['preparar', 'Preparar clase'], ['solicitudes', 'Solicitudes', SOLICITUDES.length], ['mensajes', 'Mensajes'], ['informe', 'Escribir informe'], ['estadisticas', 'Estadísticas'], ['alumnos', 'Mis alumnos'], ['ingresos', 'Ingresos'], ['ajustes', 'Ajustes']]
   };
   const SOLO_PROFE = ['inicio', 'calendario', 'mensajes', 'perfil'];
   const soloProfe = v => REAL && rol === 'profe' && SOLO_PROFE.includes(v);
@@ -860,12 +1034,14 @@ D.listo.then(async () => {
     if (actual === 'favoritos') actual = 'profes'; // la antigua pestaña «Profes guardados» está ahora dentro de «Mis profes»
     if (!MENUS[rol].some(m => m[0] === actual) && !soloProfe(actual)) actual = 'inicio';
     if (U.avisos) U.avisos({ solicitudes: rol === 'profe' ? SOLICITUDES.length : 0 }); // número en la barra de abajo del móvil
-    $('#menu').innerHTML = MENUS[rol].map(([id, t, n]) => `<button type="button" data-v="${id}" aria-current="${id === actual}">${t}${n ? `<span class="num">${n}</span>` : ''}</button>`).join('');
+    const numMenu = (id, n) => id === 'informe' && rol === 'profe' ? informesPendientes().length : n; // informes por escribir, siempre al día
+    $('#menu').innerHTML = MENUS[rol].map(([id, t, n]) => [id, t, numMenu(id, n)]).map(([id, t, n]) => `<button type="button" data-v="${id}" aria-current="${id === actual}">${t}${n ? `<span class="num">${n}</span>` : ''}</button>`).join('');
   }
   $('#menu').onclick = e => { const b = e.target.closest('button'); if (!b) return; ir(b.dataset.v); };
   $('#rol').onclick = e => { const b = e.target.closest('button'); if (!b) return; rol = b.dataset.r; actual = 'inicio'; ir('inicio'); };
 
   function ir(v, sinAnim) {
+    if (grabando) pararGrabar(false); // al salir del informe se apaga el micrófono
     actual = v;
     menu(); v = actual; // menu() corrige pestañas que ya no existen
     // Inicio, Calendario, Mensajes y Perfil del profe se ven solos, sin el menú lateral
@@ -905,14 +1081,21 @@ D.listo.then(async () => {
       informes: () => `<h1>Informes de clase</h1>
         <div class="hoja resumen-mes" ${REAL ? 'hidden' : ''}><p style="font-size:14px;font-weight:600;color:var(--butano)"><span class="punto-ia"></span>Resumen del mes</p>
           <p id="resMes" style="font-size:18px;margin-top:8px;letter-spacing:-.01em;min-height:54px"></p></div>
-        ${INFORMES.length ? `<h2 class="prog-h2">${titProgreso()}</h2>${notaProgreso()}${bloqueProgreso()}<h2 class="prog-h2">Todos los informes</h2>` : ''}
+        ${INFORMES.length || NOTAS.length ? `<h2 class="prog-h2">${titProgreso()}</h2>${notaProgreso()}${bloqueProgreso()}` : ''}
+        <div class="cab-seccion"><h2>Notas de examen</h2><button type="button" class="enlace-sec" data-nueva-nota>+ Apuntar una nota</button></div>
+        ${NOTAS.length ? `<div class="hoja lista-notas">${NOTAS.slice().sort((a, b) => a.fecha < b.fecha ? 1 : -1).map(n => `<div class="fila-nota"><b class="nota-chip">${notaTxt(n.nota)}</b>
+          <span><b>${U.esc(asigNom(n.asignatura))}${quienEx(n)}</b><small>${fmt(deIso(n.fecha), { day: 'numeric', month: 'long', year: 'numeric' })}${n.antes ? ' · antes de empezar las clases' : ''}${n.teacher_id && D.profe(n.teacher_id) ? ' · con ' + U.esc(D.profe(n.teacher_id).nombre.split(' ')[0]) : ''}</small></span>
+          <button type="button" class="ex-borrar" data-borrar-nota="${n.id}" aria-label="Borrar esta nota">✕</button></div>`).join('')}</div>`
+          : '<p class="suave" style="margin-bottom:28px">Apunta las notas de sus exámenes (también la de antes de empezar) y verás en la gráfica cómo suben.</p>'}
+        ${INFORMES.length ? '<h2 class="prog-h2">Todos los informes</h2>' : ''}
         ${INFORMES.length ? INFORMES.map(tarjetaInforme).join('') : '<p class="suave">Todavía no hay informes. El profe lo escribe al acabar cada clase. Con ellos verás aquí cómo avanza en cada asignatura.</p>'}`,
       // Asistente IA: el corrector de deberes (assets/corrector.js), con el curso del hijo ya elegido
       corrector: () => `<h1>Asistente IA</h1><p class="suave" style="margin:-10px 0 22px;font-size:18px;max-width:680px">Haz una foto a los deberes o escribe el ejercicio: te dice qué está bien, en qué paso falla cada uno y te da la solución explicada. Si te queda una duda, pregúntale.</p>
         <div id="corrPanel" aria-label="Corrector de deberes"></div>`,
       asistente: () => `<h1>Seguimiento</h1><p class="suave" style="margin:-10px 0 20px">Pregunta lo que quieras sobre las clases de ${U.esc(hijo.nombre)}. Responde con lo que han escrito sus profes.</p>
         <div class="hoja asis"><div class="asis-msjs" id="asisMsjs"></div>
-          <div class="sugerencias" id="asisSug">${[`¿Cómo va ${hijo.nombre}?`, '¿Qué le cuesta más?', '¿Cuándo es la próxima clase?', '¿Cuánto llevamos gastado este mes?', 'Hazme un plan para el examen de mates del día 18'].map(q => `<button type="button">${U.esc(q)}</button>`).join('')}</div>
+          <div class="sugerencias" id="asisSug">${[`¿Cómo va ${hijo.nombre}?`, '¿Qué le cuesta más?', '¿Cuándo es la próxima clase?', '¿Cuánto llevamos gastado este mes?', (() => { const x = EXAMENES.filter(y => y.fecha >= isoD(new Date())).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
+            return x ? `Hazme un plan para el examen de ${asigNom(x.asignatura).toLowerCase()} del día ${deIso(x.fecha).getDate()}` : 'Hazme un plan para su próximo examen'; })()].map(q => `<button type="button">${U.esc(q)}</button>`).join('')}</div>
           <form id="fAsis"><input class="entrada" placeholder="Escribe tu pregunta…" aria-label="Pregunta" autocomplete="off"><button class="boton">Preguntar</button></form></div>`,
       pagos: () => `<h1>Pagos y bonos</h1>
         <div class="hoja" style="padding:24px;margin-bottom:18px" ${REAL ? 'hidden' : ''}><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><div><b style="font-size:20px">Bono de 10 clases · Laura Méndez</b><p class="suave">Quedan 6 clases · comprado el ${fmt(dia(-30), { day: 'numeric', month: 'long' })}</p></div><a class="boton peq" href="profe.html?id=laura">Renovar</a></div>
@@ -923,6 +1106,7 @@ D.listo.then(async () => {
     },
     profe: {
       inicio: vistaInicioProfe,
+      estadisticas: vistaEstadisticas,
       solicitudes: () => `<h1>Solicitudes</h1>${vistaSolicitudes()}`,
       perfil: vistaPerfilProfe,
       preparar: () => `<h1>Preparar la próxima clase</h1>
@@ -935,17 +1119,24 @@ D.listo.then(async () => {
             ${REAL ? '<button class="boton peq" type="button" id="copiarEj">Copiar para mandarlos</button>' : `<button class="boton peq" type="button" onclick="U.tostada('Ejercicios enviados a Lucas y a su familia')">Enviar a Lucas</button>`}</div></div>
           <div class="ejercicios" id="ejercicios"></div></div>`,
       mensajes: vistaChat,
-      informe: () => `<h1>Informe de la clase</h1><form class="hoja" style="padding:26px" id="fInforme">
-        ${REAL ? `<label class="campo" style="margin-top:6px"><span>Clase</span><select class="entrada" id="infClase">${CLASES.filter(c => c.teacher_id === yo && ['aceptada', 'hecha'].includes(c.estado)).map(c => `<option value="${c.id}">${fmt(new Date(c.empieza), { day: 'numeric', month: 'short' })} · ${U.esc(c.alumno || 'Alumno')}</option>`).join('') || '<option value="">Todavía no tienes clases aceptadas</option>'}</select></label>` : '<p class="suave">Clase de ayer · Lucas · 4º ESO · Matemáticas</p>'}
-        <div class="grabadora"><button class="grabar" type="button" id="grabar" aria-label="Grabar nota de voz">●</button>
-          <div style="flex:1"><b id="grabTxt">Cuéntalo en voz alta y lo rellenamos por ti</b><div class="ondas-p" id="ondasP">${'<i></i>'.repeat(48)}</div></div></div>
+      informe: () => { const lista = REAL ? clasesParaInforme() : [], sel = lista.find(c => c.id === infSel) || lista.find(c => !tieneInforme(c.id)) || lista[0];
+        const demo = !REAL ? informesPendientes().find(e => e.id === infSel) || informesPendientes()[0] : null;
+        return `<h1>Informe de la clase</h1><form class="hoja" style="padding:26px" id="fInforme">
+        ${REAL ? `<label class="campo" style="margin-top:6px"><span>Clase</span><select class="entrada" id="infClase">${lista.map(c => `<option value="${c.id}" ${c === sel ? 'selected' : ''}>${fmt(new Date(c.empieza), { weekday: 'short', day: 'numeric', month: 'short' })} · ${hora(new Date(c.empieza))} · ${U.esc(c.alumno || 'Alumno')}${tieneInforme(c.id) ? ' · ya tiene informe' : ' · falta el informe'}</option>`).join('') || '<option value="">Todavía no has dado ninguna clase</option>'}</select></label>`
+          : `<p class="suave" id="infDemo" data-id="${demo ? demo.id : ''}">${demo ? `${cuandoRel(demo.d)} · ${U.esc(demo.alumno)} · ${U.esc(demo.tipoNombre)}` : 'Clase de ayer · Lucas · 4º ESO · Matemáticas'}</p>`}
+        <div class="grabadora">${Dictado ? '<button class="grabar" type="button" id="grabar" aria-label="Grabar nota de voz"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>' : ''}
+          <div style="flex:1;min-width:0"><b id="grabTxt">${Dictado ? 'Cuéntalo en voz alta y lo convertimos en el informe' : 'Escribe o dicta cómo ha ido y lo convertimos en el informe'}</b>
+            <small class="grab-sub" id="grabSub">${Dictado ? 'Unos 20 segundos: qué habéis visto, qué tal lo ha hecho, qué le cuesta y qué toca después.' : 'En el móvil puedes usar el micrófono del teclado para dictarlo.'}</small>
+            ${Dictado ? `<div class="ondas-p" id="ondasP">${'<i></i>'.repeat(48)}</div>` : ''}</div></div>
+        <div class="dictado" id="dictadoCaja" ${Dictado ? 'hidden' : ''}><label class="campo"><span>Lo que has contado (puedes corregirlo)</span><textarea class="entrada" id="dictado" rows="4" placeholder="Por ejemplo: hoy hemos visto ecuaciones de segundo grado. Ya aplica la fórmula sin mirar, pero se lía con los signos. Para el jueves le he mandado cinco ejercicios."></textarea></label>
+          <p style="margin-top:10px"><button class="boton peq" type="button" id="aInforme">Convertir en informe</button></p></div>
         <label class="campo" style="margin-top:18px"><span>Tema</span><input class="entrada" id="infTema" required value="${REAL ? '' : 'Ecuaciones de segundo grado'}"></label>
         <label class="campo" style="margin-top:14px"><span>Qué ha ido bien</span><textarea class="entrada" id="infBien" required style="min-height:70px"></textarea></label>
         <label class="campo" style="margin-top:14px"><span>Qué cuesta</span><textarea class="entrada" id="infCuesta" required style="min-height:70px"></textarea></label>
         <label class="campo" style="margin-top:14px"><span>Qué toca después</span><textarea class="entrada" id="infLuego" required style="min-height:70px"></textarea></label>
         <p style="font-weight:650;margin-top:16px">¿Qué seguridad tiene en el tema?</p>
         <div style="display:flex;gap:8px;margin-top:8px" id="nivelInf">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="boton sec peq" aria-pressed="false">${n}</button>`).join('')}</div>
-        <button class="boton" style="margin-top:22px">Enviar a la familia</button></form>`,
+        <button class="boton" style="margin-top:22px">Enviar a la familia</button></form>`; },
       alumnos: () => `<h1>Mis alumnos</h1><p class="suave" style="margin:-10px 0 22px">Cuantas más clases con la misma familia, menos comisión pagas.</p>
         ${ALUMNOS.length ? '' : '<p class="suave">Cuando des tus primeras clases, aquí verás a cada familia y cuánto baja tu comisión con ella.</p>'}${ALUMNOS.map(([n, c]) => { const pct = D.comision(c + 1); const sig = c < 5 ? 5 : c < 20 ? 20 : null; return `<div class="hoja" style="padding:20px;margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>${n}</b><span class="etiqueta ${pct === 5 ? 'ok' : 'naranja'}">Comisión actual ${pct} %</span></div>
           <div class="tramo"><div class="tramo-barra"><i style="width:${Math.min(c, 5) / 25 * 100}%;background:var(--butano)"></i><i style="width:${Math.max(0, Math.min(c, 20) - 5) / 25 * 100}%;background:var(--aviso)"></i><i style="width:${Math.max(0, Math.min(c, 25) - 20) / 25 * 100}%;background:var(--ok)"></i></div>
@@ -984,12 +1175,134 @@ D.listo.then(async () => {
   function bloqueHoy() {
     const deHoy = eventos(hoy, hoy).filter(e => e.estado !== 'cancelada');
     const clases = deHoy.length
-      ? deHoy.map(e => `<button type="button" class="hoy-c" data-ev-dia="${e.f}">${icoHoy('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>')}<span><b>${U.esc(e.titulo)}</b><small>Hoy a las ${U.esc(cuandoEv(e))}${e.lugar ? ' · ' + U.esc(e.lugar) : ''}${ESTADO_EV[e.estado] ? ' · ' + ESTADO_EV[e.estado] : ''}</small></span></button>`).join('')
+      ? deHoy.map(e => { const quien = e.profe && D.profe(e.profe) ? U.esc(D.profe(e.profe).nombre.split(' ')[0]) : 'Tu profe';
+        const vivo = e.hecha ? `<em class="hoy-ok">✓ Clase hecha</em>` : e.llegada ? `<em class="hoy-ok">✓ ${quien} ha llegado a las ${hora(new Date(e.llegada))}</em>` : '';
+        return `<button type="button" class="hoy-c" data-ev-dia="${e.f}">${icoHoy('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>')}<span><b>${U.esc(e.titulo)}</b><small>Hoy a las ${U.esc(cuandoEv(e))}${e.lugar ? ' · ' + U.esc(e.lugar) : ''}${ESTADO_EV[e.estado] ? ' · ' + ESTADO_EV[e.estado] : ''}</small>${vivo}</span></button>`; }).join('')
       : `<div class="hoy-c">${icoHoy('<path d="M3 15c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2M3 19c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/><circle cx="12" cy="8" r="3"/>')}<span><b>No tienes clases hoy</b></span></div>`;
     const quien = s.hijos && s.hijos.length ? `los deberes de ${U.esc(hijo.nombre)}` : 'tus deberes';
     return `<h2 class="hoy-tit">Hoy</h2><div class="hoy-lista">${clases}
       <button type="button" class="hoy-c blanca" data-ir="corrector">${icoHoy('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>')}<span><b>Corrige ${quien} con el asistente</b><small>Haz una foto y te dice qué está bien y dónde falla</small></span></button>
-      ${porValorar()[0] ? tarjetaValora(porValorar()[0]) : ''}</div>`;
+      ${porValorar()[0] ? tarjetaValora(porValorar()[0]) : ''}${tarjetasHueco()}</div>`;
+  }
+  // «Ya tiene hueco»: los profes que pediste que te avisaran cuando vuelvan a tener horario
+  function tarjetasHueco() {
+    return HUECOS.filter(a => a.avisado && !a.visto && D.profe(a.teacher_id)).map(a => { const p = D.profe(a.teacher_id), nom = U.esc(p.nombre.split(' ')[0]);
+      return `<div class="hoja valora hueco-libre" data-hueco="${a.teacher_id}">${U.cara(p, 'p')}<div class="valora-txt"><b>${nom} ya tiene hueco</b><small>Pediste que te avisáramos. Reserva antes de que se vuelva a llenar.</small></div>
+        <p class="hueco-botones"><a class="boton peq" href="profe.html?id=${p.id}">Pedir clase</a><button type="button" class="boton sec peq" data-hueco-visto="${p.id}">Vale</button></p></div>`; }).join('');
+  }
+
+  // ---------- Exámenes y notas (los apunta la familia) ----------
+  const hijosLista = () => (s.hijos || []).filter(h => h && h.nombre);
+  const variosHijos = () => hijosLista().length > 1;
+  const quienEx = x => variosHijos() && x.alumno ? ' · ' + U.esc(x.alumno) : '';
+  function bloqueExamenes() {
+    const hoyIso = isoD(new Date());
+    const prox = EXAMENES.filter(x => x.fecha >= hoyIso).sort((a, b) => a.fecha < b.fecha ? -1 : 1);
+    const sinNota = EXAMENES.filter(x => x.fecha < hoyIso && diasHasta(x.fecha) >= -30 && !NOTAS.some(n => n.examen_id === x.id) && !leerLS('sinNota', []).includes(x.id))
+      .sort((a, b) => a.fecha < b.fecha ? 1 : -1);
+    const quienTxt = x => x.alumno && hijosLista().length ? U.esc(x.alumno) : hijosLista().length ? U.esc(hijo.nombre) : 'tú';
+    const tarjetasEx = prox.map(x => { const n = diasHasta(x.fecha), d = deIso(x.fecha);
+      return `<article class="hoja ex-c ${n <= 3 ? 'cerca' : ''}"><div class="fecha"><span>${fmt(d, { weekday: 'short' }).replace('.', '')}</span><b>${d.getDate()}</b><small>${fmt(d, { month: 'short' }).replace('.', '')}</small></div>
+        <div class="ex-txt"><b>${U.esc(asigNom(x.asignatura))}${quienEx(x)}</b><small>${x.tema ? U.esc(x.tema) : 'Examen'}</small><span class="ex-cuenta">${may(cuandoExamen(x.fecha))}</span></div>
+        <div class="ex-acc"><button type="button" class="boton sec peq" data-plan-examen="${x.id}"><span class="punto-ia"></span>Plan de repaso</button><button type="button" class="ex-borrar" data-borrar-examen="${x.id}" aria-label="Borrar el examen de ${U.esc(asigNom(x.asignatura))}">✕</button></div></article>`; }).join('');
+    const tarjetasNota = sinNota.slice(0, 2).map(x => `<article class="hoja ex-c pide-nota"><div class="ex-txt"><b>${hijosLista().length ? `¿Qué nota ha sacado ${quienTxt(x)}` : "¿Qué nota has sacado"} en ${U.esc(asigNom(x.asignatura))}?</b><small>Examen del ${fmt(deIso(x.fecha), { weekday: 'long', day: 'numeric' })}${x.tema ? ' · ' + U.esc(x.tema) : ''}. Así ves cómo avanza.</small></div>
+      <div class="nota-rapida"><input class="entrada" type="text" inputmode="decimal" maxlength="5" placeholder="Nota" aria-label="Nota sobre 10" data-nota-de="${x.id}"><button type="button" class="boton peq" data-guardar-nota-ex="${x.id}">Guardar</button>
+        <button type="button" class="boton sec peq" data-foto-nota-ex="${x.id}" title="Leer la nota de una foto del examen">📷</button><button type="button" class="enlace-sec" data-sin-nota="${x.id}">Aún no la sabemos</button></div></article>`).join('');
+    const vacio = !prox.length && !sinNota.length
+      ? `<div class="hoja ex-vacio"><p>Apunta sus exámenes: te avisamos con tiempo, sus profes los ven al preparar la clase y el asistente te hace un plan de repaso.</p></div>` : '';
+    return `<div class="cab-seccion"><h2>Exámenes</h2><span class="cab-botones"><button type="button" class="enlace-sec" data-nueva-nota>+ Nota</button><button type="button" class="enlace-sec" data-nuevo-examen>+ Examen</button></span></div>
+      <div class="ex-lista">${tarjetasNota}${tarjetasEx}${vacio}</div>`;
+  }
+  // Notas de examen de una asignatura (y alumno) en orden de fecha
+  const notasDe = (asig, alumno) => NOTAS.filter(n => n.asignatura === asig && (!alumno || !n.alumno || n.alumno === alumno)).sort((a, b) => a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : (b.antes ? 1 : 0) - (a.antes ? 1 : 0));
+  // Guardar y borrar exámenes y notas (en Supabase o, en la maqueta, en el navegador)
+  const guardarLocalEN = () => { if (!REAL) { ponerLS('examenes', EXAMENES); ponerLS('notas', NOTAS); } };
+  async function nuevoExamen(x) { EXAMENES.push(REAL ? await SUPA.guardarExamen(x) : { ...x, id: 'ex' + Date.now() }); guardarLocalEN(); }
+  async function nuevaNota(n) { const r = REAL ? await SUPA.guardarNota(n) : { ...n, id: 'n' + Date.now() }; r.nota = Number(r.nota); NOTAS.push(r); guardarLocalEN(); }
+  async function borrarExamen(id) { if (REAL) await SUPA.borrarExamen(id); EXAMENES = EXAMENES.filter(x => x.id !== id); guardarLocalEN(); }
+  async function borrarNota(id) { if (REAL) await SUPA.borrarNota(id); NOTAS = NOTAS.filter(x => x.id !== id); guardarLocalEN(); }
+  // Profes con los que hay clase y que dan esa asignatura (a ellos se les puede atribuir la nota)
+  function profesDeAsig(asig) {
+    const ids = REAL ? [...new Set(CLASES.filter(c => c.familia_id === yo && ['pedida', 'aceptada', 'hecha'].includes(c.estado)).map(c => c.teacher_id))] : MIS_PROFES;
+    return ids.map(D.profe).filter(p => p && p.asig.includes(asig));
+  }
+  const hoyIsoTxt = () => isoD(new Date());
+  const opcionesAsig = sel => { const mias = [...new Set(MIS_PROFES.flatMap(id => (D.profe(id) || { asig: [] }).asig))];
+    return [...mias, ...D.ASIG.map(a => a.id).filter(id => !mias.includes(id))].map(id => `<option value="${id}" ${id === sel ? 'selected' : ''}>${U.esc(asigNom(id))}</option>`).join(''); };
+  const campoAlumno = sel => variosHijos() ? `<label class="campo"><span>¿De quién?</span><select class="entrada" name="alumno">${hijosLista().map(h => `<option ${h.nombre === sel ? 'selected' : ''}>${U.esc(h.nombre)}</option>`).join('')}</select></label>` : '';
+  const alumnoDe = f => f.alumno ? f.alumno.value : (hijosLista()[0] || {}).nombre || null;
+  let dlgEN = null;
+  function abrirDialogo(html) {
+    if (!dlgEN) {
+      dlgEN = document.createElement('dialog'); dlgEN.className = 'dlg-en'; document.body.append(dlgEN);
+      dlgEN.addEventListener('click', e => { if (e.target === dlgEN || e.target.closest('[data-cerrar-dlg]')) dlgEN.close(); });
+    }
+    dlgEN.innerHTML = `<button class="dlg-cerrar" type="button" data-cerrar-dlg aria-label="Cerrar">×</button><div class="dlg-cuerpo">${html}</div>`;
+    dlgEN.showModal(); return dlgEN;
+  }
+  const conEspera = async (btn, fn) => { const t = btn.textContent; btn.disabled = true; btn.textContent = 'Guardando…'; try { await fn(); return true; } catch (x) { U.tostada(x.message); return false; } finally { btn.disabled = false; btn.textContent = t; } };
+  function formExamen() {
+    const d = abrirDialogo(`<h2>Apuntar un examen</h2><p class="suave">Sus profes lo verán al preparar la clase, y el asistente te puede hacer un plan de repaso hasta ese día.</p>
+      <form class="form-en" id="fExamen">${campoAlumno()}<label class="campo"><span>Asignatura</span><select class="entrada" name="asig">${opcionesAsig()}</select></label>
+        <label class="campo"><span>Fecha</span><input class="entrada" type="date" name="fecha" min="${hoyIsoTxt()}" required></label>
+        <label class="campo"><span>Tema <small class="suave">(opcional)</small></span><input class="entrada" name="tema" maxlength="120" placeholder="Por ejemplo: ecuaciones de segundo grado"></label>
+        <p class="dlg-botones"><button class="boton">Guardar examen</button></p></form>`);
+    const f = d.querySelector('#fExamen');
+    f.onsubmit = async e => { e.preventDefault();
+      if (!f.fecha.value) return U.tostada('Elige la fecha');
+      const ok = await conEspera(f.querySelector('.boton'), () => nuevoExamen({ alumno: alumnoDe(f), asignatura: f.asig.value, fecha: f.fecha.value, tema: f.tema.value.trim() }));
+      if (ok) { d.close(); U.tostada(`Examen de ${asigNom(f.asig.value)} apuntado`); ir(actual, true); } };
+  }
+  // Lee la nota de la foto de un examen con la IA. Devuelve { nota, asignatura } o null (y lo explica).
+  async function leerNotaFoto(archivo) {
+    if (!window.Deberes) return null;
+    let im; try { im = await Deberes.prepararFoto(archivo, 1600); } catch (x) { U.tostada(x.message); return null; }
+    const r = await Deberes.llamarIA({ modo: 'nota', imagen: { tipo: im.tipo, datos: im.datos } });
+    if (r && r.sinIA) { U.tostada('Leer la nota de una foto funcionará cuando esté activada la IA. De momento, escríbela.'); return null; }
+    if (!r || !r.ok) { U.tostada((r && r.error) || 'No se ha podido leer la foto'); return null; }
+    if (r.resultado.nota == null) { U.tostada('No veo una nota clara en la foto. Escríbela a mano.'); return null; }
+    return r.resultado;
+  }
+  const opcionesProfe = asig => { const ps = profesDeAsig(asig); return ps.map((p, i) => `<option value="${p.id}" ${i === 0 ? 'selected' : ''}>${U.esc(p.nombre)}</option>`).join('') + `<option value="" ${ps.length ? '' : 'selected'}>Ninguno o no está en ClasUno</option>`; };
+  function formNota(ex) {
+    const d = abrirDialogo(`<h2>Apuntar una nota</h2><p class="suave">Escríbela o haz una foto del examen y la leemos. La foto no se guarda.</p>
+      <form class="form-en" id="fNota">${campoAlumno(ex && ex.alumno)}<label class="campo"><span>Asignatura</span><select class="entrada" name="asig">${opcionesAsig(ex && ex.asignatura)}</select></label>
+        <div class="dos-campos"><label class="campo"><span>Nota (sobre 10)</span><input class="entrada" type="text" inputmode="decimal" maxlength="5" name="nota" placeholder="Por ejemplo, 7,5" required></label>
+          <label class="campo"><span>Fecha del examen</span><input class="entrada" type="date" name="fecha" max="${hoyIsoTxt()}" value="${ex ? ex.fecha : hoyIsoTxt()}" required></label></div>
+        <p><button type="button" class="boton sec peq" id="fotoNota">📷 Leer la nota de una foto</button><input type="file" accept="image/*" capture="environment" id="fotoNotaIn" hidden></p>
+        <label class="check-en"><input type="checkbox" name="antes"> Es una nota de antes de empezar las clases (el punto de partida)</label>
+        <label class="campo"><span>¿Con qué profe da esta asignatura?</span><select class="entrada" name="profe">${opcionesProfe(ex ? ex.asignatura : (D.ASIG[0] || {}).id)}</select>
+          <small class="suave">Si eliges profe, la nota cuenta, sin tu nombre, para la mejora media de sus alumnos que sale en su ficha.</small></label>
+        <p class="dlg-botones"><button class="boton">Guardar nota</button></p></form>`);
+    const f = d.querySelector('#fNota');
+    f.profe.innerHTML = opcionesProfe(f.asig.value);
+    f.asig.onchange = () => { f.profe.innerHTML = opcionesProfe(f.asig.value); };
+    d.querySelector('#fotoNota').onclick = () => d.querySelector('#fotoNotaIn').click();
+    d.querySelector('#fotoNotaIn').onchange = async e => {
+      const a = e.target.files[0]; if (!a) return; const b = d.querySelector('#fotoNota'), t = b.textContent; b.disabled = true; b.textContent = 'Leyendo la foto…';
+      const r = await leerNotaFoto(a); b.disabled = false; b.textContent = t;
+      if (r) { f.nota.value = notaTxt(r.nota); const as = D.ASIG.find(x => IA.normal(x.nombre) === IA.normal(r.asignatura || '')); if (as && !ex) { f.asig.value = as.id; f.asig.onchange(); } U.tostada(`Leído: ${notaTxt(r.nota)}. Revísalo y guarda.`); }
+    };
+    f.onsubmit = async e => { e.preventDefault();
+      const nota = Number(String(f.nota.value).replace(',', '.'));
+      if (!(nota >= 0 && nota <= 10)) return U.tostada('La nota tiene que estar entre 0 y 10');
+      const ok = await conEspera(f.querySelector('.boton'), () => nuevaNota({ alumno: alumnoDe(f), asignatura: f.asig.value, nota, fecha: f.fecha.value, antes: f.antes.checked, examen_id: ex ? ex.id : null, teacher_id: f.profe.value || null }));
+      if (ok) { d.close(); U.tostada('Nota guardada'); ir(actual, true); } };
+    return d;
+  }
+  async function notaRapida(id, valor) {
+    const x = EXAMENES.find(e => e.id === id); if (!x) return;
+    const nota = Number(String(valor).replace(',', '.'));
+    if (valor === '' || !(nota >= 0 && nota <= 10)) return U.tostada('Escribe una nota entre 0 y 10');
+    const ps = profesDeAsig(x.asignatura);
+    try { await nuevaNota({ alumno: x.alumno, asignatura: x.asignatura, nota, fecha: x.fecha, examen_id: x.id, teacher_id: ps.length === 1 ? ps[0].id : null }); } catch (e) { return U.tostada(e.message); }
+    U.tostada(`Nota guardada: ${notaTxt(nota)} en ${asigNom(x.asignatura)}`); ir(actual, true);
+  }
+  function tiraNotas(ns) {
+    if (!ns.length) return '';
+    const ult = ns.slice(-4), a = ns[0].nota, b = ns[ns.length - 1].nota, dif = Math.round((b - a) * 10) / 10;
+    return `<div class="prog-notas"><span class="prog-notas-t">Exámenes</span>${ult.map((n, i) => `${i ? '<span class="flecha-n" aria-hidden="true">→</span>' : ''}<span class="nota-chip ${i === ult.length - 1 ? 'ult' : ''}" title="${fmt(deIso(n.fecha), { day: 'numeric', month: 'long' })}${n.antes ? ' · antes de empezar las clases' : ''}">${notaTxt(n.nota)}${n.antes ? '<small>antes</small>' : ''}</span>`).join('')}
+      ${ns.length > 1 && dif ? `<b class="${dif > 0 ? 'sube' : 'baja'}">${dif > 0 ? '+' : '−'}${U.coma(Math.abs(dif))}</b>` : ''}</div>`;
   }
 
   // ---------- Progreso por asignatura ----------
@@ -1022,9 +1335,17 @@ D.listo.then(async () => {
     return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="false" role="group" aria-label="Evolución en ${U.esc(s.asig.nombre)}"><g class="rej">${rej}</g><g class="ejes">${ejes}</g>${linea}${puntos}</svg>`;
   }
   function bloqueProgreso() {
-    const series = seriesProgreso(); if (!series.length) return '';
-    const varios = new Set(series.map(s => s.alumno)).size > 1;
-    return `<div class="progreso">${series.map(s => {
+    const series = seriesProgreso();
+    // Asignaturas con notas de examen pero sin informes: tarjeta solo con las notas
+    const soloNotas = {};
+    NOTAS.forEach(n => { if (!series.some(s => s.asig.id === n.asignatura && (!s.alumno || !n.alumno || s.alumno === n.alumno))) soloNotas[n.asignatura + '|' + (n.alumno || '')] = { asig: n.asignatura, alumno: n.alumno || '' }; });
+    if (!series.length && !Object.keys(soloNotas).length) return '';
+    const varios = new Set([...series.map(s => s.alumno), ...Object.values(soloNotas).map(x => x.alumno)].filter(Boolean)).size > 1;
+    const tarjetasNotas = Object.values(soloNotas).map(x => { const a = D.asig(x.asig) || { nombre: x.asig, c: '#888' }, ns = notasDe(x.asig, x.alumno), ult = ns[ns.length - 1];
+      return `<article class="hoja prog-c" style="--c:${a.c}"><div class="prog-cab"><div style="min-width:0"><p class="prog-asig"><i></i>${a.nombre}</p><p class="prog-quien">${varios && x.alumno ? U.esc(x.alumno) + ' · ' : ''}notas de examen</p></div>
+        <p class="prog-nivel">${notaTxt(ult.nota)}<small> de 10</small></p></div>${tiraNotas(ns)}
+        <p class="prog-tend">${ns.length === 1 ? 'Con la próxima nota verás si sube.' : ''}</p></article>`; }).join('');
+    return `<div class="progreso">${tarjetasNotas}${series.map(s => {
       const n = s.pts.length, a = s.pts[0].v, b = s.pts[n - 1].v;
       const sem = Math.max(1, Math.round((s.pts[n - 1].d - s.pts[0].d) / (7 * 864e5)));
       const tend = n === 1 ? 'Primer informe: con las próximas clases verás cómo avanza.'
@@ -1034,7 +1355,7 @@ D.listo.then(async () => {
         <div class="prog-cab"><div style="min-width:0"><p class="prog-asig"><i></i>${s.asig.nombre}</p><p class="prog-quien">${varios && s.alumno ? U.esc(s.alumno) + ' · ' : ''}con ${U.esc(s.profe.nombre.split(' ')[0])} · ${n} ${n === 1 ? 'informe' : 'informes'}</p></div>
           <p class="prog-nivel">${b}<small> de 5</small></p></div>
         <div class="prog-graf">${graficaProgreso(s)}<div class="prog-tip" hidden></div></div>
-        <p class="prog-tend">${tend}</p></article>`;
+        <p class="prog-tend">${tend}</p>${tiraNotas(notasDe(s.asig.id, s.alumno))}</article>`;
     }).join('')}</div>`;
   }
   const titProgreso = () => !(s.hijos && s.hijos.length) ? 'Cómo vas' : s.hijos.length > 1 ? 'Cómo van tus hijos' : 'Cómo va ' + U.esc(hijo.nombre);
@@ -1079,14 +1400,14 @@ D.listo.then(async () => {
     const grupos = MIS_GRUPOS.length
       ? `<div class="grupos-p">${MIS_GRUPOS.slice(0, 2).map(tarjetaGrupo).join('')}</div>`
       : `<div class="hoja" style="padding:20px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap"><p class="suave">Con 2 a 4 alumnos de tu zona y tu curso, cada familia paga hasta la mitad.</p><a class="boton sec peq" href="grupos.html">Ver grupos de estudio</a></div>`;
-    return `${cabApp()}<h1>Hola, ${U.esc(s.nombre)}.</h1>${bloqueHoy()}
+    return `${cabApp()}<h1>Hola, ${U.esc(s.nombre)}.</h1>${bloqueHoy()}${bloqueExamenes()}
       <div class="hoja aviso-ia" ${REAL ? 'hidden' : ''}><div><b><span class="punto-ia"></span>${U.esc(hijo.nombre)} repite el mismo fallo en dos clases seguidas</b><p>Los signos al despejar en Matemáticas. Su profe ya lo sabe y empezará por ahí en la próxima clase. Mientras, 10 minutos de práctica con el asistente le vendrían bien.</p></div>
         <button class="boton peq" type="button" data-pregunta="¿Qué le cuesta más a ${U.esc(hijo.nombre)}?">Ver detalles</button></div>
       <div class="inicio-f">${hero}<div class="accesos">${accesos}</div></div>
       ${cabSeccion('Los próximos 7 días', 'calendario', 'Ver calendario')}${semana}
       ${cabSeccion('Tus profes', 'profes', 'Ver todos')}${profes}
       ${cabSeccion('Tus grupos de estudio', MIS_GRUPOS.length ? 'grupos' : '', 'Ver todos')}${grupos}
-      ${INFORMES.length ? cabSeccion(titProgreso(), 'informes', 'Ver informes') + notaProgreso() + bloqueProgreso() : ''}
+      ${INFORMES.length || NOTAS.length ? cabSeccion(titProgreso(), 'informes', 'Ver informes') + notaProgreso() + bloqueProgreso() : ''}
       ${cabSeccion('Último informe', INFORMES.length ? 'informes' : '', 'Ver todos')}${INFORMES[0] ? tarjetaInforme(INFORMES[0]) : '<div class="hoja" style="padding:20px"><p class="suave">Después de cada clase, aquí verás el resumen del profe: qué ha ido bien, qué cuesta y qué toca después.</p></div>'}`;
   }
 
@@ -1172,10 +1493,71 @@ D.listo.then(async () => {
         <p style="font-size:14px;font-weight:600;color:var(--butano);margin-top:18px"><span class="punto-ia"></span>${U.esc(quien)} · ${may(fmt(d, { weekday: 'long', day: 'numeric', month: 'long' }))} a las ${hora(d)} · ${min} min${c.estado === 'pedida' ? ' · aún sin aceptar' : ''}</p>
         ${inf ? `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">En tu último informe (${fmt(inf.d, { day: 'numeric', month: 'long' })}, «${U.esc(inf.tema)}») apuntaste que le cuesta <b>${U.esc(inf.cuesta.replace(/\.$/, '').toLowerCase())}</b> y que tocaba <b>${U.esc(inf.luego.replace(/\.$/, '').toLowerCase())}</b>.</p>`
           : `<p style="font-size:18px;margin-top:10px;letter-spacing:-.01em">Es vuestra primera clase: todavía no hay informes de ${U.esc(quien)}. Dedica el principio a ver su nivel.</p>`}
+        ${(() => { const ex = EXAMENES.filter(x => x.familia_id === c.familia_id && (!c.alumno || !x.alumno || x.alumno === c.alumno) && diasHasta(x.fecha) >= 0).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
+          return ex ? `<p class="prep-examen">📅 Tiene examen de <b>${U.esc(asigNom(ex.asignatura))}</b> el ${fmt(deIso(ex.fecha), { weekday: 'long', day: 'numeric' })} (${cuandoExamen(ex.fecha)})${ex.tema ? `: ${U.esc(ex.tema)}` : ''}. Merece la pena dedicarle parte de la clase.</p>` : ''; })()}
         <h3 style="margin-top:22px;font-size:var(--t-tarjeta)">Propuesta para ${min} minutos</h3>
         <div class="estructura">${estructura.map(([m, txt]) => `<div><span>${m}'</span>${txt}</div>`).join('')}</div>
         <p style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">${CONV[c.familia_id] ? `<button class="boton sec peq" type="button" data-chat="${c.familia_id}">Escribir a la familia</button>` : ''}<button class="boton sec peq" type="button" data-ir="informe">Escribir el informe después</button></p></div>`;
   }
+
+  // ---------- Estadísticas del profe ----------
+  let EST = null;
+  const DEMO_EST = { visitas_30: 214, visitas_semanas: [31, 38, 29, 44, 52, 47, 58, 61], escriben_30: 17, solicitudes_30: 9, aceptadas_30: 7, hechas: 64, responde_min: 95, mejora: { media: 1.6, alumnos: 9 }, completo: false, esperando: 0 };
+  const tardaTxt = m => m == null ? '—' : m < 60 ? `${Math.max(1, m)} min` : m < 1440 ? `${Math.round(m / 60)} h` : `${Math.round(m / 1440)} ${Math.round(m / 1440) === 1 ? 'día' : 'días'}`;
+  function vistaEstadisticas() {
+    return `<h1>Estadísticas</h1><p class="suave" style="margin:-10px 0 22px">Cómo te encuentran las familias (últimos 30 días) y qué puedes mejorar en tu ficha.</p>
+      <div id="estCaja">${EST || !REAL ? htmlEstadisticas(EST || DEMO_EST) : '<div class="hoja" style="padding:24px"><p class="suave">Cargando tus datos…</p></div>'}</div>`;
+  }
+  function graficaVisitas(sem) {
+    const W = 320, H = 150, AB = 22, AR = 18, n = sem.length, hueco = 10, ancho = (W - hueco * (n - 1)) / n, tope = Math.max(1, ...sem);
+    const lunes = new Date(); lunes.setHours(0, 0, 0, 0); lunes.setDate(lunes.getDate() - (lunes.getDay() + 6) % 7);
+    const barras = sem.map((v, i) => {
+      const x = i * (ancho + hueco), h = Math.max(v ? 3 : 0, (H - AB - AR) * v / tope), y = H - AB - h, r = Math.min(4, h / 2), d = new Date(lunes); d.setDate(d.getDate() - 7 * (n - 1 - i));
+      const fe = fmt(d, { day: 'numeric', month: 'short' }).replace('.', '');
+      return `<g class="barra-v"><title>Semana del ${fe}: ${v} ${v === 1 ? 'visita' : 'visitas'}</title><rect class="hit" x="${x}" y="0" width="${ancho}" height="${H - AB}"/>
+        ${h ? `<path d="M${x},${H - AB} V${y + r} Q${x},${y} ${x + r},${y} H${x + ancho - r} Q${x + ancho},${y} ${x + ancho},${y + r} V${H - AB} Z" class="${i === n - 1 ? 'ult' : ''}"/>` : ''}
+        <text x="${x + ancho / 2}" y="${y - 5}" text-anchor="middle" class="val">${v}</text>${i === 0 || i === n - 1 || i === Math.floor(n / 2) ? `<text x="${x + ancho / 2}" y="${H - 5}" text-anchor="middle">${fe}</text>` : ''}</g>`;
+    }).join('');
+    return `<svg viewBox="0 -4 ${W} ${H + 4}" class="graf-visitas" role="img" aria-label="Visitas a tu ficha en las últimas ${n} semanas: ${sem.join(', ')}"><line x1="0" x2="${W}" y1="${H - AB}" y2="${H - AB}" class="base"/>${barras}</svg>`;
+  }
+  function htmlEstadisticas(st) {
+    const pf = MI_PERFIL || {}, yoP = (REAL ? D.profe(yo) : D.profe('laura')) || {}, pend = informesPendientes().length;
+    const tiles = [['Visitas a tu ficha', st.visitas_30, 'en 30 días'], ['Familias que te escriben', st.escriben_30, 'conversaciones nuevas'],
+      ['Solicitudes de clase', st.solicitudes_30, `${st.aceptadas_30} ${st.aceptadas_30 === 1 ? 'aceptada' : 'aceptadas'}`],
+      ['Tardas en contestar', tardaTxt(st.responde_min), st.responde_min == null ? 'sale cuando hayas contestado 3 mensajes' : 'lo normal, últimos 90 días']];
+    const conv = st.visitas_30 >= 20 ? `<p class="est-conv">De cada 100 familias que ven tu ficha, <b>${Math.round(st.escriben_30 / st.visitas_30 * 100)}</b> te escriben.</p>` : '';
+    const consejos = [
+      [!!(pf.avatar), 'Pon una foto tuya', 'De cara, con buena luz y sonriendo. Las familias quieren saber quién va a dar clase a sus hijos.', 'perfil'],
+      [(pf.bio || '').length >= 300, 'Cuenta más sobre ti', `Tienes ${(pf.bio || '').length} caracteres en «Sobre ti». Explica cómo das clase, con qué cursos tienes experiencia y algún resultado.`, 'perfil'],
+      [(pf.libre || []).length >= 8, 'Marca más huecos libres', `Tienes ${(pf.libre || []).length} huecos a la semana. Con más opciones es más fácil que una familia encuentre su hora.`, 'perfil'],
+      [st.responde_min != null && st.responde_min <= 180, 'Contesta rápido', st.responde_min == null ? 'Tu tiempo de respuesta sale en tu ficha cuando hayas contestado 3 mensajes. Intenta responder en menos de 2 o 3 horas.' : `Ahora tardas unas ${tardaTxt(st.responde_min)}. Muchas familias escriben a varios profes a la vez y se quedan con el que antes contesta.`, 'mensajes'],
+      [!!pf.certificado, 'Envíanos el certificado de delitos sexuales', 'Es obligatorio para dar clase a menores. Cuando lo revisemos, tu ficha dirá «Certificado para menores».', null],
+      [!!pf.grupos, 'Activa los grupos de estudio', 'Con 3 o 4 alumnos cada familia paga menos y tú cobras más por hora.', 'perfil'],
+      [(yoP.nResenas || 0) >= 3, 'Consigue tus primeras reseñas', 'Al acabar cada clase, las familias ven en su panel la opción de valorarte. Recuérdaselo en persona: ayuda mucho.', null],
+      [!pend, 'Escribe los informes', pend ? `Tienes ${pend} ${pend === 1 ? 'informe' : 'informes'} sin escribir. Es lo que más valoran los padres, y con la voz se hace en un minuto.` : 'Los tienes al día.', 'informe']
+    ];
+    const porHacer = consejos.filter(c => !c[0]), hechos = consejos.filter(c => c[0]);
+    const mej = st.mejora && st.mejora.alumnos ? st.mejora : null;
+    return `<section class="hoja est-completo"><div><b>Horario completo</b><p class="suave">${st.completo
+        ? `Tu ficha dice «Horario completo» y las familias pueden pedir que les avisemos cuando tengas hueco. ${st.esperando ? `Ahora esperan <b>${st.esperando}</b>: al quitarlo, les avisamos.` : 'Aún no lo ha pedido ninguna.'}`
+        : 'Si ya no te caben más alumnos, márcalo: en vez de irse, las familias podrán pedir que les avisemos cuando tengas hueco.'}</p></div>
+        <button type="button" class="interruptor" role="switch" aria-checked="${!!st.completo}" aria-label="Horario completo" id="swCompleto"><span></span></button></section>
+      <div class="est-tiles">${tiles.map(([k, v, s2]) => `<div class="hoja est-tile"><span>${k}</span><b>${v}</b><small>${s2}</small></div>`).join('')}</div>
+      ${conv}
+      <section class="hoja est-graf"><div class="cab-seccion" style="margin:0 0 10px"><h2>Visitas a tu ficha por semana</h2></div>${graficaVisitas(st.visitas_semanas || [])}</section>
+      ${mej ? `<section class="hoja est-mejora"><b class="${mej.media >= 0 ? 'sube' : ''}">${mej.media > 0 ? '+' : mej.media < 0 ? '−' : ''}${U.coma(Math.abs(mej.media))} puntos</b><p>de media en los exámenes de tus alumnos (${mej.alumnos} ${mej.alumnos === 1 ? 'alumno' : 'alumnos'}), según las notas que apuntan las familias. ${mej.alumnos >= 3 ? 'Sale en tu ficha.' : `Saldrá en tu ficha cuando haya 3 alumnos con notas.`}</p></section>` : ''}
+      <h2 class="prog-h2" style="margin-top:28px">Para que te escriban más</h2>
+      ${porHacer.length ? `<div class="consejos">${porHacer.map(([, t, txt, v]) => `<div class="hoja consejo"><span class="c-ico" aria-hidden="true">○</span><div><b>${t}</b><p>${txt}</p></div>${v ? `<button type="button" class="boton sec peq" data-ir="${v}">${v === 'informe' ? 'Escribirlos' : v === 'mensajes' ? 'Ver mensajes' : 'Editar ficha'}</button>` : ''}</div>`).join('')}</div>` : '<p class="suave">Lo tienes todo hecho. ¡Bien!</p>'}
+      ${hechos.length ? `<ul class="consejos-ok">${hechos.map(([, t]) => `<li>✓ ${t}</li>`).join('')}</ul>` : ''}`;
+  }
+  async function cambiarCompleto(b) {
+    let n = 0;
+    if (REAL) { try { n = await SUPA.ponerCompleto(b); } catch (x) { return U.tostada(x.message); } EST.completo = b; if (!b) EST.esperando = 0; }
+    else { DEMO_EST.completo = b; n = b ? 0 : DEMO_EST.esperando; DEMO_EST.esperando = 0; }
+    U.tostada(b ? 'Hecho: tu ficha dice «Horario completo»' : n ? `Hemos avisado a ${n} ${n === 1 ? 'familia' : 'familias'} de que tienes hueco` : 'Tu ficha vuelve a aceptar clases');
+    $('#estCaja').innerHTML = htmlEstadisticas(REAL ? EST : DEMO_EST); ligarEstadisticas();
+  }
+  const ligarEstadisticas = () => { const sw = $('#swCompleto'); if (sw) sw.onclick = () => cambiarCompleto(sw.getAttribute('aria-checked') !== 'true'); };
 
   // ---------- Mi perfil (profe): verlo como lo ven las familias y cambiarlo todo ----------
   const ESTADO_PERFIL = {
@@ -1537,11 +1919,21 @@ D.listo.then(async () => {
     const t = IA.normal(q);
     const asigDe = r => { const p = persona(r.profe); return D.asig(p.asig[0]).nombre; };
     if (/plan|examen/.test(t)) {
-      const m = t.match(/dia (\d{1,2})/); const f = new Date(hoy); if (m) { f.setDate(+m[1]); if (f <= hoy) f.setMonth(f.getMonth() + 1); } else f.setDate(f.getDate() + 21);
-      const temas = [...new Set(INFORMES.slice(0, 3).flatMap(r => [r.cuesta.replace(/\.$/, ''), r.tema]))].slice(0, 3);
-      const pl = IA.plan({ asig: 'mat', fecha: f, horas: 3, temas: temas.length ? temas : ['Repaso general'] });
-      return { txt: `Hasta el examen del ${DIAS_L(f)} quedan ${pl.dias} días. Te propongo esto${INFORMES.length ? ', empezando por lo que más le cuesta según sus profes' : ''}:`,
-        extra: `<table class="mini-tabla">${pl.semanas.map(x => `<tr><td>Semana ${x.semana} · ${fmt(x.ini, { day: 'numeric', month: 'short' })}</td><td>${U.esc(x.tema)}</td></tr>`).join('')}</table>` };
+      // El examen apuntado del que habla (por asignatura o por día) o, si no dice cuál, el siguiente
+      const futuros = EXAMENES.filter(y => y.fecha >= isoD(new Date())).sort((a, b) => a.fecha < b.fecha ? -1 : 1);
+      const m = t.match(/dia (\d{1,2})/);
+      const asigTxt = D.ASIG.find(a => t.includes(IA.normal(a.nombre)) || (a.id === 'mat' && /mates/.test(t)));
+      const ex = futuros.find(y => (!asigTxt || y.asignatura === asigTxt.id) && (!m || deIso(y.fecha).getDate() === +m[1])) || (!asigTxt && !m ? futuros[0] : null);
+      const f = ex ? deIso(ex.fecha) : new Date(hoy);
+      if (!ex) { if (m) { f.setDate(+m[1]); if (f <= hoy) f.setMonth(f.getMonth() + 1); } else f.setDate(f.getDate() + 21); }
+      const asig = ex ? ex.asignatura : asigTxt ? asigTxt.id : 'mat';
+      // Lo que más le cuesta en esa asignatura según los informes de sus profes (si no hay, de cualquiera)
+      const deAsig = INFORMES.filter(r => { const p = D.profe(r.profe); return p && p.asig.includes(asig); });
+      const temas = [...new Set([ex && ex.tema, ...(deAsig.length ? deAsig : INFORMES).slice(0, 3).flatMap(r => [r.cuesta.replace(/\.$/, ''), r.tema])].filter(Boolean))].slice(0, 3);
+      if (ex && diasHasta(ex.fecha) === 0) return { txt: `El examen de ${asigNom(asig).toLowerCase()} es hoy. Ya no toca estudiar más: un repaso ligero de los resúmenes, desayunar bien y confiar en lo trabajado. ¡Mucho ánimo!` };
+      const pl = IA.plan({ asig, fecha: f, horas: 3, temas: temas.length ? temas : ["Repaso general"], porDias: true });
+      return { txt: `Hasta el examen ${ex ? 'de ' + asigNom(asig).toLowerCase() + ' ' : ''}del ${DIAS_L(f)} ${pl.dias === 1 ? 'queda 1 día' : `quedan ${pl.dias} días`}. Te propongo esto${INFORMES.length ? ', empezando por lo que más le cuesta según sus profes' : ''}:`,
+        extra: `<table class="mini-tabla">${pl.semanas.map(x => `<tr><td>${x.etiqueta ? may(x.etiqueta) : `Semana ${x.semana} · ${fmt(x.ini, { day: "numeric", month: "short" })}`}</td><td>${U.esc(x.tema)}</td></tr>`).join('')}</table>` };
     }
     if (/gast|pagad|dinero|cuanto llevamos/.test(t)) {
       if (!GASTOS.length) return { txt: 'Este mes no lleváis nada gastado.' };
@@ -1589,24 +1981,103 @@ D.listo.then(async () => {
     }).join('');
   }
 
-  /* Informe por voz (simulado) */
-  const NOTA = { bien: 'Ya aplica la fórmula de segundo grado sin mirar los apuntes y resuelve las ecuaciones completas.', cuesta: 'Sigue cambiando mal el signo al pasar un término al otro lado.', luego: 'Cinco ejercicios de signos para el jueves. Próxima clase: problemas con enunciado.' };
-  async function grabarInforme() {
-    const btn = $('#grabar'), barras = [...document.querySelectorAll('#ondasP i')];
-    if (btn.classList.contains('on')) return;
-    btn.classList.add('on'); $('#grabTxt').textContent = 'Escuchando… (en la maqueta se simula una nota de 4 segundos)';
-    const anim = setInterval(() => barras.forEach(b => b.style.height = (15 + Math.random() * 85) + '%'), 120);
-    await IA.espera(4000); clearInterval(anim); barras.forEach(b => b.style.height = '20%');
-    btn.classList.remove('on'); $('#grabTxt').textContent = 'Nota convertida en informe. Revísalo y envíalo.';
-    for (const [id, k] of [['#infBien', 'bien'], ['#infCuesta', 'cuesta'], ['#infLuego', 'luego']]) {
-      const el = $(id); if (!el) return; el.value = '';
-      for (let i = 1; i <= NOTA[k].length; i += 2) { el.value = NOTA[k].slice(0, i); await IA.espera(6); }
-      el.value = NOTA[k];
+  /* ---------- Informe por voz: el navegador pasa la voz a texto y la IA lo ordena en el informe ---------- */
+  const Dictado = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, grabando = false, animOndas = null, tope = null;
+  function grabarInforme() { if (grabando) pararGrabar(true); else empezarGrabar(); }
+  function empezarGrabar() {
+    if (!Dictado) return;
+    const caja = $('#dictado'); let fijo = caja.value.trim() ? caja.value.trim() + ' ' : '';
+    rec = new Dictado(); rec.lang = 'es-ES'; rec.continuous = true; rec.interimResults = true;
+    rec.onresult = ev => {
+      let prov = '';
+      for (let i = ev.resultIndex; i < ev.results.length; i++) { const r = ev.results[i]; if (r.isFinal) fijo += r[0].transcript.trim() + '. '; else prov += r[0].transcript; }
+      caja.value = (fijo + prov).replace(/\s+\./g, '.').trim();
+    };
+    rec.onerror = ev => {
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') U.tostada('Hace falta dar permiso al micrófono. También puedes escribirlo abajo.');
+      else if (ev.error === 'no-speech') U.tostada('No te he oído. Prueba otra vez, más cerca del micrófono.');
+      else if (ev.error !== 'aborted') U.tostada('El dictado se ha cortado. Puedes seguir escribiendo abajo.');
+      pararGrabar(false);
+    };
+    // Algunos navegadores paran solos tras un silencio: mientras estés grabando, se vuelve a encender
+    rec.onend = () => { if (grabando) { try { rec.start(); } catch (e) { pararGrabar(false); } } };
+    try { rec.start(); } catch (e) { return U.tostada('No se ha podido usar el micrófono'); }
+    grabando = true;
+    $('#grabar').classList.add('on'); $('#grabar').setAttribute('aria-label', 'Parar y convertir en informe');
+    $('#grabTxt').textContent = 'Te escucho… pulsa otra vez cuando acabes';
+    $('#dictadoCaja').hidden = false;
+    const barras = [...document.querySelectorAll('#ondasP i')];
+    animOndas = setInterval(() => barras.forEach(b => b.style.height = (15 + Math.random() * 85) + '%'), 120);
+    tope = setTimeout(() => pararGrabar(true), 120e3); // como mucho 2 minutos
+  }
+  function pararGrabar(convertir) {
+    grabando = false; clearInterval(animOndas); clearTimeout(tope);
+    try { rec && rec.stop(); } catch (e) {}
+    const g = $('#grabar'); if (!g) return;
+    g.classList.remove('on'); g.setAttribute('aria-label', 'Grabar nota de voz');
+    document.querySelectorAll('#ondasP i').forEach(b => b.style.height = '20%');
+    $('#grabTxt').textContent = 'Cuéntalo en voz alta y lo convertimos en el informe';
+    // Se espera un momento a que llegue el último trozo de texto
+    if (convertir) setTimeout(() => { if ($('#dictado').value.trim().length >= 15) convertirInforme(); }, 700);
+  }
+  // Sin IA: reparte las frases por palabras clave para que el profe solo tenga que revisarlo
+  function informeSinIA(txt) {
+    const frases = txt.replace(/\s+/g, ' ').split(/(?<=[.!?])\s+|\s+(?=(?:pero|aunque|y luego|la próxima|el próximo|para la próxima)\b)/i).map(f => f.trim().replace(/^[,;]\s*/, '')).filter(f => f.length > 3);
+    const cap = f => { f = f.replace(/[.\s]*$/, '').replace(/[\s,]+(y|e|pero|aunque)$/i, ''); return f.charAt(0).toUpperCase() + f.slice(1) + '.'; };
+    const bien = [], cuesta = [], luego = [];
+    const deTema = /^(hoy )?(hemos (visto|dado|trabajado|repasado|empezado)|estamos con)\b/i;
+    frases.forEach(f => {
+      if (deTema.test(f) && frases.length > 1) return; // la frase del tema va en «Tema»
+      if (/próxim|siguiente|deberes|para el (lunes|martes|miércoles|jueves|viernes|sábado)|toca|vamos a|haremos|repasar/i.test(f)) luego.push(cap(f));
+      else if (/cuesta|difícil|dificultad|falla|se lía|se equivoca|confunde|todavía no|aún no|problema|le lía|olvida/i.test(f)) cuesta.push(cap(f.replace(/^(pero|aunque)\s+/i, '')));
+      else bien.push(cap(f));
+    });
+    const m = txt.match(/(?:hemos (?:visto|dado|trabajado|repasado|empezado(?: con)?)|tema(?: de)?|estamos con)\s+([^.,;]{3,60})/i);
+    let seguridad = 3;
+    if (/domina|muy bien|perfecto|genial|lo tiene/i.test(txt)) seguridad = 4;
+    if (/perdid|no entiende|no se entera|muy flojo/i.test(txt)) seguridad = 2;
+    return { tema: m ? cap(m[1]).replace(/\.$/, '') : '', bien: bien.join(' ') || 'Ha trabajado bien en clase.', cuesta: cuesta.join(' ') || 'Lo vemos en la próxima clase.', luego: luego.join(' ') || 'Seguimos con el tema en la próxima clase.', seguridad };
+  }
+  async function convertirInforme() {
+    const txt = $('#dictado').value.trim();
+    if (txt.length < 15) return U.tostada('Cuenta un poco más cómo ha ido la clase');
+    const btn = $('#aInforme'), t0 = btn.textContent; btn.disabled = true; btn.textContent = 'Convirtiendo…';
+    const c = claseInforme(), fam = c && c.familia_id && FAMILIAS[c.familia_id];
+    const hj = fam && (fam.hijos || []).find(h => h && h.nombre === (c && c.alumno));
+    const ant = c ? INFORMES.filter(i => i.familia === c.familia_id && (!c.alumno || i.alumno === c.alumno)).sort((a, b) => b.d - a.d)[0] : null;
+    const r = window.Deberes ? await Deberes.llamarIA({ modo: 'informe', texto: txt, alumno: (c && c.alumno) || '', curso: (hj && hj.curso) || '',
+      asignatura: MI_PERFIL ? MI_PERFIL.asig.map(a => D.asig(a).nombre).join(', ') : '', anterior: ant ? { tema: ant.tema, cuesta: ant.cuesta, luego: ant.luego } : null }) : { sinIA: true };
+    btn.disabled = false; btn.textContent = t0;
+    let inf, aviso = 'Listo. Revísalo y envíalo a la familia.';
+    if (r && r.ok && r.resultado) inf = r.resultado;
+    else if (r && r.sinIA) { inf = informeSinIA(txt); aviso = 'Lo hemos repartido por frases (la IA aún no está activada). Revísalo antes de enviarlo.'; }
+    else return U.tostada((r && r.error) || 'No se ha podido convertir. Escríbelo a mano esta vez.');
+    for (const [sel, v] of [['#infTema', inf.tema], ['#infBien', inf.bien], ['#infCuesta', inf.cuesta], ['#infLuego', inf.luego]]) {
+      const el = $(sel); if (!el || !v) continue; el.value = '';
+      for (let i = 1; i <= v.length; i += 3) { el.value = v.slice(0, i); await IA.espera(4); }
+      el.value = v;
     }
-    document.querySelectorAll('#nivelInf button')[3].click();
+    const nb = document.querySelectorAll('#nivelInf button')[(inf.seguridad || 3) - 1]; if (nb) nb.click();
+    $('#grabSub').textContent = aviso;
+  }
+  // La clase del informe (la elegida en la lista o la de la maqueta)
+  let infSel = null;
+  const claseInforme = () => REAL ? CLASES.find(x => x.id === ($('#infClase') || {}).value) : null;
+  function clasesParaInforme() {
+    return CLASES.filter(c => c.teacher_id === yo && ['aceptada', 'hecha'].includes(c.estado) && new Date(c.empieza) <= new Date())
+      .sort((a, b) => new Date(b.empieza) - new Date(a.empieza));
   }
 
   const DESPUES = {
+    estadisticas: async () => {
+      if (REAL && !EST) {
+        try { EST = await SUPA.misEstadisticas(); }
+        catch (x) { const c = $('#estCaja'); if (c) c.innerHTML = `<div class="hoja" style="padding:24px"><p>${U.esc(x.message)}</p></div>`; return; }
+        const c = $('#estCaja'); if (!c) return; c.innerHTML = htmlEstadisticas(EST);
+      }
+      ligarEstadisticas();
+    },
     corrector: () => {
       const el = $('#corrPanel'); if (!el) return;
       const cursoHijo = (s.hijos || []).map(h => h && h.curso).find(c => Corrector.CURSOS.includes(c)) || null;
@@ -1669,16 +2140,22 @@ D.listo.then(async () => {
     mensajes: () => { if (!document.querySelector('.hilo')) return; pintarHilo(document.querySelector('.hilo').dataset.abierto); document.querySelector('.convs').onclick = e => { const b = e.target.closest('[data-conv]'); if (b) pintarHilo(b.dataset.conv); }; },
     ingresos: () => setTimeout(() => document.querySelectorAll('.ingresos i').forEach(i => i.style.height = i.dataset.h + '%'), 60),
     informe: () => {
-      $('#grabar').onclick = grabarInforme;
+      if ($('#grabar')) $('#grabar').onclick = grabarInforme;
+      $('#aInforme').onclick = () => { if (grabando) pararGrabar(false); convertirInforme(); };
+      if ($('#infClase')) $('#infClase').onchange = () => { infSel = $('#infClase').value; };
       $('#nivelInf').onclick = e => { const b = e.target.closest('button'); if (b) $('#nivelInf').querySelectorAll('button').forEach(x => { x.setAttribute('aria-pressed', x === b); x.style.background = x === b ? 'var(--ok)' : ''; x.style.color = x === b ? '#fff' : ''; }); };
       $('#fInforme').onsubmit = async e => {
         e.preventDefault(); if ([...e.target.querySelectorAll('textarea')].some(t => !t.value.trim())) return U.tostada('Rellena los tres apartados');
+        if (grabando) pararGrabar(false);
+        const seg = document.querySelector('#nivelInf [aria-pressed="true"]');
+        const datos = { tema: $('#infTema').value.trim(), bien: $('#infBien').value.trim(), cuesta: $('#infCuesta').value.trim(), luego: $('#infLuego').value.trim(), seguridad: seg ? +seg.textContent : null };
         if (REAL) {
           const c = CLASES.find(x => x.id === $('#infClase').value); if (!c) return U.tostada('Elige la clase');
-          const seg = document.querySelector('#nivelInf [aria-pressed="true"]');
-          try { await SUPA.enviarInforme({ clase_id: c.id, familia_id: c.familia_id, alumno: c.alumno, tema: $('#infTema').value.trim(), bien: $('#infBien').value.trim(), cuesta: $('#infCuesta').value.trim(), luego: $('#infLuego').value.trim(), seguridad: seg ? +seg.textContent : null }); }
+          try { await SUPA.enviarInforme({ clase_id: c.id, familia_id: c.familia_id, alumno: c.alumno, ...datos }); }
           catch (x) { return U.tostada(x.message); }
-        }
+          INFORMES.unshift({ clase: c.id, profe: yo, familia: c.familia_id, alumno: c.alumno, d: new Date(), ...datos, nivel: [datos.seguridad || 3] });
+        } else { const dd = $('#infDemo'); if (dd && dd.dataset.id) DEMO_INFORMADAS.add(dd.dataset.id); }
+        infSel = null;
         U.tostada('Informe enviado a la familia'); setTimeout(() => ir('inicio'), 900);
       };
     },
@@ -1770,6 +2247,11 @@ D.listo.then(async () => {
     const sr = e.target.closest('[data-sol-rechaza]'); if (sr) { if (!confirm('¿Rechazar esta solicitud?')) return; return responderSolicitudIni(+sr.dataset.solRechaza, false); }
     const ca = e.target.closest('[data-clase-acepta]'); if (ca) return cambiarClaseIni(ca.dataset.claseAcepta, true);
     const cr = e.target.closest('[data-clase-rechaza]'); if (cr) { if (!confirm('¿Rechazar esta clase?')) return; return cambiarClaseIni(cr.dataset.claseRechaza, false); }
+    // Clase hecha e informe
+    const cl = e.target.closest('[data-clase-llegue]'); if (cl) return accionClase(cl.dataset.claseLlegue, 'llegue');
+    const ct = e.target.closest('[data-clase-terminar]'); if (ct) return accionClase(ct.dataset.claseTerminar, 'terminar');
+    const cn = e.target.closest('[data-clase-no]'); if (cn) return accionClase(cn.dataset.claseNo, 'no');
+    const idf = e.target.closest('[data-informe-de]'); if (idf) { infSel = idf.dataset.informeDe; return ir('informe'); }
     // Profe: perfil de la familia y empezar el chat
     const pf = e.target.closest('[data-perfil-fam]'); if (pf) return abrirPerfilFamilia(pf.dataset.perfilFam);
     const ef = e.target.closest('[data-escribir-fam]'); if (ef) return escribirFamilia(ef.dataset.escribirFam);
@@ -1777,6 +2259,23 @@ D.listo.then(async () => {
     const cm = e.target.closest('[data-cmes]'); if (cm) { calMes.setMonth(calMes.getMonth() + Number(cm.dataset.cmes)); return ir('calendario', true); }
     const cd = e.target.closest('[data-cdia]'); if (cd) { calDia = cd.dataset.cdia; return ir('calendario', true); }
     const ed = e.target.closest('[data-ev-dia]'); if (ed) { calDia = ed.dataset.evDia; calMes = deIso(calDia); calMes.setDate(1); return ir('calendario'); }
+    // Exámenes y notas
+    if (e.target.closest('[data-nuevo-examen]')) return formExamen();
+    if (e.target.closest('[data-nueva-nota]')) return formNota(null);
+    const pe = e.target.closest('[data-plan-examen]');
+    if (pe) { const x = EXAMENES.find(y => y.id === pe.dataset.planExamen); if (!x) return; preguntaPendiente = `Hazme un plan para el examen de ${asigNom(x.asignatura).toLowerCase()} del día ${deIso(x.fecha).getDate()}`; return ir('asistente'); }
+    const be = e.target.closest('[data-borrar-examen]');
+    if (be) { if (!confirm('¿Borrar este examen?')) return; return borrarExamen(be.dataset.borrarExamen).then(() => ir(actual, true), x => U.tostada(x.message)); }
+    const bn = e.target.closest('[data-borrar-nota]');
+    if (bn) { if (!confirm('¿Borrar esta nota?')) return; return borrarNota(bn.dataset.borrarNota).then(() => ir(actual, true), x => U.tostada(x.message)); }
+    const gn = e.target.closest('[data-guardar-nota-ex]');
+    if (gn) { const inp = document.querySelector(`[data-nota-de="${gn.dataset.guardarNotaEx}"]`); return notaRapida(gn.dataset.guardarNotaEx, inp ? inp.value : ''); }
+    const fn = e.target.closest('[data-foto-nota-ex]');
+    if (fn) { const x = EXAMENES.find(y => y.id === fn.dataset.fotoNotaEx); return formNota(x).querySelector('#fotoNota').click(); }
+    const sn = e.target.closest('[data-sin-nota]'); if (sn) { ponerLS('sinNota', [...leerLS('sinNota', []), sn.dataset.sinNota]); return ir(actual, true); }
+    // «Ya tiene hueco»: visto
+    const hv = e.target.closest('[data-hueco-visto]');
+    if (hv) { const t = hv.dataset.huecoVisto, a = HUECOS.find(x => x.teacher_id === t); if (a) a.visto = true; if (REAL) SUPA.avisoVisto(t); hv.closest('.hueco-libre').remove(); return; }
     // Reseñas: puntuar con un toque y, si quieres, un comentario
     const vr = e.target.closest('[data-valorar]');
     if (vr) { const art = vr.closest('.mi-profe'); if (!art.querySelector('.valora')) art.insertAdjacentHTML('beforeend', tarjetaValora(vr.dataset.valorar, true)); vr.remove(); return; }

@@ -1,10 +1,13 @@
-// ClasUno · Corrector de deberes con Claude (Supabase Edge Function, Deno)
+// ClasUno · IA de ClasUno con Claude (Supabase Edge Function, Deno). Se llama «corregir-deberes» por su primer uso.
 //
 // La web nunca ve la clave de Claude: la llama esta función, que la lee del secreto
-// ANTHROPIC_API_KEY de Supabase. Dos modos:
+// ANTHROPIC_API_KEY de Supabase. Cuatro modos:
 //   · «corregir»: recibe 1–3 fotos (o el texto de un ejercicio) y devuelve la corrección
 //     ejercicio a ejercicio en JSON (estado, dónde falla, por qué, pista, pasos, práctica…).
 //   · «pregunta»: chat de tutor sobre un ejercicio concreto («no entiendo el paso 2»).
+//   · «informe»: convierte lo que el profe ha dicho en voz alta al acabar la clase en el informe
+//     para la familia (tema, qué ha ido bien, qué cuesta, qué toca después y seguridad de 1 a 5).
+//   · «nota»: lee la nota de la foto de un examen corregido (la foto no se guarda).
 //
 // Cómo se despliega: supabase/functions/corregir-deberes/LEEME.md
 
@@ -17,10 +20,11 @@ const anthropic = new Anthropic(); // lee ANTHROPIC_API_KEY del entorno
 const MAX_IMAGENES = 3;
 const MAX_BYTES_IMAGEN = 3_500_000; // base64 ≈ 2,6 MB de imagen; la web ya las reduce a ~400 KB
 const MAX_TEXTO = 4000;
-const LIMITE_HORA = { corregir: 12, pregunta: 60 }; // por IP y hora
+const LIMITE_HORA = { corregir: 12, pregunta: 60, informe: 30, nota: 20 }; // por IP y hora
+type Modo = keyof typeof LIMITE_HORA;
 const usos = new Map<string, number[]>();
 
-function dentroDelLimite(ip: string, modo: "corregir" | "pregunta"): boolean {
+function dentroDelLimite(ip: string, modo: Modo): boolean {
   const clave = `${modo}:${ip}`, ahora = Date.now();
   const lista = (usos.get(clave) ?? []).filter((t) => ahora - t < 3_600_000);
   if (lista.length >= LIMITE_HORA[modo]) { usos.set(clave, lista); return false; }
@@ -165,13 +169,15 @@ Deno.serve(async (req) => {
   try { cuerpo = await req.json(); } catch { return responder({ ok: false, error: "Petición no válida." }, 400, origen); }
 
   const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "desconocida";
-  const modo = cuerpo.modo === "pregunta" ? "pregunta" : "corregir";
+  const modo: Modo = (["pregunta", "informe", "nota"] as const).find((m) => m === cuerpo.modo) ?? "corregir";
   if (!dentroDelLimite(ip, modo)) {
     return responder({ ok: false, error: "Has hecho muchas consultas seguidas. Espera un rato y vuelve a probar." }, 429, origen);
   }
 
   try {
     if (modo === "pregunta") return responder(await preguntar(cuerpo), 200, origen);
+    if (modo === "informe") return responder(await redactarInforme(cuerpo), 200, origen);
+    if (modo === "nota") return responder(await leerNota(cuerpo), 200, origen);
     return responder(await corregir(cuerpo), 200, origen);
   } catch (e) {
     if (e instanceof Anthropic.RateLimitError) return responder({ ok: false, error: "El corrector está muy ocupado ahora mismo. Prueba en un minuto." }, 429, origen);
@@ -266,4 +272,87 @@ async function preguntar(c: Record<string, unknown>) {
   const mensaje = await stream.finalMessage();
   if (mensaje.stop_reason === "refusal") return { ok: false, error: "Esa pregunta no la puedo responder. Pregúntame por el ejercicio." };
   return { ok: true, respuesta: textoFinal(mensaje).trim(), ia: true };
+}
+
+// ---------- Informe de la clase a partir de la nota de voz del profe ----------
+const SISTEMA_INFORME = `Eres el ayudante de los profes de ClasUno, una plataforma de clases particulares en Madrid. Al acabar una clase, el profe cuenta en voz alta cómo ha ido y tú lo conviertes en el informe que lee la familia.
+
+- Usa solo lo que dice el profe. No inventes temas, ejercicios, notas ni progresos que no menciona. Si un apartado no sale en lo que dice, escribe una frase prudente y general en vez de inventar (por ejemplo «Lo vemos en la próxima clase»).
+- «tema»: el tema de la clase en pocas palabras (máximo 8), con mayúscula inicial y sin punto final.
+- «bien»: qué ha ido bien, una o dos frases.
+- «cuesta»: qué le cuesta todavía, una o dos frases concretas.
+- «luego»: qué toca en la próxima clase o qué deberes tiene, una o dos frases.
+- «seguridad»: de 1 a 5, cuánta seguridad tiene el alumno en el tema según lo que cuenta el profe (1 = se pierde, 3 = va entendiendo, 5 = lo domina). Si el profe no da pistas, pon 3.
+- Escribe para los padres: español de España, claro, cercano y sin tecnicismos innecesarios. Habla del alumno en tercera persona y por su nombre si lo sabes. Corrige las muletillas y los errores del dictado.
+- La transcripción viene de un dictado automático y puede tener palabras mal reconocidas: interprétalas por el contexto de la asignatura.`;
+
+const ESQUEMA_INFORME = {
+  type: "object",
+  additionalProperties: false,
+  required: ["tema", "bien", "cuesta", "luego", "seguridad"],
+  properties: { tema: texto, bien: texto, cuesta: texto, luego: texto, seguridad: { type: "integer", enum: [1, 2, 3, 4, 5] } },
+};
+
+async function redactarInforme(c: Record<string, unknown>) {
+  const dictado = limpio(c.texto, 6000).trim();
+  if (dictado.length < 15) throw new EntradaNoValida("Cuenta un poco más cómo ha ido la clase.");
+  const datos = [
+    c.alumno ? `Alumno: ${limpio(c.alumno, 60)}` : "",
+    c.curso ? `Curso: ${limpio(c.curso, 40)}` : "",
+    c.asignatura ? `Asignatura: ${limpio(c.asignatura, 60)}` : "",
+    c.anterior ? `Informe anterior (para dar continuidad, no lo copies): ${limpio(JSON.stringify(c.anterior), 1200)}` : "",
+  ].filter(Boolean).join("\n");
+  const mensaje = await anthropic.beta.messages.create({
+    model: MODELO,
+    max_tokens: 4000,
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",
+    output_config: { effort: "low", format: { type: "json_schema", schema: ESQUEMA_INFORME } },
+    system: SISTEMA_INFORME,
+    messages: [{ role: "user", content: `${datos}\n\nLo que ha dicho el profe al acabar la clase:\n«${dictado}»` }],
+  });
+  if (mensaje.stop_reason === "refusal") return { ok: false, error: "No he podido convertirlo en informe. Escríbelo a mano esta vez." };
+  const resultado = JSON.parse(textoFinal(mensaje));
+  console.log(JSON.stringify({ modo: "informe", entrada: mensaje.usage.input_tokens, salida: mensaje.usage.output_tokens }));
+  return { ok: true, resultado, ia: true };
+}
+
+// ---------- Leer la nota de la foto de un examen ----------
+const SISTEMA_NOTA = `Lees la nota de la foto de un examen corregido de un alumno en España. Devuelve solo lo que se lee con seguridad.
+
+- «nota»: la nota final sobre 10 (si está sobre otra escala, conviértela a sobre 10 con dos decimales como mucho). Si pone una calificación en palabras (Insuficiente, Suficiente, Bien, Notable, Sobresaliente) y no hay número, usa 4, 5, 6, 7,5 y 9,5. Si no se ve ninguna nota clara, null.
+- «asignatura»: la asignatura si aparece o se deduce sin dudas; si no, cadena vacía.
+- «duda»: si algo no se lee bien, dilo en una frase; si no, cadena vacía.
+- No repitas nombres ni datos personales del alumno.`;
+
+const ESQUEMA_NOTA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["nota", "asignatura", "duda"],
+  properties: { nota: { anyOf: [{ type: "null" }, { type: "number" }] }, asignatura: texto, duda: texto },
+};
+
+async function leerNota(c: Record<string, unknown>) {
+  const im = (c.imagen ?? {}) as Record<string, unknown>;
+  const tipo = String(im.tipo ?? "") as TipoImagen, datos = String(im.datos ?? "");
+  if (!TIPOS_IMAGEN.includes(tipo) || !datos || datos.length > MAX_BYTES_IMAGEN || /[^A-Za-z0-9+/=]/.test(datos)) {
+    throw new EntradaNoValida("La foto no es válida o es demasiado grande.");
+  }
+  const mensaje = await anthropic.beta.messages.create({
+    model: MODELO,
+    max_tokens: 2000,
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",
+    output_config: { effort: "low", format: { type: "json_schema", schema: ESQUEMA_NOTA } },
+    system: SISTEMA_NOTA,
+    messages: [{ role: "user", content: [
+      { type: "image", source: { type: "base64", media_type: tipo, data: datos } },
+      { type: "text", text: "¿Qué nota ha sacado en este examen?" },
+    ] }],
+  });
+  if (mensaje.stop_reason === "refusal") return { ok: false, error: "No he podido leer esa foto. Escribe la nota a mano." };
+  const r = JSON.parse(textoFinal(mensaje));
+  const nota = typeof r.nota === "number" && r.nota >= 0 && r.nota <= 10 ? Math.round(r.nota * 100) / 100 : null;
+  console.log(JSON.stringify({ modo: "nota", entrada: mensaje.usage.input_tokens, salida: mensaje.usage.output_tokens }));
+  return { ok: true, resultado: { nota, asignatura: String(r.asignatura ?? ""), duda: String(r.duda ?? "") }, ia: true };
 }

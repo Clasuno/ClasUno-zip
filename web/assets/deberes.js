@@ -273,5 +273,5 @@ window.Deberes = (() => {
     return () => { clearInterval(a); clearInterval(b); };
   }
 
-  return { EJEMPLO, IMG_EJEMPLO, prepararFoto, corregir, ejemplo, preguntar, pintarMarcas, htmlResumen, pintarCorreccion, progreso, ESTADO, cuenta, esc };
+  return { EJEMPLO, IMG_EJEMPLO, prepararFoto, corregir, ejemplo, preguntar, pintarMarcas, htmlResumen, pintarCorreccion, progreso, ESTADO, cuenta, esc, llamarIA: llamar };
 })();

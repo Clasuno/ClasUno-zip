@@ -19,6 +19,8 @@ window.SUPA = (() => {
   const asigDeNombre = n => (D.ASIG.find(a => norm(a.nombre) === norm(n)) || {}).id;
   const MODO = { presencial: 'presencial', online: 'online', ambas: 'ambas', both: 'ambas', in_person: 'presencial', 'en persona': 'presencial' };
 
+  const textoResponde = m => m == null ? null : m < 60 ? 'menos de una hora' : m < 150 ? 'una o dos horas' : m < 720 ? `unas ${Math.round(m / 60)} horas`
+    : m < 1440 ? 'el mismo día' : m < 2880 ? 'un día' : `${Math.round(m / 1440)} días`;
   function aProfe(t) {
     const asig = lista(t.subjects).map(asigDeNombre).filter(Boolean);
     const precio = Number(t.price) || 0;
@@ -28,7 +30,11 @@ window.SUPA = (() => {
       asig, niveles: lista(t.levels), modo: MODO[norm(t.modality)] || 'ambas', zona: t.zone ? zonaDeNombre(t.zone) : null,
       precio, precioGrupo: Math.round(precio * 0.6), nota: Number(t.nota) || 0, nResenas: Number(t.n_resenas) || 0,
       reparto: Array.isArray(t.reparto) ? t.reparto.map(Number) : null, clases: Number(t.classes) || 0,
-      verificado: !!t.verified, certificado: !!t.certificado, grupos: !!t.grupos, responde: 'pocas horas',
+      verificado: !!t.verified, certificado: !!t.certificado, grupos: !!t.grupos, completo: !!t.completo,
+      // Tiempo real de respuesta (mediana de los últimos 90 días); null si aún no hay datos
+      respondeMin: t.responde_min == null ? null : Number(t.responde_min), responde: textoResponde(t.responde_min),
+      // Mejora media de sus alumnos en los exámenes (notas que apuntan las familias)
+      mejora: t.mejora && t.mejora.alumnos ? { media: Number(t.mejora.media), alumnos: Number(t.mejora.alumnos) } : null,
       idiomas: lista(t.languages).length ? lista(t.languages) : ['Español'],
       corta: t.headline || '', bio: t.description || '',
       resenas: (Array.isArray(t.resenas) ? t.resenas : []).map(r => ({ autor: r.autor || 'Familia', estrellas: Number(r.estrellas) || 0, texto: r.texto || '', creada: r.creada })),
@@ -242,6 +248,48 @@ window.SUPA = (() => {
     }
   }
 
+  // ---------- Clases hechas, exámenes, notas, estadísticas y «avísame» (supabase/8-clases-hechas-notas.sql) ----------
+  const FALTA_8 = 'Falta ejecutar «8-clases-hechas-notas.sql» en Supabase.';
+  const error8 = e => new Error(/42P01|42703|PGRST20[25]|does not exist|could not find/i.test(((e && e.message) || '') + ' ' + ((e && e.code) || '')) ? FALTA_8 : errorBonito(e));
+  const lista8 = async q => { const { data, error } = await q; return error ? [] : data || []; };
+  // Da por hechas las clases que acabaron hace más de 6 horas (por si el cierre automático de Supabase no está activo)
+  async function cerrarClases() { try { await sb.rpc('cerrar_clases_pasadas'); } catch (e) {} }
+  async function marcarLlegada(id) {
+    const { data, error } = await sb.from('clases').update({ llegada: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error8(error); return data;
+  }
+  async function marcarHecha(id) {
+    const { data, error } = await sb.from('clases').update({ estado: 'hecha' }).eq('id', id).select().single();
+    if (error) throw error8(error); return data;
+  }
+  const misExamenes = () => lista8(sb.from('examenes').select('*').order('fecha'));
+  async function guardarExamen(x) {
+    const fila = { alumno: x.alumno || null, asignatura: x.asignatura, fecha: x.fecha, tema: x.tema || null };
+    const q = x.id ? sb.from('examenes').update(fila).eq('id', x.id) : sb.from('examenes').insert(fila);
+    const { data, error } = await q.select().single(); if (error) throw error8(error); return data;
+  }
+  async function borrarExamen(id) { const { error } = await sb.from('examenes').delete().eq('id', id); if (error) throw error8(error); }
+  const misNotas = () => lista8(sb.from('notas').select('*').order('fecha'));
+  async function guardarNota(n) {
+    const fila = { alumno: n.alumno || null, asignatura: n.asignatura, nota: n.nota, fecha: n.fecha, antes: !!n.antes, examen_id: n.examen_id || null, teacher_id: n.teacher_id || null };
+    const { data, error } = await sb.from('notas').insert(fila).select().single(); if (error) throw error8(error); return data;
+  }
+  async function borrarNota(id) { const { error } = await sb.from('notas').delete().eq('id', id); if (error) throw error8(error); }
+  // Una visita a la ficha de un profe (una vez por sesión del navegador)
+  async function contarVisita(t) {
+    try { const k = 'visto:' + t; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) {}
+    try { await sb.rpc('contar_visita', { t }); } catch (e) {}
+  }
+  async function misEstadisticas() { const { data, error } = await sb.rpc('mis_estadisticas'); if (error) throw error8(error); return data; }
+  async function ponerCompleto(b) { const { data, error } = await sb.rpc('poner_completo', { b }); if (error) throw error8(error); return data || 0; }
+  const misAvisos = () => lista8(sb.from('avisame').select('*'));
+  async function pedirAviso(t) {
+    const { error } = await sb.from('avisame').upsert({ teacher_id: t, familia_id: usuario.id, avisado: null, visto: false, creado: new Date().toISOString() }, { onConflict: 'teacher_id,familia_id' });
+    if (error) throw error8(error);
+  }
+  async function quitarAviso(t) { const { error } = await sb.from('avisame').delete().eq('teacher_id', t).eq('familia_id', usuario.id); if (error) throw error8(error); }
+  async function avisoVisto(t) { await sb.from('avisame').update({ visto: true }).eq('teacher_id', t).eq('familia_id', usuario.id); }
+
   // ---------- Panel de un grupo (grupo.html) ----------
   // Devuelve null si el grupo no existe o no estás dentro
   async function grupoDetalle(id) {
@@ -337,6 +385,8 @@ window.SUPA = (() => {
   return { sb, sesionLista, usuario: () => usuario, rol: rolActual, registrar, entrar, salir, recuperar, guardarPerfilProfe, miPerfilProfe, cambiarNombre, estadoPerfilProfe, sincronizarFavs, fav,
     pedirClase, misClases, cambiarClase, misInformes, enviarInforme, unirseGrupo, salirGrupo, proponerGrupo, crearGrupo, grupoPorCodigo, unirseConCodigo,
     grupoDetalle, mensajesGrupo, enviarGrupo, escucharGrupo, ajustarGrupo, nuevoEnlaceGrupo, borrarGrupo, marcarSesion, quitarSesion,
-    perfilAlumno, abrirChatFamilia, misResenas, resenar, guardarAjustes, datosCuenta, correo, cambiarCorreo, cambiarClave, salirDeTodo, misDatos,
+    perfilAlumno, abrirChatFamilia, misResenas, resenar, guardarAjustes,
+    cerrarClases, marcarLlegada, marcarHecha, misExamenes, guardarExamen, borrarExamen, misNotas, guardarNota, borrarNota,
+    contarVisita, misEstadisticas, ponerCompleto, misAvisos, pedirAviso, quitarAviso, avisoVisto, FALTA_8, datosCuenta, correo, cambiarCorreo, cambiarClave, salirDeTodo, misDatos,
     conversaciones, abrirConversacion, mensajes, enviar, escuchar, soporte, nombreZonaBD, errorBonito };
 })();

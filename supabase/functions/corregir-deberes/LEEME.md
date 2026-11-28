@@ -22,11 +22,13 @@ Con la CLI de Supabase (alternativa): `supabase functions deploy corregir-debere
 
 - **Modo `corregir`**: 1–3 fotos (JPG/PNG/WEBP, la web las reduce a 1600 px) y/o texto. Claude resuelve cada ejercicio desde cero, compara con lo del alumno y devuelve JSON con: estado de cada ejercicio, el paso exacto donde falla, por qué, una pista, la explicación paso a paso, la solución, fallos agrupados por tipo, por dónde empezar, qué hace bien, 2–3 ejercicios de práctica y un mensaje para la familia.
 - **Modo `pregunta`**: chat de tutor sobre un ejercicio («no entiendo el paso 2»), respuestas cortas.
+- **Modo `informe`** (panel del profe → *Escribir informe*): recibe lo que el profe ha dictado al acabar la clase (el navegador pasa la voz a texto) y devuelve el informe para la familia: tema, qué ha ido bien, qué cuesta, qué toca después y seguridad de 1 a 5. Solo usa lo que dice el profe. Sin la función, la web reparte las frases por palabras clave y lo avisa.
+- **Modo `nota`** (panel de la familia → *Apuntar una nota* → 📷): lee la nota de la foto de un examen corregido. La foto no se guarda. Sin la función, la familia escribe la nota a mano.
 - Modelo: `claude-opus-5-5`, esfuerzo `high` al corregir y `low` al responder preguntas. Activado `fallbacks: "default"` (si un filtro de seguridad rechaza una foto por error, otro modelo termina la respuesta).
 
 ## Límites y coste
 
-- Por IP: 12 correcciones y 60 preguntas por hora (se reinicia si la función se reinicia). Máximo 3 fotos por corrección.
+- Por IP: 12 correcciones, 60 preguntas, 30 informes y 20 notas por hora (se reinicia si la función se reinicia). Máximo 3 fotos por corrección.
 - Coste aproximado con Claude Opus 5.5 ($4 por millón de tokens de entrada, $20 de salida): una hoja (≈4.000 tokens de entrada y 4.000–8.000 de salida contando el razonamiento) sale por unos **10–20 céntimos de dólar**; una pregunta del chat, 1–2 céntimos. Para abaratarlo: bajar `effort` a `"medium"` en `corregir()` (algo menos fino con las cuentas largas). El gasto real se ve en platform.claude.com → *Usage*, y conviene poner allí un límite de gasto mensual.
 - Las fotos no se guardan: solo pasan por la función hacia Claude.
 - En los registros de la función (*Logs*) se apunta solo cuántas fotos y tokens ha usado cada corrección.

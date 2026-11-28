@@ -89,9 +89,23 @@ window.IA = (() => {
   }
 
   /* Plan de estudio hasta una fecha */
-  function plan({ asig, fecha, horas, temas }) {
+  function plan({ asig, fecha, horas, temas, porDias = false }) {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-    const fin = new Date(fecha); const dias = Math.max(7, Math.round((fin - hoy) / 864e5));
+    const fin = new Date(fecha); fin.setHours(0, 0, 0, 0);
+    // Con menos de dos semanas (y si se pide), el plan va día a día
+    const quedan = Math.round((fin - hoy) / 864e5);
+    if (porDias && quedan >= 1 && quedan <= 13) {
+      const ts = temas.length ? temas : ['Repaso general'];
+      const out = Array.from({ length: quedan }, (_, i) => {
+        const d = new Date(hoy); d.setDate(hoy.getDate() + i); const faltan = quedan - i;
+        const tema = faltan === 1 ? 'Repaso ligero de los resúmenes y a descansar pronto'
+          : faltan === 2 && quedan >= 3 ? 'Simulacro: un examen de práctica con el reloj delante'
+          : `${ts[i % ts.length]}: ejercicios, empezando por los fallos`;
+        return { semana: i + 1, ini: d, tema, etiqueta: d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric' }), clases: 1, solo: 0, ultima: faltan === 1 };
+      });
+      return { semanas: out, dias: quedan, asig, porDias: true };
+    }
+    const dias = Math.max(7, quedan);
     const semanas = Math.min(10, Math.max(1, Math.ceil(dias / 7)));
     const ts = temas.length ? temas : ['Repaso general'];
     const out = [];

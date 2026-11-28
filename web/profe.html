@@ -45,6 +45,10 @@
 .barra-nota i span{display:block;height:100%;background:var(--butano);width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
 .resena{padding:16px 0;border-top:1px dashed var(--linea)}
 .mini-mapa{max-width:520px}
+.mejora-ficha b{color:var(--ok)}
+.completo-caja{padding:18px;border-radius:16px;background:var(--papel-2);margin:6px 0 4px}
+.avisame-ok{font-weight:600;color:var(--ok)}
+.enlace-quitar{border:0;background:none;padding:6px 0 0;color:var(--tinta-2);font-size:14px;text-decoration:underline;cursor:pointer}
 @media (max-width:980px){.cuerpo-ficha{grid-template-columns:1fr}.reserva{position:static}.ficha-cab .fila{grid-template-columns:auto 1fr}.ficha-cab .fila>:last-child{grid-column:1/-1}}
 @media (max-width:560px){.ficha-cab .fila{grid-template-columns:1fr}.cara.g{width:90px;height:90px;font-size:32px}}
 </style>
@@ -90,7 +94,8 @@ D.listo.then(() => {
             ${/* Solo lo que de verdad está comprobado (en los datos de ejemplo se da por hecho) */ ''}
             ${!p.real || p.verificado ? '<span class="etiqueta ok">✓ Comprobado en persona</span>' : ''}
             ${!p.real || p.certificado ? '<span class="etiqueta ok">✓ Certificado para menores</span>' : '<span class="etiqueta">Certificado para menores: pendiente de revisar</span>'}
-            <span class="etiqueta">Responde en ${p.responde}</span>
+            ${p.responde ? `<span class="etiqueta" title="${p.real ? 'Lo que suele tardar en contestar, medido en sus mensajes de los últimos 90 días' : ''}">Responde en ${p.responde}</span>` : ''}
+            ${p.completo ? '<span class="etiqueta naranja">Horario completo ahora</span>' : ''}
             ${p.grupos ? '<span class="etiqueta naranja">Grupos de estudio</span>' : ''}
           </p>
         </div>
@@ -102,6 +107,7 @@ D.listo.then(() => {
       <div class="datos-rapidos">
         <div><b>${p.nota ? '★ ' + U.coma(p.nota) : 'Nuevo'}</b><span>${p.nota ? totalRes + (totalRes === 1 ? ' reseña' : ' reseñas') : 'sin reseñas aún'}</span></div>
         <div><b>${p.clases}</b><span>clases en la web</span></div>
+        ${p.mejora && p.mejora.alumnos >= 3 ? `<div class="mejora-ficha" title="Media de lo que han cambiado las notas de examen de sus alumnos desde que empezaron con ${U.esc(p.nombre.split(' ')[0])}, según las notas que apuntan las familias"><b>${p.mejora.media > 0 ? '+' : p.mejora.media < 0 ? '−' : ''}${U.coma(Math.abs(p.mejora.media))}</b><span>puntos de media en los exámenes de sus alumnos (${p.mejora.alumnos})</span></div>` : ''}
         <div><b>${p.precio} €</b><span>la hora</span></div>
         <div><b>${z ? z.nombre : 'Online'}</b><span>${U.modoTxt(p.modo)}</span></div>
       </div>
@@ -132,6 +138,12 @@ D.listo.then(() => {
 
     <aside class="hoja reserva" aria-label="Reservar">
       <h2 style="font-size:var(--t-seccion)">Pedir clase</h2>
+      ${p.completo ? `<div class="completo-caja" id="completoCaja">
+        <p><b>Ahora mismo ${U.esc(p.nombre.split(' ')[0])} tiene el horario completo.</b></p>
+        <p class="suave" style="margin-top:6px">Te avisamos en tu panel en cuanto vuelva a tener hueco, y así no tienes que estar mirando.</p>
+        <div id="avisameZona" style="margin-top:14px"><button class="boton" type="button" id="avisame" style="width:100%">Avísame cuando tenga hueco</button></div>
+        <p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><a class="boton sec peq" href="panel.html?chat=${p.id}">Escribirle igualmente</a><a class="boton sec peq" href="buscar.html?asig=${p.asig[0]}${p.zona ? '&zona=' + p.zona : ''}">Ver profes parecidos</a></p></div>` : ''}
+      <div id="formReserva" ${p.completo ? 'hidden' : ''}>
       <div class="tipos" id="tipos">
         <button class="tipo" type="button" aria-pressed="true" data-t="prueba"><b>Primera a prueba</b><small>60 min · si no encaja, no pagas</small></button>
         <button class="tipo" type="button" aria-pressed="false" data-t="suelta"><b>Clase suelta</b><small>${p.precio} € la hora</small></button>
@@ -153,12 +165,48 @@ D.listo.then(() => {
       <div class="desglose" id="desglose"></div>
       <button class="boton" type="button" id="pedir" style="width:100%" disabled>Elige un hueco</button>
       <p class="suave" style="font-size:12.5px;margin-top:12px">No se cobra nada hasta que ${p.nombre.split(' ')[0]} acepta. Cancelación gratis hasta 24 h antes.</p>
+      </div>
     </aside>
   </section>`;
   observarApariciones();
 
   if (z) { const m = crearMapa($('#miniMapa'), { id: 'm', profes: [], sinOnline: true, sinTip: true }); m.zona(p.zona, true); setTimeout(() => m.zoom(p.zona, 2.6), 400); }
   setTimeout(() => document.querySelectorAll('[data-w]').forEach(s => s.style.width = s.dataset.w + '%'), 300);
+
+  // Visitas a la ficha (para las estadísticas del profe; una por sesión)
+  if (p.real && window.SUPA) SUPA.sesionLista.then(() => SUPA.contarVisita(p.id));
+
+  // «Avísame cuando tenga hueco»
+  if (p.completo) {
+    const zona = $('#avisameZona');
+    const pintar = apuntado => {
+      zona.innerHTML = apuntado
+        ? `<p class="avisame-ok">✓ Te avisaremos en tu panel cuando ${U.esc(p.nombre.split(' ')[0])} tenga hueco.</p><button class="enlace-quitar" type="button" id="quitarAviso">Ya no quiero el aviso</button>`
+        : `<button class="boton" type="button" id="avisame" style="width:100%">Avísame cuando tenga hueco</button>`;
+    };
+    const local = () => { try { return JSON.parse(localStorage.getItem('avisame') || '[]'); } catch (e) { return []; } };
+    const guardarLocal = l => { try { localStorage.setItem('avisame', JSON.stringify(l)); } catch (e) {} };
+    const real = p.real && window.SUPA;
+    (async () => {
+      if (real) { await SUPA.sesionLista; if (SUPA.usuario() && SUPA.rol() !== 'profe') { const a = (await SUPA.misAvisos()).find(x => x.teacher_id === p.id && !x.avisado); pintar(!!a); } }
+      else pintar(local().includes(p.id));
+    })();
+    zona.onclick = async e => {
+      if (e.target.closest('#avisame')) {
+        if (real) {
+          if (!SUPA.usuario()) { location.href = 'entrar.html?alta=familia&volver=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
+          if (SUPA.rol() === 'profe') return U.tostada('Los avisos son para las familias');
+          try { await SUPA.pedirAviso(p.id); } catch (x) { return U.tostada(x.message); }
+        } else guardarLocal([...new Set([...local(), p.id])]);
+        pintar(true); U.tostada('Listo: te avisaremos cuando tenga hueco');
+      }
+      if (e.target.closest('#quitarAviso')) {
+        if (real) { try { await SUPA.quitarAviso(p.id); } catch (x) { return U.tostada(x.message); } }
+        else guardarLocal(local().filter(x => x !== p.id));
+        pintar(false);
+      }
+    };
+  }
 
   // Reserva
   let tipo = 'prueba', dur = 60, hueco = null, modalidad = p.modo === 'online' ? 'online' : 'presencial';
@@ -226,7 +274,7 @@ D.listo.then(() => {
       <h2 style="font-size:var(--t-seccion)">Se lo hemos dicho a ${p.nombre.split(' ')[0]}.</h2>
       <p style="margin-top:14px">${{ prueba: 'Primera clase a prueba', suelta: 'Clase suelta', bono: 'Bono de 10 clases', grupo: 'Plaza en grupo de estudio' }[tipo]} · ${DIAS_L[hueco[0]]} a las ${hueco.slice(1)}:00 · ${dur} min · ${MODO_TXT[modalidad]}.</p>
       <ol style="margin:18px 0 0;padding-left:20px;line-height:1.8">
-        <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora (suele tardar ${p.responde}).</li>
+        <li>${p.nombre.split(' ')[0]} acepta o te propone otra hora${p.responde ? ` (suele tardar ${p.responde})` : ''}.</li>
         <li>Pagas entonces; el dinero queda guardado hasta después de la clase.</li>
         <li>Al terminar recibes el informe de la clase en tu panel.</li>
       </ol>

@@ -147,6 +147,10 @@ window.D = (() => {
     p.nResenas = p.nota ? Math.max(p.resenas.length, Math.round(p.clases / 6)) : 0;
     p.precioGrupo = Math.round(p.precio * 0.6);
   });
+  // Maqueta: mejora en los exámenes de sus alumnos y un profe con el horario completo
+  Object.assign(PROFES.find(p => p.id === 'laura') || {}, { mejora: { media: 1.6, alumnos: 9 } });
+  Object.assign(PROFES.find(p => p.id === 'daniel') || {}, { mejora: { media: 1.1, alumnos: 4 } });
+  Object.assign(PROFES.find(p => p.id === 'marcos') || {}, { completo: true });
   const profe = id => PROFES.find(p => p.id === id);
 
   const GRUPOS = [

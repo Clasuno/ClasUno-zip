@@ -116,6 +116,7 @@
           <span class="etiqueta">📍 ${lugar}</span>
           <span class="etiqueta">${modoTxt(p.modo)}</span>
           ${p.grupos ? '<span class="etiqueta naranja">Grupos de estudio</span>' : ''}
+          ${p.completo ? '<span class="etiqueta">Sin huecos ahora</span>' : ''}
         </p>
         <p class="acciones-tarjeta">
           <a class="boton peq" href="profe.html?id=${p.id}">Ver perfil</a>
@@ -219,7 +220,7 @@
     visita: [['entrar.html', 'Entrar', 'entrar'], ['entrar.html?alta=familia', 'Crear cuenta de familia', 'persona'], ['dar-clases.html', 'Quiero dar clases', 'clases'], ['como-se-paga.html', 'Cómo se paga', 'pagos'], ['ayuda.html', 'Ayuda', 'ayuda']],
     familia: [['panel.html#corrector', 'Asistente IA', 'ia'], ['panel.html#profes', 'Mis profes', 'persona'], ['panel.html#grupos', 'Mis grupos', 'grupos'], ['grupos.html', 'Buscar grupos de estudio', 'buscar'], ['panel.html#informes', 'Informes de clase', 'informes'],
       ['panel.html#asistente', 'Seguimiento', 'seguimiento'], ['panel.html#pagos', 'Pagos y bonos', 'pagos'], ['panel.html#ajustes', 'Ajustes', 'ajustes'], ['ayuda.html', 'Ayuda', 'ayuda']],
-    profe: [['panel.html#perfil', 'Mi perfil', 'persona'], ['panel.html#preparar', 'Preparar clase', 'preparar'], ['panel.html#informe', 'Escribir informe', 'escribir'], ['panel.html#alumnos', 'Mis alumnos', 'grupos'],
+    profe: [['panel.html#perfil', 'Mi perfil', 'persona'], ['panel.html#preparar', 'Preparar clase', 'preparar'], ['panel.html#informe', 'Escribir informe', 'escribir'], ['panel.html#estadisticas', 'Estadísticas', 'informes'], ['panel.html#alumnos', 'Mis alumnos', 'grupos'],
       ['panel.html#ingresos', 'Ingresos', 'ingresos'], ['panel.html#ajustes', 'Ajustes', 'ajustes'], ['ayuda.html', 'Ayuda', 'ayuda']]
   };
   const tipoCuenta = () => { const s = sesion(); return !s ? 'visita' : s.rol === 'profe' ? 'profe' : 'familia'; };
