@@ -417,6 +417,7 @@ D.listo.then(async () => {
     actual = v;
     menu(); v = actual; // menu() corrige pestañas que ya no existen
     history.replaceState(null, '', `panel.html${rol === 'profe' && !REAL ? '?rol=profe' : ''}#${v}`);
+    if (U.pintarNav) U.pintarNav(); // la cabecera marca la sección en la que estás
     const pintar = () => { $('#vista').innerHTML = `<div class="vista">${VISTAS[rol][v]()}</div>`; DESPUES[v] && DESPUES[v](); };
     // Transición si se puede; si el navegador no llega a pintarla (pestaña en segundo plano), cambiamos igual
     if (document.startViewTransition && !sinAnim && !document.hidden) {
@@ -1056,6 +1057,8 @@ D.listo.then(async () => {
     }
     if (a) { const fila = a.closest('.fila-clase'); fila.style.transition = 'all .4s'; fila.style.opacity = 0; fila.style.transform = 'translateX(40px)'; setTimeout(() => fila.remove(), 400); U.tostada(a.hasAttribute('data-acepta') ? 'Aceptada: la familia ya puede pagar' : 'Te hemos abierto el chat para proponer hora'); }
   });
+  // Los enlaces de la cabecera (p. ej. «Solicitudes» → panel.html#solicitudes) cambian de sección sin recargar
+  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (v && v !== actual && VISTAS[rol][v]) ir(v); });
   ir(actual, true);
 });
 </script>
